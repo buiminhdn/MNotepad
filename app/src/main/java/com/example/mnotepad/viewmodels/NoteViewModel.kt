@@ -13,10 +13,13 @@ import kotlinx.coroutines.launch
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
     val notes: LiveData<List<Note>>
+    val deletedNotes: LiveData<List<Note>>
+
     private val noteDao: NoteDao = AppDatabase.getDatabase(application).getNoteDao()
 
     init {
         notes = noteDao.getAll()
+        deletedNotes = noteDao.getDeletedNotes()
     }
 
     fun deleteNote(id: Int) = viewModelScope.launch(Dispatchers.IO) {

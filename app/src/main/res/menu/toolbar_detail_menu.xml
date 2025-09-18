@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/navEdit"
+        android:icon="@drawable/ic_pen"
+        app:iconTint="@color/white"
+        android:title="@string/allow_edit"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/navSave"
         android:title="@string/save"
         app:showAsAction="ifRoom" />
@@ -20,5 +27,40 @@
     <item
         android:id="@+id/navRedo"
         android:title="@string/redo"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navCategorize"
+        android:title="@string/categorize"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navColorize"
+        android:title="Colorize"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navImport"
+        android:title="@string/import_file"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navExport"
+        android:title="@string/export_file"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navReadOnly"
+        android:title="@string/read_only"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navSearchDetail"
+        android:title="@string/search"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navShare"
+        android:title="@string/share"
         app:showAsAction="never" />
 </menu>

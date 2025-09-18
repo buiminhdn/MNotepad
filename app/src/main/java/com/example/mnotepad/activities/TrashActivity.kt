@@ -1,0 +1,66 @@
+package com.example.mnotepad.activities
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mnotepad.R
+import com.example.mnotepad.adapters.NoteAdapter
+import com.example.mnotepad.databinding.ActivityTrashBinding
+import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.IS_EDITED_ACTION
+import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.viewmodels.NoteViewModel
+import kotlin.getValue
+
+class TrashActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityTrashBinding
+    private val noteViewModel: NoteViewModel by viewModels()
+    private lateinit var noteAdapter: NoteAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityTrashBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        initToolbar()
+        setupViewModel()
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(binding.toolbar)
+
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+    }
+
+    private fun setupViewModel() {
+        noteAdapter = NoteAdapter(emptyList(), ::startToNoteDetail)
+
+        binding.rvDeletedNotes.layoutManager = LinearLayoutManager(this)
+        binding.rvDeletedNotes.adapter = noteAdapter
+
+        noteViewModel.deletedNotes.observe(this, noteAdapter::setNotes)
+
+    }
+
+    private fun startToNoteDetail(note: Note) {
+        val intent = Intent(this, NoteDetailActivity::class.java).apply {
+            putExtra(NOTE_DETAIL_OBJECT, note)
+            putExtra(IS_EDITED_ACTION, true)
+        }
+        startActivity(intent)
+    }
+}

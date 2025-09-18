@@ -26,6 +26,7 @@ import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_NEWEST
 import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_OLDEST
 import com.example.mnotepad.helpers.SORT_TITLE_A_Z
 import com.example.mnotepad.helpers.SORT_TITLE_Z_A
+import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -61,6 +62,11 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navEditCategories -> {
                     startActivity(Intent(this, CategoryActivity::class.java))
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.navTrash -> {
+                    startActivity(Intent(this, TrashActivity::class.java))
                     binding.drawerLayout.closeDrawers()
                     true
                 }

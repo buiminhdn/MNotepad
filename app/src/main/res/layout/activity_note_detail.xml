@@ -19,7 +19,19 @@
         app:menu="@menu/toolbar_detail_menu"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/white"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="@color/white">
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:backgroundTint="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:inputType="text"
+            android:visibility="gone"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <LinearLayout
         android:orientation="vertical"

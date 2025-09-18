@@ -13,7 +13,7 @@ data class Note(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val content: String,
-    val categoryId: Int? = null,
+    val categoryIds: Int? = null,
     val color: Int? = null,
     val type: NoteType = NoteType.TEXT,
     val isDeleted: Boolean = false,
@@ -24,14 +24,14 @@ data class Note(
     constructor(
         title: String,
         content: String,
-        categoryId: Int? = null,
+        categoryIds: Int? = null,
         color: Int? = null,
         type: NoteType = NoteType.TEXT
     ) : this(
         id = 0,
         title = title,
         content = content,
-        categoryId = categoryId,
+        categoryIds = categoryIds,
         color = color,
         type = type,
         isDeleted = false,

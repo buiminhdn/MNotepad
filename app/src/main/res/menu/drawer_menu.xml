@@ -19,17 +19,17 @@
             android:title="@string/edit_categories" />
     </group>
 
-<!--    <group>-->
+    <group>
 <!--        <item-->
 <!--            android:id="@+id/navBackup"-->
 <!--            android:icon="@drawable/ic_backup"-->
 <!--            android:title="@string/backup" />-->
 
-<!--        <item-->
-<!--            android:id="@+id/navTrash"-->
-<!--            android:icon="@drawable/ic_trash"-->
-<!--            android:title="@string/trash" />-->
-<!--    </group>-->
+        <item
+            android:id="@+id/navTrash"
+            android:icon="@drawable/ic_trash"
+            android:title="@string/trash" />
+    </group>
 
 <!--    <group>-->
 <!--        <item-->

@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.mnotepad.database.DAO.CategoryDao
 import com.example.mnotepad.database.DAO.NoteDao
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.IntListConverter
 
 @Database(entities = [Note::class, Category::class], version = 1)
+@TypeConverters(IntListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getCategoryDao() : CategoryDao
     abstract fun getNoteDao() : NoteDao
