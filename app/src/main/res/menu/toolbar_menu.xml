@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/navSearch"
+        android:icon="@drawable/ic_search"
+        android:contentDescription="@string/button_to_search_note"
+        android:title="@string/search"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/navSort"
+        android:title="@string/sort"
+        android:contentDescription="@string/button_to_sort_note"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/navMore"
+        android:title="@string/more"
+        app:iconTint="@color/white"
+        android:contentDescription="@string/button_for_more"
+        app:showAsAction="never" />
+</menu>

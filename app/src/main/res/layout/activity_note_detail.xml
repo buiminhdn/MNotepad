@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.NoteDetailActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        app:title="Notepad"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+        app:popupTheme="@style/ToolbarPopupTheme"
+        app:menu="@menu/toolbar_detail_menu"
+        app:navigationIcon="@drawable/ic_back"
+        app:navigationIconTint="@color/white"
+        app:titleTextColor="@color/white" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@drawable/rounded_item_bg"
+        android:padding="10dp"
+        android:layout_margin="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/edtTitle"
+            android:backgroundTint="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Today Note"
+            android:inputType="text"
+            android:hint="@string/enter_title" />
+
+        <EditText
+            android:id="@+id/edtContent"
+            android:backgroundTint="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autofillHints="Nothing to Say"
+            android:inputType="text"
+            android:gravity="top"
+            android:hint="@string/enter_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>

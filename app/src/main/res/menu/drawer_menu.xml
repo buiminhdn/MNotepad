@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/navNotes"
+            android:icon="@drawable/ic_note"
+            android:title="@string/notes" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/navUncategorized"
+            android:icon="@drawable/ic_bookmark_x"
+            android:title="@string/uncategorized" />
+
+        <item
+            android:id="@+id/navEditCategories"
+            android:icon="@drawable/ic_list_plus"
+            android:title="@string/edit_categories" />
+    </group>
+
+<!--    <group>-->
+<!--        <item-->
+<!--            android:id="@+id/navBackup"-->
+<!--            android:icon="@drawable/ic_backup"-->
+<!--            android:title="@string/backup" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/navTrash"-->
+<!--            android:icon="@drawable/ic_trash"-->
+<!--            android:title="@string/trash" />-->
+<!--    </group>-->
+
+<!--    <group>-->
+<!--        <item-->
+<!--            android:id="@+id/navSettings"-->
+<!--            android:icon="@drawable/ic_settings"-->
+<!--            android:title="@string/settings" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/navRate"-->
+<!--            android:icon="@drawable/ic_star"-->
+<!--            android:title="@string/rate_the_app" />-->
+<!--        <item-->
+<!--            android:id="@+id/navHelp"-->
+<!--            android:icon="@drawable/ic_help"-->
+<!--            android:title="@string/help" />-->
+
+<!--        <item-->
+<!--            android:id="@+id/navPrivacy"-->
+<!--            android:icon="@drawable/ic_privacy"-->
+<!--            android:title="@string/privacy_policy" />-->
+<!--    </group>-->
+</menu>

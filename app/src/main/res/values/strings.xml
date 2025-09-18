@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">MNotepad</string>
+    <string name="button_to_add_note">Button to Add Note</string>
+    <string name="notes">Notes</string>
+    <string name="uncategorized">Uncategorized</string>
+    <string name="edit_categories">Edit Categories</string>
+
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="button_to_search_note">Button to Search Note</string>
+    <string name="search">Search</string>
+    <string name="sort">SORT</string>
+    <string name="button_to_sort_note">Button to Sort Note</string>
+    <string name="button_for_more">Button for More</string>
+    <string name="more">MORE</string>
+    <string name="save">SAVE</string>
+    <string name="undo">UNDO</string>
+    <string name="delete">DELETE</string>
+    <string name="enter_content">Enter content...</string>
+    <string name="enter_title">Enter title...</string>
+    <string name="project_title">MNotepad</string>
+    <string name="enter_category">Enter category...</string>
+    <string name="add">ADD</string>
+    <string name="button_to_update_category">Button to Update Category</string>
+    <string name="button_to_delete_category">Button to Delete Category</string>
+    <string name="redo">Redo</string>
+</resources>
