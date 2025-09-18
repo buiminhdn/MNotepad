@@ -3,6 +3,8 @@ package com.example.mnotepad.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,7 @@ import com.example.mnotepad.databinding.ActivityTrashBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.NoteViewModel
 import kotlin.getValue
 
@@ -35,25 +38,25 @@ class TrashActivity : AppCompatActivity() {
         }
 
         initToolbar()
-        setupViewModel()
+        setupRecyclerView()
+        observeViewModel()
     }
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
-
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
     }
 
-    private fun setupViewModel() {
+    private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(emptyList(), ::startToNoteDetail)
-
         binding.rvDeletedNotes.layoutManager = LinearLayoutManager(this)
         binding.rvDeletedNotes.adapter = noteAdapter
+    }
 
+    private fun observeViewModel() {
         noteViewModel.deletedNotes.observe(this, noteAdapter::setNotes)
-
     }
 
     private fun startToNoteDetail(note: Note) {
@@ -62,5 +65,28 @@ class TrashActivity : AppCompatActivity() {
             putExtra(IS_EDITED_ACTION, true)
         }
         startActivity(intent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_trash_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.navDeleteAll -> {
+                noteViewModel.deleteAllNotes()
+                showToast("All trashed notes deleted", applicationContext)
+                true
+            }
+
+            R.id.navUndeleteAll -> {
+                noteViewModel.undeleteAllNotes()
+                showToast("All trashed notes restored", applicationContext)
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

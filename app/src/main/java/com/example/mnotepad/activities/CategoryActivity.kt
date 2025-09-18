@@ -33,44 +33,61 @@ class CategoryActivity : AppCompatActivity() {
             insets
         }
 
+        setupToolbar()
+        setupRecyclerView()
+        setupObservers()
         handleClickBack()
-        setupViewModel()
         handleClickAdd()
+    }
+
+    private fun setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener { finish() }
+    }
+
+    private fun setupRecyclerView() {
+        categoryAdapter = CategoryAdapter(emptyList(), object : OnItemCategoryClickListener {
+            override fun onItemUpdate(category: Category) {
+                categoryViewModel.updateCategory(category)
+                toast("Updated: ${category.name}")
+            }
+
+            override fun onItemDelete(id: Int) {
+                categoryViewModel.deleteCategory(id)
+                toast("Deleted category: $id")
+            }
+        })
+
+        binding.rvCategories.apply {
+            layoutManager = LinearLayoutManager(this@CategoryActivity)
+            adapter = categoryAdapter
+        }
+    }
+
+    private fun setupObservers() {
+        categoryViewModel.categories.observe(this) { categories ->
+            categoryAdapter.setCategories(categories)
+        }
     }
 
     private fun handleClickAdd() {
         binding.btnAdd.setOnClickListener {
             val name = binding.edtName.text.toString().trim()
-            if (name.isNotEmpty()) {
-                val newCategory = Category(0, name)
-                categoryViewModel.addCategory(newCategory)
-                binding.edtName.text.clear()
-                showToast("Added: $name", applicationContext)
+            if (name.isEmpty()) {
+                toast("Enter category name")
+                return@setOnClickListener
+            }
+
+            val exists = categoryViewModel.categories.value?.any {
+                it.name.equals(name, ignoreCase = true)
+            } ?: false
+
+            if (exists) {
+                toast("Category already exists: $name")
             } else {
-                showToast("Enter category name", applicationContext)
+                categoryViewModel.addCategory(Category(0, name))
+                binding.edtName.text.clear()
+                toast("Added: $name")
             }
-        }
-    }
-
-    private fun setupViewModel() {
-        categoryAdapter = CategoryAdapter(emptyList(), object : OnItemCategoryClickListener {
-            override fun onItemUpdate(category: Category) {
-                categoryViewModel.updateCategory(category)
-                showToast("Updated: ${category.name}", applicationContext)
-            }
-
-            override fun onItemDelete(id: Int) {
-                categoryViewModel.deleteCategory(id)
-                showToast("Delete Category: $id", applicationContext)
-            }
-
-        })
-
-        binding.rvCategories.layoutManager = LinearLayoutManager(this)
-        binding.rvCategories.adapter = categoryAdapter
-
-        categoryViewModel.categories.observe(this) {
-                categories -> categoryAdapter.setCategories(categories)
         }
     }
 
@@ -78,5 +95,9 @@ class CategoryActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun toast(message: String) {
+        showToast(message, applicationContext)
     }
 }

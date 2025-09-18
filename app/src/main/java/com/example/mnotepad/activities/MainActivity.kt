@@ -20,13 +20,6 @@ import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
-import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_NEWEST
-import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_OLDEST
-import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_NEWEST
-import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_OLDEST
-import com.example.mnotepad.helpers.SORT_TITLE_A_Z
-import com.example.mnotepad.helpers.SORT_TITLE_Z_A
-import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -37,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var noteAdapter: NoteAdapter
     private val noteViewModel: NoteViewModel by viewModels()
     private var selectedSortTypeIndex: Int = 0
-    private lateinit var selectedSortType: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,29 +43,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        initNavigationView()
-        setupViewModel()
+        setupToolbarAndDrawer()
+        setupRecyclerView()
+        setupObservers()
         handleClickAdd()
-        handleClickDrawerMenu()
-    }
-
-    private fun handleClickDrawerMenu() {
-        binding.navView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navEditCategories -> {
-                    startActivity(Intent(this, CategoryActivity::class.java))
-                    binding.drawerLayout.closeDrawers()
-                    true
-                }
-                R.id.navTrash -> {
-                    startActivity(Intent(this, TrashActivity::class.java))
-                    binding.drawerLayout.closeDrawers()
-                    true
-                }
-
-                else -> true
-            }
-        }
     }
 
     private fun handleClickAdd() {
@@ -86,17 +59,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setupViewModel() {
-        noteAdapter = NoteAdapter(emptyList(), ::startToNoteDetail)
-
+    private fun setupRecyclerView() {
+        noteAdapter = NoteAdapter(emptyList(), ::openNoteDetail)
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
         binding.rvNotes.adapter = noteAdapter
-
-        noteViewModel.notes.observe(this, noteAdapter::setNotes)
-
     }
 
-    private fun initNavigationView() {
+    private fun setupObservers() {
+        noteViewModel.filteredNotes.observe(this) { notes ->
+            noteAdapter.setNotes(notes)
+        }
+    }
+
+    private fun setupToolbarAndDrawer() {
         setSupportActionBar(binding.toolbar)
 
         toggle = ActionBarDrawerToggle(
@@ -108,14 +83,22 @@ class MainActivity : AppCompatActivity() {
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
+        binding.navView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navEditCategories -> startActivity(Intent(this, CategoryActivity::class.java))
+                R.id.navTrash -> startActivity(Intent(this, TrashActivity::class.java))
+            }
+            binding.drawerLayout.closeDrawers()
+            true
+        }
     }
 
-    private fun startToNoteDetail(note: Note) {
-        val intent = Intent(this, NoteDetailActivity::class.java).apply {
+    private fun openNoteDetail(note: Note) {
+        startActivity(Intent(this, NoteDetailActivity::class.java).apply {
             putExtra(NOTE_DETAIL_OBJECT, note)
             putExtra(IS_EDITED_ACTION, true)
-        }
-        startActivity(intent)
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -126,93 +109,54 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.navSearch -> {
-                handleSearch()
-                true
+                showSearchBar(); true
             }
 
             R.id.navSort -> {
-                handleSort()
-                true
+                showSortDialog(); true
             }
 
-            else -> {
-                if (toggle.onOptionsItemSelected(item)) {
-                    true
-                } else {
-                    super.onOptionsItemSelected(item)
-                }
-            }
+            else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
     }
 
-    private fun handleSort() {
-        selectedSortType = noteSortOptions[selectedSortTypeIndex]
+    private fun showSortDialog() {
         MaterialAlertDialogBuilder(this)
             .setTitle("Sort By")
-            .setSingleChoiceItems(noteSortOptions, selectedSortTypeIndex) { dialog_, which ->
+            .setSingleChoiceItems(noteSortOptions, selectedSortTypeIndex) { _, which ->
                 selectedSortTypeIndex = which
-                selectedSortType = noteSortOptions[which]
             }
-            .setPositiveButton("Sort") { dialog, which ->
-                when (selectedSortType) {
-                    SORT_EDIT_DATE_FROM_NEWEST -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedByDescending { it.updatedAt }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    SORT_EDIT_DATE_FROM_OLDEST -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedBy { it.updatedAt }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    SORT_TITLE_A_Z -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedBy { it.title }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    SORT_TITLE_Z_A -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedByDescending { it.title }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    SORT_CREATE_DATE_FROM_NEWEST -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedByDescending { it.updatedAt }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    SORT_CREATE_DATE_FROM_OLDEST -> {
-                        val allNotes = noteViewModel.notes.value ?: emptyList()
-                        val filtered = allNotes.sortedBy { it.updatedAt }
-                        noteAdapter.setNotes(filtered)
-                    }
-                    else -> true
-                }
+            .setPositiveButton("Sort") { _, _ ->
+                val sortType = noteSortOptions[selectedSortTypeIndex]
+                noteViewModel.sortBy(sortType)
             }
-            .setNegativeButton("Cancel") { dialog, which ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun handleSearch() {
-        val searchBtn = findViewById<View>(R.id.navSearch)
-        searchBtn.visibility = View.GONE
+    private fun showSearchBar() {
+        val btnSearch = findViewById<View>(R.id.navSearch)
+        val btnSort = findViewById<View>(R.id.navSort)
         val edtSearch = binding.edtSearch
-        edtSearch.visibility = View.VISIBLE;
-        edtSearch.requestFocus();
+        val btnClear = binding.btnClearSearch
 
-        edtSearch.doOnTextChanged { text, start, before, count ->
-            val query = text?.toString() ?: ""
+        btnSearch.visibility = View.GONE
+        btnSort.visibility = View.GONE
+        edtSearch.visibility = View.VISIBLE
+        btnClear.visibility = View.VISIBLE
+        edtSearch.requestFocus()
 
-            val allNotes = noteViewModel.notes.value ?: emptyList()
-            if (query.isNotEmpty()) {
-                val filtered = allNotes.filter { it.title.contains(query, ignoreCase = true) }
-                noteAdapter.setNotes(filtered)
-            } else {
-                noteAdapter.setNotes(allNotes)
-                edtSearch.visibility = View.GONE
-                searchBtn.visibility = View.VISIBLE
-            }
+        edtSearch.doOnTextChanged { text, _, _, _ ->
+            noteViewModel.filter(text?.toString() ?: "")
+        }
+
+        btnClear.setOnClickListener {
+            edtSearch.text.clear()
+            edtSearch.clearFocus()
+            edtSearch.visibility = View.GONE
+            btnClear.visibility = View.GONE
+            btnSearch.visibility = View.VISIBLE
+            btnSort.visibility = View.VISIBLE
         }
     }
 

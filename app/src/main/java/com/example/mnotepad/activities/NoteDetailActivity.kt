@@ -1,39 +1,35 @@
 package com.example.mnotepad.activities
 
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
 import android.text.InputType
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextWatcher
-import android.text.style.BackgroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.get
+import androidx.core.widget.addTextChangedListener
 import com.example.mnotepad.R
 import com.example.mnotepad.databinding.ActivityNoteDetailBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.FileHelper
+import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
-import com.example.mnotepad.helpers.exportToTxtFile
+import com.example.mnotepad.helpers.applyHistory
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.util.Stack
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -43,20 +39,13 @@ class NoteDetailActivity : AppCompatActivity() {
     private val noteViewModel: NoteViewModel by viewModels()
     private val categoryViewModel: CategoryViewModel by viewModels()
     private var listCategories: List<Category> = emptyList()
-    private var isEditedAction = false
     private var curNoteItem: Note? = null
-    private lateinit var checkedItems: BooleanArray
-    private val undoStack = Stack<String>()
-    private val redoStack = Stack<String>()
-    private var lastSavedText = ""
+    private lateinit var importLauncher: ActivityResultLauncher<Intent>
+    private val history = HistoryManager()
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
         override fun run() {
-            val currentText = binding.edtContent.text.toString()
-            if (currentText != lastSavedText) {
-                undoStack.push(currentText)
-                lastSavedText = currentText
-            }
+            history.save(binding.edtContent.text.toString())
             handler.postDelayed(this, 1000)
         }
     }
@@ -75,311 +64,205 @@ class NoteDetailActivity : AppCompatActivity() {
         }
 
         initToolbar()
+        initObservers()
         getNoteDataIfUpdate()
-        handleContentChange()
+        initImportLauncher()
 
         handler.post(saveRunnable)
+    }
 
-        categoryViewModel.categories.observe(this) { categories ->
-            listCategories = categories
+    private fun initImportLauncher() {
+        importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                if (uri != null) {
+                    val content = FileHelper.readTextFromUri(this, uri)
+                    val lines = content.lines()
+                    val title = lines.firstOrNull() ?: ""
+                    val body = lines.drop(1).joinToString("\n")
+
+                    binding.edtTitle.setText(title)
+                    binding.edtContent.setText(body)
+                }
+            }
         }
     }
 
-    private fun handleCategorize() {
-        if (listCategories.isEmpty()) {
-            showToast("Please add at least 1 category first", this)
-            return
+    private fun initObservers() {
+        categoryViewModel.categories.observe(this) {
+            listCategories = it
         }
-        checkedItems = BooleanArray(listCategories.size)
-        val array = arrayOfNulls<String>(listCategories.size)
-        var index = 0
-        for (value in listCategories) {
-            array[index] = value.name
-            index++
-        }
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Select Categories")
-            .setMultiChoiceItems(array, checkedItems) { dialog, which, isChecked ->
-                checkedItems[which] = isChecked
-            }
-            .setPositiveButton("Confirm") { dialog, which ->
-                noteViewModel.updateNote(
-                    Note(
-                        id = curNoteItem!!.id,
-                        title = curNoteItem!!.title,
-                        content = curNoteItem!!.content
-                    )
-                )
-            }
-            .setNegativeButton("Cancel") { dialog, which ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun getNoteDataIfUpdate() {
-        isEditedAction = intent.getBooleanExtra(IS_EDITED_ACTION, false)
-        if (isEditedAction) getNoteDataBundle()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun getNoteDataBundle() {
-        curNoteItem = intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)!!
-        binding.edtTitle.setText(curNoteItem?.title)
-        binding.edtContent.setText(curNoteItem?.content)
-    }
-
-
-    private fun handleContentChange() {
-        binding.edtContent.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {}
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int,
-                count: Int, after: Int
-            ) {
-            }
-
-            override fun onTextChanged(
-                s: CharSequence, start: Int,
-                before: Int, count: Int
-            ) {
-                optionsMenu[1].isEnabled = s.toString().isNotEmpty()
-            }
-        })
     }
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+    }
 
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun getNoteDataIfUpdate() {
+        if (intent.getBooleanExtra(IS_EDITED_ACTION, false)) {
+            curNoteItem = intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)
+            curNoteItem?.let {
+                binding.edtTitle.setText(it.title)
+                binding.edtContent.setText(it.content)
+            }
         }
+    }
+
+
+    private fun handleContentChange() {
+        binding.edtContent.addTextChangedListener { text ->
+            optionsMenu.findItem(R.id.navUndo)?.isEnabled = !text.isNullOrEmpty()
+        }
+    }
+
+
+    private fun handleCategorize() {
+//        if (listCategories.isEmpty()) {
+//            showToast("Please add at least 1 category first", this)
+//            return
+//        }
+//
+//        val names = listCategories.map { it.name }.toTypedArray()
+//        val checkedItems = BooleanArray(listCategories.size)
+//
+//        MaterialAlertDialogBuilder(this)
+//            .setTitle("Select Categories")
+//            .setMultiChoiceItems(names, checkedItems) { _, which, isChecked ->
+//                checkedItems[which] = isChecked
+//            }
+//            .setPositiveButton("Confirm") { _, _ ->
+//                curNoteItem?.let {
+//                    noteViewModel.updateNote(it.copy(updatedAt = System.currentTimeMillis()))
+//                }
+//            }
+//            .setNegativeButton("Cancel", null)
+//            .show()
     }
 
     private fun upsertNote() {
-        val noteTitle = binding.edtTitle.text.toString()
-        val noteContent = binding.edtContent.text.toString()
+        val title = binding.edtTitle.text.toString()
+        val content = binding.edtContent.text.toString()
 
-        if (noteTitle.isEmpty() && noteContent.isEmpty()) {
+        if (title.isEmpty() && content.isEmpty()) {
             showToast("Type Something", this)
             return
         }
 
-        // Update & Add
-        if (curNoteItem != null) {
-            noteViewModel.updateNote(
-                Note(
-                    id = curNoteItem!!.id,
-                    title = noteTitle,
-                    content = noteContent
-                )
-            )
-            showToast("$noteTitle Updated", this)
-        } else {
-            noteViewModel.addNote(Note(id = 0, title = noteTitle, content = noteContent))
-            showToast("$noteTitle Added", this)
-        }
+        val updatedNote = curNoteItem?.copy(
+            title = title,
+            content = content,
+            updatedAt = System.currentTimeMillis()
+        ) ?: Note(title = title, content = content)
 
+        noteViewModel.upsertNote(updatedNote)
+        showToast("$title Saved", this)
         finish()
     }
 
-    private fun undoNote() {
-        if (undoStack.size > 1) {
-            redoStack.push(undoStack.pop())
-            val prev = undoStack.peek()
-            prev?.let {
-                binding.edtContent.setText(it)
-                binding.edtContent.setSelection(it.length)
-                lastSavedText = it
-            }
-        } else {
-            redoStack.push(undoStack.pop())
-            binding.edtContent.setText("")
-            lastSavedText = ""
-        }
-    }
-
-    private fun redoNote() {
-        if (redoStack.isNotEmpty()) {
-            val redoText = redoStack.pop()
-            undoStack.push(redoText)
-            redoText?.let {
-                binding.edtContent.setText(it)
-                binding.edtContent.setSelection(it.length)
-                lastSavedText = it
-            }
-        }
-    }
-
-
-    // Request code for creating a PDF document.
-
     private fun handleImportFile() {
-        var chooseFile = Intent(Intent.ACTION_GET_CONTENT)
-        chooseFile.setType("text/plain")
-        chooseFile = Intent.createChooser(chooseFile, "Choose a file")
-        startActivityForResult(chooseFile, 50)
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "text/plain"
+        }
+        importLauncher.launch(Intent.createChooser(intent, "Choose a TXT file"))
     }
 
     private fun handleExportFile() {
-        val noteTitle = binding.edtTitle.text.toString()
-        val noteContent = binding.edtContent.text.toString()
-
-        if (noteTitle.isEmpty() && noteContent.isEmpty()) {
-            showToast("Type Something", this)
+        val title = binding.edtTitle.text.toString()
+        val content = binding.edtContent.text.toString()
+        if (title.isEmpty() && content.isEmpty()) {
+            showToast("Type something before export", this)
             return
         }
 
-        exportToTxtFile(applicationContext, noteTitle, noteContent)
+        FileHelper.exportToTxtFile(this, title, "$title\n$content")
+        showToast("Exported to download dir", this)
     }
 
-    private fun switchToReadOnly() {
-        optionsMenu.findItem(R.id.navSave).isVisible = false
-        optionsMenu.findItem(R.id.navUndo).isVisible = false
-        optionsMenu.findItem(R.id.navEdit).isVisible = true
-        binding.edtTitle.inputType = InputType.TYPE_NULL
-        binding.edtContent.inputType = InputType.TYPE_NULL
-    }
+    private fun shareNote() {
+        val title = binding.edtTitle.text.toString()
+        val content = binding.edtContent.text.toString()
 
-    private fun switchToAllowEdit() {
-        switchToAllowEdit()
-        optionsMenu.findItem(R.id.navSave).isVisible = true
-        optionsMenu.findItem(R.id.navUndo).isVisible = true
-        optionsMenu.findItem(R.id.navEdit).isVisible = false
-        binding.edtTitle.inputType = InputType.TYPE_CLASS_TEXT
-        binding.edtContent.inputType = InputType.TYPE_CLASS_TEXT
-    }
-
-    private fun highlightText(s: String) {
-        val spannableString = SpannableString(binding.edtContent.getText())
-//        val backgroundColorSpan =
-//            spannableString.getSpans(
-//                0,
-//                spannableString.length,
-//                BackgroundColorSpan::class.java
-//            )
-//        for (bgSpan in backgroundColorSpan) {
-//            spannableString.removeSpan(bgSpan)
-//        }
-        var indexOfKeyWord = spannableString.toString().indexOf(s)
-        while (indexOfKeyWord > 0) {
-            spannableString.setSpan(
-                BackgroundColorSpan(Color.RED), indexOfKeyWord,
-                indexOfKeyWord + s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            indexOfKeyWord = spannableString.toString().indexOf(s, indexOfKeyWord + s.length)
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            putExtra(Intent.EXTRA_TEXT, "$title\n\n$content")
         }
-        binding.edtContent.setText(spannableString)
+        startActivity(Intent.createChooser(shareIntent, "Share note via"))
     }
 
+    private fun startSearchMode() {
 
+    }
 
+    private fun toggleEditMode(enable: Boolean) {
+        optionsMenu.findItem(R.id.navSave).isVisible = enable
+        optionsMenu.findItem(R.id.navUndo).isVisible = enable
+        optionsMenu.findItem(R.id.navEdit).isVisible = !enable
+
+        binding.edtTitle.inputType = if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
+        binding.edtContent.inputType =
+            if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_detail_menu, menu)
         if (menu != null) {
             optionsMenu = menu
             menu.findItem(R.id.navEdit).isVisible = false
+            handleContentChange()
         }
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.navSave -> {
-                upsertNote()
-                true
-            }
-
-            R.id.navUndo -> {
-                undoNote()
-                true
-            }
-
-            R.id.navRedo -> {
-                redoNote()
-                true
-            }
-
-            R.id.navDelete -> {
-                if (curNoteItem != null) {
-                    noteViewModel.deleteNote(curNoteItem!!.id)
-                }
-                finish()
-                true
-            }
-
-            R.id.navCategorize -> {
-                handleCategorize()
-                true
-            }
-
-            R.id.navImport -> {
-                handleImportFile()
-                true
-            }
-
-            R.id.navExport -> {
-                handleExportFile()
-                true
-            }
-
-            R.id.navReadOnly -> {
-                switchToReadOnly()
-                true
-            }
-
-            R.id.navEdit -> {
-                switchToAllowEdit()
-                true
-            }
-
-            R.id.navShare -> {
-                val intent= Intent()
-                intent.action=Intent.ACTION_SEND
-                intent.putExtra(Intent.EXTRA_TEXT,binding.edtContent.text.toString())
-                intent.type="text/plain"
-                startActivity(Intent.createChooser(intent,"Share To:"))
-                true
-            }
-
-            R.id.navSearchDetail -> {
-                val edtSearch = binding.edtSearch
-                edtSearch.visibility = View.VISIBLE;
-                edtSearch.requestFocus();
-
-                edtSearch.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {
-                    }
-
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
-                    }
-
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
-                        highlightText(s.toString());
-                    }
-
-                })
-                true
-            }
-
-            R.id.navColorize -> {
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.navSave -> {
+            upsertNote(); true
         }
+
+        R.id.navUndo -> {
+            val text = history.undo()
+            binding.edtContent.applyHistory(history.undo()); true
+        }
+
+        R.id.navRedo -> {
+            binding.edtContent.applyHistory(history.redo()); true
+        }
+
+        R.id.navDelete -> {
+            curNoteItem?.let { noteViewModel.deleteNote(it.id) }; finish(); true
+        }
+
+        R.id.navCategorize -> {
+            handleCategorize(); true
+        }
+
+        R.id.navImport -> {
+            handleImportFile(); true
+        }
+
+        R.id.navExport -> {
+            handleExportFile(); true
+        }
+
+        R.id.navReadOnly -> {
+            toggleEditMode(false); true
+        }
+
+        R.id.navEdit -> {
+            toggleEditMode(true); true
+        }
+
+        R.id.navShare -> {
+            shareNote(); true
+        }
+
+        R.id.navSearchDetail -> {
+            startSearchMode(); true
+        }
+
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

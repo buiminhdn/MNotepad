@@ -17,16 +17,16 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
-            android:background="@color/primary"
-            app:titleTextColor="@color/white"
-            app:title="MNotepad"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:popupTheme="@style/ToolbarPopupTheme"
-            app:navigationIconTint="@color/white"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIconTint="@color/white"
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:title="MNotepad"
+            app:titleTextColor="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,13 +35,25 @@
 
                 <EditText
                     android:id="@+id/edtSearch"
-                    android:backgroundTint="@color/primary"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:autofillHints=""
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/white"
                     android:inputType="text"
                     android:visibility="gone"
+                    android:hint="Search..."
+                    android:singleLine="true"
                     tools:ignore="LabelFor" />
+
+                <ImageButton
+                    android:id="@+id/btnClearSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_x"
+                    android:layout_gravity="center_vertical"
+                    app:tint="@color/white"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
