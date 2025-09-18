@@ -2,13 +2,20 @@ package com.example.mnotepad.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import com.example.mnotepad.R
 import com.example.mnotepad.databinding.ActivityNoteDetailBinding
 import com.example.mnotepad.entities.models.Category
@@ -193,7 +201,31 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun startSearchMode() {
+        val btnSave = findViewById<View>(R.id.navSave)
+        val btnUndo = findViewById<View>(R.id.navUndo)
 
+        btnSave.visibility = View.GONE
+        btnUndo.visibility = View.GONE
+
+        val btnClear = binding.btnClearSearch
+        val edtSearch = binding.edtSearch
+        edtSearch.visibility = View.VISIBLE;
+        btnClear.visibility = View.VISIBLE
+        edtSearch.requestFocus();
+
+        edtSearch.doOnTextChanged { query, _, _, _ ->
+            val keyword = query.toString()
+            highlightSearchKeyword(binding.edtContent, keyword)
+        }
+
+        btnClear.setOnClickListener {
+            edtSearch.text.clear()
+            edtSearch.clearFocus()
+            edtSearch.visibility = View.GONE
+            btnClear.visibility = View.GONE
+            btnSave.visibility = View.VISIBLE
+            btnUndo.visibility = View.VISIBLE
+        }
     }
 
     private fun toggleEditMode(enable: Boolean) {
@@ -268,6 +300,29 @@ class NoteDetailActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(saveRunnable) // cleanup
+    }
+
+    private fun highlightSearchKeyword(editText: EditText, keyword: String) {
+        val text = editText.text.toString()
+        val spannable = SpannableString(text)
+
+        // clear old highlight
+        spannable.removeSpan(BackgroundColorSpan(Color.YELLOW))
+
+        if (keyword.isNotBlank()) {
+            var index = text.indexOf(keyword, 0, ignoreCase = true)
+            while (index >= 0) {
+                spannable.setSpan(
+                    BackgroundColorSpan(Color.YELLOW),
+                    index,
+                    index + keyword.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                index = text.indexOf(keyword, index + keyword.length, ignoreCase = true)
+            }
+        }
+
+        editText.setText(spannable, TextView.BufferType.SPANNABLE)
     }
 }
 
