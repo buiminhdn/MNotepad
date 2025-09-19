@@ -107,6 +107,65 @@ class NoteDetailActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_detail_menu, menu)
+        if (menu != null) {
+            optionsMenu = menu
+            menu.findItem(R.id.navEdit).isVisible = false
+            handleContentChange()
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.navSave -> {
+            upsertNote(); true
+        }
+
+        R.id.navUndo -> {
+            val text = history.undo()
+            binding.edtContent.applyHistory(text); true
+        }
+
+        R.id.navRedo -> {
+            binding.edtContent.applyHistory(history.redo()); true
+        }
+
+        R.id.navDelete -> {
+            curNoteItem?.let { noteViewModel.deleteNote(it.id) }; finish(); true
+        }
+
+        R.id.navCategorize -> {
+            handleCategorize(); true
+        }
+
+        R.id.navImport -> {
+            handleImportFile(); true
+        }
+
+        R.id.navExport -> {
+            handleExportFile(); true
+        }
+
+        R.id.navReadOnly -> {
+            toggleEditMode(false); true
+        }
+
+        R.id.navEdit -> {
+            toggleEditMode(true); true
+        }
+
+        R.id.navShare -> {
+            shareNote(); true
+        }
+
+        R.id.navSearchDetail -> {
+            startSearchMode(); true
+        }
+
+        else -> super.onOptionsItemSelected(item)
+    }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getNoteDataIfUpdate() {
         if (intent.getBooleanExtra(IS_EDITED_ACTION, false)) {
@@ -236,65 +295,6 @@ class NoteDetailActivity : AppCompatActivity() {
         binding.edtTitle.inputType = if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
         binding.edtContent.inputType =
             if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_detail_menu, menu)
-        if (menu != null) {
-            optionsMenu = menu
-            menu.findItem(R.id.navEdit).isVisible = false
-            handleContentChange()
-        }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.navSave -> {
-            upsertNote(); true
-        }
-
-        R.id.navUndo -> {
-            val text = history.undo()
-            binding.edtContent.applyHistory(history.undo()); true
-        }
-
-        R.id.navRedo -> {
-            binding.edtContent.applyHistory(history.redo()); true
-        }
-
-        R.id.navDelete -> {
-            curNoteItem?.let { noteViewModel.deleteNote(it.id) }; finish(); true
-        }
-
-        R.id.navCategorize -> {
-            handleCategorize(); true
-        }
-
-        R.id.navImport -> {
-            handleImportFile(); true
-        }
-
-        R.id.navExport -> {
-            handleExportFile(); true
-        }
-
-        R.id.navReadOnly -> {
-            toggleEditMode(false); true
-        }
-
-        R.id.navEdit -> {
-            toggleEditMode(true); true
-        }
-
-        R.id.navShare -> {
-            shareNote(); true
-        }
-
-        R.id.navSearchDetail -> {
-            startSearchMode(); true
-        }
-
-        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

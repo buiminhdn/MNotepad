@@ -17,9 +17,11 @@ class HistoryManager {
 
     fun undo(): String = if (undoStack.size > 1) {
         redoStack.push(undoStack.pop())
+        lastSaved = undoStack.peek()
         undoStack.peek()
     } else if (undoStack.isNotEmpty()) {
         redoStack.push(undoStack.pop())
+        lastSaved = ""
         ""
     } else {
         ""
@@ -28,6 +30,7 @@ class HistoryManager {
     fun redo(): String = if (redoStack.isNotEmpty()) {
         val redoText = redoStack.pop()
         undoStack.push(redoText)
+        lastSaved = redoText
         redoText
     } else lastSaved
 }
