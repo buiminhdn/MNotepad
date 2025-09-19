@@ -30,6 +30,7 @@ import com.example.mnotepad.R
 import com.example.mnotepad.databinding.ActivityNoteDetailBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.DateTimeHelper
 import com.example.mnotepad.helpers.FileHelper
 import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
@@ -38,6 +39,7 @@ import com.example.mnotepad.helpers.applyHistory
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -75,8 +77,13 @@ class NoteDetailActivity : AppCompatActivity() {
         initObservers()
         getNoteDataIfUpdate()
         initImportLauncher()
+        handleButtonDeleteSearch()
 
         handler.post(saveRunnable)
+    }
+
+    private fun handleButtonDeleteSearch() {
+
     }
 
     private fun initImportLauncher() {
@@ -147,6 +154,10 @@ class NoteDetailActivity : AppCompatActivity() {
             handleExportFile(); true
         }
 
+        R.id.navPrint -> {
+            handlePrintFile(); true
+        }
+
         R.id.navReadOnly -> {
             toggleEditMode(false); true
         }
@@ -163,7 +174,37 @@ class NoteDetailActivity : AppCompatActivity() {
             startSearchMode(); true
         }
 
+        R.id.navShowInfo -> {
+            showInfoDialog(); true
+        }
+
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun showInfoDialog() {
+        val content = binding.edtContent.text.toString()
+        val numOfWords = content.split("\\s+".toRegex()).size
+        val numOfWrappedLines = content.split("\n+".toRegex()).size
+        val numOfCharacters = content.length
+        val numOfCharactersWithoutWhitespaces = content
+            .trim()
+            .replace(" ","")
+            .replace("\n","").length
+        val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
+        val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
+        val contentInfo = "Words: $numOfWords \n" +
+                "Wrapped lines: $numOfWrappedLines\n" +
+                "Characters: $numOfCharacters\n" +
+                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+                "Created at: $createdAt\n" +
+                "Last saved at: $updatedAt"
+//                "Last saved at: ${curNoteItem?.updatedAt}"
+        MaterialAlertDialogBuilder(this)
+            .setMessage(contentInfo)
+            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -259,13 +300,23 @@ class NoteDetailActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(shareIntent, "Share note via"))
     }
 
+    private fun handlePrintFile(){
+        val textTitle = binding.edtTitle.text.toString()
+        val textContent = binding.edtContent.text.toString()
+        if (textContent.isNotEmpty()) {
+            FileHelper.createPDF(this,  textTitle, textContent)
+        }
+    }
+
     private fun startSearchMode() {
         val btnSave = findViewById<View>(R.id.navSave)
         val btnUndo = findViewById<View>(R.id.navUndo)
 
+        // Hide button Save, Undo
         btnSave.visibility = View.GONE
         btnUndo.visibility = View.GONE
 
+        // Show Input Search, X icon
         val btnClear = binding.btnClearSearch
         val edtSearch = binding.edtSearch
         edtSearch.visibility = View.VISIBLE;
@@ -275,8 +326,13 @@ class NoteDetailActivity : AppCompatActivity() {
         edtSearch.doOnTextChanged { query, _, _, _ ->
             val keyword = query.toString()
             highlightSearchKeyword(binding.edtContent, keyword)
+            // Mỗi lần text change thì 2 nút này chạy lại
+            // Nên set lại như vầy
+            btnSave.visibility = View.GONE
+            btnUndo.visibility = View.GONE
         }
 
+        // Reset lại view ban đầu
         btnClear.setOnClickListener {
             edtSearch.text.clear()
             edtSearch.clearFocus()

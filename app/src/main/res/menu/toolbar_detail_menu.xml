@@ -36,7 +36,7 @@
 
     <item
         android:id="@+id/navColorize"
-        android:title="Colorize"
+        android:title="@string/colorize"
         app:showAsAction="never" />
 
     <item
@@ -47,6 +47,11 @@
     <item
         android:id="@+id/navExport"
         android:title="@string/export_file"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navPrint"
+        android:title="@string/print"
         app:showAsAction="never" />
 
     <item
@@ -62,5 +67,10 @@
     <item
         android:id="@+id/navShare"
         android:title="@string/share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navShowInfo"
+        android:title="@string/show_info"
         app:showAsAction="never" />
 </menu>

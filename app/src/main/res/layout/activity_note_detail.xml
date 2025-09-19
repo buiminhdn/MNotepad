@@ -72,10 +72,10 @@
         <EditText
             android:id="@+id/edtContent"
             android:backgroundTint="@color/primary"
+            android:inputType="textCapSentences|textMultiLine"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:autofillHints="Nothing to Say"
-            android:inputType="text"
             android:gravity="top"
             android:hint="@string/enter_content"/>
 

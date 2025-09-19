@@ -34,4 +34,8 @@
     <string name="delete_all">Delete All</string>
     <string name="export_all">Export All</string>
     <string name="trash">Trash</string>
+    <string name="colorize">Colorize</string>
+    <string name="print">Print</string>
+    <string name="show_info">Show Info</string>
+    <string name="ok">OK</string>
 </resources>
