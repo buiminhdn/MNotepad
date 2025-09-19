@@ -11,7 +11,8 @@ import com.example.mnotepad.helpers.DateTimeHelper
 
 class NoteAdapter(
     private var notes: List<Note>,
-    private val onItemClick: (Note) -> Unit
+    private val onItemClick: (Note) -> Unit,
+    private val onSelectModeChange:(Boolean)->Unit
 ) :
     RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
@@ -35,35 +36,65 @@ class NoteAdapter(
     @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val note = notes[position]
+
+        val isSelectedItem = isSelectedItem(note)
+
         holder.binding.apply {
             txtTitle.text = note.title
             txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
 
-            if (selectedItems.contains(note)) {
-                itemNote.alpha = 0.7f
-            } else {
-                itemNote.alpha = 1.0f
-            }
+            val alpha = if (isSelectedItem) 0.7f else 1.0f
+            itemNote.alpha = alpha
 
             root.setOnClickListener {
                 onItemClick.invoke(note)
             }
 
-            itemNote.setOnLongClickListener {
-                if (!multiSelect) {
-                    multiSelect = true
-                    selectItem(holder, note)
-                }
+            root.setOnLongClickListener {
+                if (multiSelect) return@setOnLongClickListener true
+                toggleSelectMode(true)
+                addToSelectedItem(note,position)
                 true
             }
 
-            itemNote.setOnClickListener {
-                if (multiSelect) {
-                    selectItem(holder, note)
+            root.setOnClickListener {
+                if (!multiSelect) {
+                    onItemClick.invoke(note)
+                    return@setOnClickListener
+                }
+                if (isSelectedItem) {
+                    removeSelectedItem(note,position)
+                } else {
+                    addToSelectedItem(note,position)
                 }
             }
         }
     }
+
+    private fun addToSelectedItem(note: Note,position: Int){
+        //Todo: Add item
+        notifyItem(position)
+    }
+
+    private fun removeSelectedItem(note: Note,position: Int){
+        //Todo: Remove item
+        notifyItem(position)
+    }
+
+    private fun notifyItem(position: Int){
+        notifyItemChanged(position)
+    }
+
+    fun toggleSelectMode(onSelectMode: Boolean){
+        multiSelect= onSelectMode
+        onSelectModeChange(multiSelect)
+        if (!onSelectMode){
+            selectedItems.clear()
+        }
+    }
+
+    private fun isSelectedItem(note: Note): Boolean = selectedItems.contains(note)
+
 
     override fun getItemCount(): Int = notes.size
 
