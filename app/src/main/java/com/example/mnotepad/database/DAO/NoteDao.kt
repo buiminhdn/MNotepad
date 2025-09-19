@@ -3,6 +3,7 @@ package com.example.mnotepad.database.DAO
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.mnotepad.entities.models.Note
@@ -16,7 +17,7 @@ interface NoteDao {
     fun getDeletedNotes(): LiveData<List<Note>>
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
 
     @Update

@@ -5,6 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageButton
+        android:layout_gravity="center_vertical"
+        android:id="@+id/btnDrag"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/button_to_update_category"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_drag"
+        app:tint="@color/black" />
+
     <EditText
         android:id="@+id/edtName"
         android:layout_width="0dp"
@@ -16,6 +28,7 @@
         tools:ignore="LabelFor" />
 
     <ImageButton
+        android:layout_gravity="center_vertical"
         android:id="@+id/btnUpdate"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -28,6 +41,7 @@
 
     <ImageButton
         android:id="@+id/btnDelete"
+        android:layout_gravity="center_vertical"
         app:tint="@color/black"
         android:layout_width="40dp"
         android:layout_height="40dp"

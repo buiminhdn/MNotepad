@@ -2,16 +2,19 @@ package com.example.mnotepad.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.callbacks.OnItemCategoryClickListener
 import com.example.mnotepad.databinding.CategoryItemBinding
 import com.example.mnotepad.entities.models.Category
+import java.util.Collections
 
 class CategoryAdapter(
     private var categories: List<Category>,
     private val onCategoryClickListener: OnItemCategoryClickListener
-) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,6 +28,7 @@ class CategoryAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
@@ -43,7 +47,33 @@ class CategoryAdapter(
                 )
             }
 
+            btnDrag.setOnTouchListener { v, event ->
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> onCategoryClickListener.onItemDrag(holder);
+                }
+
+                v?.onTouchEvent(event) ?: true
+            }
+
         }
+    }
+
+    override fun onRowMoved(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(categories, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(categories, i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun onRowClear(viewHolder: RecyclerView.ViewHolder) {
+        val position = viewHolder.bindingAdapterPosition
+        onCategoryClickListener.onUpdateOrder()
     }
 
     override fun getItemCount(): Int = categories.size

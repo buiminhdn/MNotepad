@@ -9,11 +9,11 @@ import com.example.mnotepad.entities.models.Category
 
 @Dao
 interface CategoryDao {
-    @Query("SELECT * FROM categories")
+    @Query("SELECT * FROM categories ORDER BY orderIndex")
     fun getAll(): LiveData<List<Category>>
 
     @Insert
-    suspend fun insert(category: Category)
+    suspend fun insert(category: Category) : Long
 
     @Update
     suspend fun update(category: Category)

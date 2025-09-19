@@ -88,7 +88,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun initImportLauncher() {
         importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val uri = result.data?.data
                 if (uri != null) {
                     val content = FileHelper.readTextFromUri(this, uri)
@@ -227,26 +227,40 @@ class NoteDetailActivity : AppCompatActivity() {
 
 
     private fun handleCategorize() {
-//        if (listCategories.isEmpty()) {
-//            showToast("Please add at least 1 category first", this)
-//            return
-//        }
-//
-//        val names = listCategories.map { it.name }.toTypedArray()
-//        val checkedItems = BooleanArray(listCategories.size)
-//
-//        MaterialAlertDialogBuilder(this)
-//            .setTitle("Select Categories")
-//            .setMultiChoiceItems(names, checkedItems) { _, which, isChecked ->
-//                checkedItems[which] = isChecked
-//            }
-//            .setPositiveButton("Confirm") { _, _ ->
-//                curNoteItem?.let {
-//                    noteViewModel.updateNote(it.copy(updatedAt = System.currentTimeMillis()))
-//                }
-//            }
-//            .setNegativeButton("Cancel", null)
-//            .show()
+        if (listCategories.isEmpty()) {
+            showToast("Please add at least 1 category first", this)
+            return
+        }
+
+        val names = listCategories.map { it.name }.toTypedArray()
+        val checkedCategories = curNoteItem?.categoryIds?:emptyList()
+
+        val checkedItems = BooleanArray(listCategories.size)
+
+        for ( i in 0 ..checkedItems.size-1){
+            checkedItems[i] = checkedCategories.contains(listCategories[i].id)
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Select Categories")
+            .setMultiChoiceItems(names, checkedItems) { _, which, isChecked ->
+                checkedItems[which] = isChecked
+            }
+            .setPositiveButton("Confirm") { _, _ ->
+                curNoteItem?.let {
+                    val checkedId = arrayListOf<Int>()
+
+                    for ( i in 0 ..checkedItems.size-1){
+                        if (checkedItems[i]){
+                            checkedId.add(listCategories[i].id)
+                        }
+                    }
+
+                    noteViewModel.upsertNote(it.copy(categoryIds = checkedId))
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun upsertNote() {

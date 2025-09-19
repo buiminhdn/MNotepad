@@ -6,19 +6,23 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mnotepad.R
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.adapters.CategoryAdapter
+import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.callbacks.OnItemCategoryClickListener
 import com.example.mnotepad.databinding.ActivityCategoryBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 
+
 class CategoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategoryBinding
     private lateinit var categoryAdapter: CategoryAdapter
     private val categoryViewModel: CategoryViewModel by viewModels()
+    var touchHelper: ItemTouchHelper? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +40,7 @@ class CategoryActivity : AppCompatActivity() {
         setupToolbar()
         setupRecyclerView()
         setupObservers()
+        setupDragAndDrop()
         handleClickBack()
         handleClickAdd()
     }
@@ -55,12 +60,28 @@ class CategoryActivity : AppCompatActivity() {
                 categoryViewModel.deleteCategory(id)
                 toast("Deleted category: $id")
             }
+
+            override fun onItemDrag(viewHolder: RecyclerView.ViewHolder) {
+                touchHelper?.startDrag(viewHolder)
+            }
+
+            override fun onUpdateOrder() {
+                showToast("hei", applicationContext)
+            }
         })
 
         binding.rvCategories.apply {
             layoutManager = LinearLayoutManager(this@CategoryActivity)
             adapter = categoryAdapter
         }
+
+    }
+
+    fun setupDragAndDrop() {
+        touchHelper = ItemTouchHelper(
+            ItemMoveCallback(categoryAdapter)
+        )
+        touchHelper?.attachToRecyclerView(binding.rvCategories)
     }
 
     private fun setupObservers() {
@@ -84,7 +105,7 @@ class CategoryActivity : AppCompatActivity() {
             if (exists) {
                 toast("Category already exists: $name")
             } else {
-                categoryViewModel.addCategory(Category(0, name))
+                val categoryId = categoryViewModel.addCategory(Category(0, name))
                 binding.edtName.text.clear()
                 toast("Added: $name")
             }
@@ -100,4 +121,5 @@ class CategoryActivity : AppCompatActivity() {
     private fun toast(message: String) {
         showToast(message, applicationContext)
     }
+
 }

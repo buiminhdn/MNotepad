@@ -28,7 +28,16 @@ class CategoryViewModel(application: Application) : AndroidViewModel(application
         categoryDao.update(note)
     }
 
-    fun addCategory(note: Category) = viewModelScope.launch(Dispatchers.IO) {
-        categoryDao.insert(note)
+    fun addCategory(category: Category): Long {
+//        viewModelScope.launch(Dispatchers.Default) {
+//            categoryDao.insert(note)
+//        }
+        var categoryId: Long = 0
+        viewModelScope.launch {
+            categoryId = categoryDao.insert(category)
+            // Use newRoomId here, e.g., update LiveData, log it, etc.
+        }
+
+        return categoryId
     }
 }

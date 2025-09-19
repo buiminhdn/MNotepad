@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         noteViewModel.filteredNotes.observe(this) { notes ->
             noteAdapter.setNotes(notes)
         }
+
+        val curNotes = noteViewModel.notes
     }
 
     private fun setupToolbarAndDrawer() {
