@@ -1,5 +1,6 @@
 package com.example.mnotepad.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -31,6 +32,7 @@ import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.DateTimeHelper
 import com.example.mnotepad.helpers.FileHelper
+import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
@@ -49,7 +51,9 @@ class NoteDetailActivity : AppCompatActivity() {
     private val categoryViewModel: CategoryViewModel by viewModels()
     private var listCategories: List<Category> = emptyList()
     private var curNoteItem: Note? = null
-    private lateinit var importLauncher: ActivityResultLauncher<Intent>
+    private lateinit var importTxtLauncher: ActivityResultLauncher<Intent>
+    private lateinit var createTxtLauncher: ActivityResultLauncher<Intent>
+    private lateinit var createPdfLauncher: ActivityResultLauncher<Intent>
     private val history = HistoryManager()
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
@@ -76,6 +80,8 @@ class NoteDetailActivity : AppCompatActivity() {
         initObservers()
         getNoteDataIfUpdate()
         initImportLauncher()
+        initCreateTxtLauncher()
+        initCreatePdfLauncher()
         handleButtonDeleteSearch()
 
         handler.post(saveRunnable)
@@ -86,17 +92,32 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun initImportLauncher() {
-        importLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        importTxtLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val uri = result.data?.data
-                if (uri != null) {
-                    val content = FileHelper.readTextFromUri(this, uri)
-                    val lines = content.lines()
-                    val title = lines.firstOrNull() ?: ""
-                    val body = lines.drop(1).joinToString("\n")
-
+                result.data?.data?.let { uri ->
+                    val (title, content) = FileSAFHelper.importTxt(this, uri) ?: return@let
                     binding.edtTitle.setText(title)
-                    binding.edtContent.setText(body)
+                    binding.edtContent.setText(content)
+                }
+            }
+        }
+    }
+
+    private fun initCreateTxtLauncher() {
+        createTxtLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    FileSAFHelper.exportTxt(this, uri, binding.edtContent.text.toString())
+                }
+            }
+        }
+    }
+
+    private fun initCreatePdfLauncher() {
+        createPdfLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    FileSAFHelper.exportPdf(this, uri, binding.edtTitle.text.toString(), binding.edtContent.text.toString())
                 }
             }
         }
@@ -283,10 +304,11 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handleImportFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
             type = "text/plain"
         }
-        importLauncher.launch(Intent.createChooser(intent, "Choose a TXT file"))
+        importTxtLauncher.launch(intent)
     }
 
     private fun handleExportFile() {
@@ -297,8 +319,8 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
-        FileHelper.exportToTxtFile(title, "$title\n$content")
-        showToast("Exported to download dir", this)
+        val intent = FileSAFHelper.createTxtFileIntent(binding.edtTitle.text.toString())
+        createTxtLauncher.launch(intent)
     }
 
     private fun shareNote() {
@@ -314,11 +336,8 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handlePrintFile(){
-        val textTitle = binding.edtTitle.text.toString()
-        val textContent = binding.edtContent.text.toString()
-        if (textContent.isNotEmpty()) {
-            FileHelper.createPDF(this,  textTitle, textContent)
-        }
+        val intent = FileSAFHelper.createPdfFileIntent(binding.edtTitle.text.toString())
+        createPdfLauncher.launch(intent)
     }
 
     private fun startSearchMode() {

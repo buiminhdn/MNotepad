@@ -61,12 +61,10 @@ object FileHelper {
 
     fun exportSelectedNotesToTxt(notes: List<Pair<String, String>>) {
         try {
-            // Tạo thư mục Notepad_Export trong Downloads
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val exportDir = File(downloadsDir, "Notepad_Export")
             if (!exportDir.exists()) exportDir.mkdirs()
 
-            // Ghi từng note thành 1 file .txt
             notes.forEach { (title, content) ->
                 val safeTitle = title.replace("[^a-zA-Z0-9._-]".toRegex(), "_") // tránh tên file lỗi
                 val file = File(exportDir, "$safeTitle.txt")
