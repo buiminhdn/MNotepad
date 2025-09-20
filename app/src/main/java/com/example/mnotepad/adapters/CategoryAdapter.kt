@@ -72,7 +72,6 @@ class CategoryAdapter(
     }
 
     override fun onRowClear(viewHolder: RecyclerView.ViewHolder) {
-        val position = viewHolder.bindingAdapterPosition
         onCategoryClickListener.onUpdateOrder()
     }
 
@@ -87,4 +86,5 @@ class CategoryAdapter(
         notifyDataSetChanged()
     }
 
+    fun getCategories(): List<Category> = categories
 }

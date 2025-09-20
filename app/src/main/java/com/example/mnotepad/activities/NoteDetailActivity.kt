@@ -1,6 +1,5 @@
 package com.example.mnotepad.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -298,7 +297,7 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
-        FileHelper.exportToTxtFile(this, title, "$title\n$content")
+        FileHelper.exportToTxtFile(title, "$title\n$content")
         showToast("Exported to download dir", this)
     }
 

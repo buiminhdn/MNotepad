@@ -24,7 +24,10 @@ interface NoteDao {
     suspend fun update(note: Note)
 
     @Query("UPDATE notes SET isDeleted = 1 WHERE id = :id")
-    suspend fun delete(id: Int)
+    suspend fun softDelete(id: Int)
+
+    @Query("UPDATE notes SET isDeleted = 1 WHERE id IN (:ids)")
+    suspend fun softDeleteNotes(ids: List<Int>)
 
     @Query("DELETE FROM notes WHERE isDeleted = 1")
     suspend fun deleteAll()

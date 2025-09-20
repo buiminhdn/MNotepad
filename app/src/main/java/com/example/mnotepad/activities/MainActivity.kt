@@ -20,6 +20,7 @@ import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -60,17 +61,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        noteAdapter = NoteAdapter(emptyList(), ::openNoteDetail)
+        noteAdapter = NoteAdapter(
+            emptyList(), ::openNoteDetail,::updateMenuForMultiSelect
+        )
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
         binding.rvNotes.adapter = noteAdapter
+    }
+
+    private fun updateMenuForMultiSelect(isMultiSelect: Boolean) {
+        val menu = binding.toolbar.menu
+
+        val searchItem = menu.findItem(R.id.navSearch)
+        val sortItem = menu.findItem(R.id.navSort)
+        val selectAllItem = menu.findItem(R.id.navSelectAll)
+        val deleteAllItem = menu.findItem(R.id.navDeleteAll)
+
+        if (isMultiSelect) {
+            searchItem?.isVisible = false
+            sortItem?.isVisible = false
+            selectAllItem?.isVisible = true
+            deleteAllItem?.isVisible = true
+        } else {
+            searchItem?.isVisible = true
+            sortItem?.isVisible = true
+            selectAllItem?.isVisible = false
+            deleteAllItem?.isVisible = false
+        }
     }
 
     private fun setupObservers() {
         noteViewModel.filteredNotes.observe(this) { notes ->
             noteAdapter.setNotes(notes)
         }
-
-        val curNotes = noteViewModel.notes
     }
 
     private fun setupToolbarAndDrawer() {
@@ -105,6 +127,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menu.findItem(R.id.navSelectAll)?.isVisible = false
+        menu.findItem(R.id.navDeleteAll)?.isVisible = false
         return true
     }
 
@@ -118,7 +142,35 @@ class MainActivity : AppCompatActivity() {
                 showSortDialog(); true
             }
 
+            R.id.navSelectAll -> {
+                if (noteAdapter.isAllSelected()) {
+                    noteAdapter.clearSelection()
+                    item.title = getString(R.string.all)
+                } else {
+                    noteAdapter.selectAll()
+                    item.title = getString(R.string.unselect_all)
+                }
+                true
+            }
+
+            R.id.navDeleteAll -> {
+                handleDeleteAll()
+                true
+            }
+
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun handleDeleteAll() {
+        val selectedNotes = noteAdapter.getSelectedNotes()
+        if (selectedNotes.isNotEmpty()) {
+            noteViewModel.softDeleteNotes(selectedNotes)
+            noteAdapter.clearSelection()
+            updateMenuForMultiSelect(false)
+            showToast("Deleted ${selectedNotes.size} notes", this)
+        } else {
+            showToast("No notes selected", this)
         }
     }
 

@@ -2,7 +2,6 @@ package com.example.mnotepad.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -40,7 +39,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteNote(id: Int) = viewModelScope.launch(Dispatchers.IO) {
-        noteDao.delete(id)
+        noteDao.softDelete(id)
     }
 
     fun upsertNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
@@ -68,6 +67,10 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             SORT_CREATE_DATE_FROM_OLDEST -> currentNotes.sortedBy { it.createdAt }
             else -> currentNotes
         }
+    }
+
+    fun softDeleteNotes(notes: List<Note>) = viewModelScope.launch(Dispatchers.IO) {
+        noteDao.softDeleteNotes(notes.map { it.id })
     }
 
     fun deleteAllNotes() = viewModelScope.launch(Dispatchers.IO) {

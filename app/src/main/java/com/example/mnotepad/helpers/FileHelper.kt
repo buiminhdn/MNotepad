@@ -21,7 +21,7 @@ object FileHelper {
         }
     }
 
-    fun exportToTxtFile(context: Context, title: String, content: String) {
+    fun exportToTxtFile(title: String, content: String) {
         return try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             if (!downloadsDir.exists()) downloadsDir.mkdirs()

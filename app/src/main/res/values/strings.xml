@@ -38,4 +38,8 @@
     <string name="print">Print</string>
     <string name="show_info">Show Info</string>
     <string name="ok">OK</string>
+    <string name="all">ALL</string>
+    <string name="unselect_all">UNSELECT</string>
+    <string name="button_to_select_all_android_title">Button to Select All android:title=</string>
+    <string name="button_to_delete_all">Button to Delete All</string>
 </resources>

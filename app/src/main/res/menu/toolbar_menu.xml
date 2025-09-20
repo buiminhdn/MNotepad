@@ -2,6 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/navSelectAll"
+        android:contentDescription="@string/button_to_select_all_android_title"
+        android:title="@string/all"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/navDeleteAll"
+        android:icon="@drawable/ic_trash"
+        app:iconTint="@color/white"
+        android:contentDescription="@string/button_to_delete_all"
+        android:title="@string/delete_all"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/navSearch"
         android:icon="@drawable/ic_search"
         android:contentDescription="@string/button_to_search_note"

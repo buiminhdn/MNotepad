@@ -11,6 +11,7 @@ import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CategoryViewModel(application: Application) : AndroidViewModel(application) {
     val categories: LiveData<List<Category>>
@@ -24,20 +25,32 @@ class CategoryViewModel(application: Application) : AndroidViewModel(application
         categoryDao.delete(id)
     }
 
-    fun updateCategory(note: Category) = viewModelScope.launch(Dispatchers.IO) {
-        categoryDao.update(note)
+    fun updateCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
+        categoryDao.update(category)
     }
 
-    fun addCategory(category: Category): Long {
-//        viewModelScope.launch(Dispatchers.Default) {
-//            categoryDao.insert(note)
-//        }
-        var categoryId: Long = 0
-        viewModelScope.launch {
-            categoryId = categoryDao.insert(category)
-            // Use newRoomId here, e.g., update LiveData, log it, etc.
+    fun updateCategories(categories: List<Category>) = viewModelScope.launch(Dispatchers.IO) {
+        categoryDao.updateAll(categories)
+    }
+
+//    fun addCategory(category: Category): Long = runBlocking {
+//        categoryDao.insert(category)
+//    }
+
+    suspend fun addCategory(category: Category): Long {
+        return categoryDao.insert(category)
+    }
+
+    fun addCategoryWithOrder(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val category = Category(id = 0, name = name)
+            val newId = categoryDao.insert(category)
+
+            // update orderIndex = id
+            categoryDao.update(
+                category.copy(id = newId.toInt(), orderIndex = newId.toInt())
+            )
         }
-
-        return categoryId
     }
+
 }

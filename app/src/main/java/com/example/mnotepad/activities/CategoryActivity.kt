@@ -16,6 +16,7 @@ import com.example.mnotepad.databinding.ActivityCategoryBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
+import kotlinx.coroutines.Dispatchers
 
 
 class CategoryActivity : AppCompatActivity() {
@@ -66,7 +67,7 @@ class CategoryActivity : AppCompatActivity() {
             }
 
             override fun onUpdateOrder() {
-                showToast("hei", applicationContext)
+                updateOrderIndexes()
             }
         })
 
@@ -75,6 +76,17 @@ class CategoryActivity : AppCompatActivity() {
             adapter = categoryAdapter
         }
 
+    }
+
+    private fun updateOrderIndexes() {
+        val updatedList = categoryAdapter.getCategories()
+            .mapIndexed { index, category ->
+                category.copy(orderIndex = index + 1)
+            }
+
+        categoryViewModel.updateCategories(updatedList)
+
+        showToast("Order updated", applicationContext)
     }
 
     fun setupDragAndDrop() {
@@ -105,7 +117,7 @@ class CategoryActivity : AppCompatActivity() {
             if (exists) {
                 toast("Category already exists: $name")
             } else {
-                val categoryId = categoryViewModel.addCategory(Category(0, name))
+                categoryViewModel.addCategoryWithOrder(name)
                 binding.edtName.text.clear()
                 toast("Added: $name")
             }
