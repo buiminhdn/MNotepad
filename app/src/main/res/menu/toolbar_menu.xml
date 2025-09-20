@@ -30,9 +30,17 @@
 
 
     <item
-        android:id="@+id/navMore"
-        android:title="@string/more"
-        app:iconTint="@color/white"
-        android:contentDescription="@string/button_for_more"
+        android:id="@+id/navExportSelected"
+        android:title="@string/export_notes_to_text_files"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navCategorizeSelected"
+        android:title="@string/categorize"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navColorizeSelected"
+        android:title="@string/colorize"
         app:showAsAction="never" />
 </menu>

@@ -99,17 +99,6 @@ class NoteAdapter(
         notifyDataSetChanged()
     }
 
-    @SuppressLint("ResourceAsColor")
-    private fun selectItem(holder: RecyclerView.ViewHolder, note: Note) {
-        if (selectedItems.contains(note)) {
-            selectedItems.remove(note)
-            holder.itemView.alpha = 1.0f
-        } else {
-            selectedItems.add(note)
-            holder.itemView.alpha = 0.7f
-        }
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     fun selectAll() {
         selectedItems.clear()

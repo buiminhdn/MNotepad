@@ -18,6 +18,7 @@ import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.FileHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.showToast
@@ -158,8 +159,21 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.navExportSelected -> {
+                handleExportSelected()
+                true
+            }
+
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun handleExportSelected() {
+        val selectedNotes = noteAdapter.getSelectedNotes()
+        if (selectedNotes.isEmpty()) return
+        val notePairs = selectedNotes.map { it.title to it.content }
+        FileHelper.exportSelectedNotesToTxt(notePairs)
+        showToast("Exported ${selectedNotes.size} notes vào thư mục Notepad_Export", this)
     }
 
     private fun handleDeleteAll() {
