@@ -30,6 +30,11 @@
 
 
     <item
+        android:id="@+id/navImportTxtFiles"
+        android:title="@string/import_text_files"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/navExportSelected"
         android:title="@string/export_notes_to_text_files"
         app:showAsAction="never" />

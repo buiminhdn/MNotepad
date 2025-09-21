@@ -319,7 +319,7 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
-        val intent = FileSAFHelper.createTxtFileIntent(binding.edtTitle.text.toString())
+        val intent = FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", "text/plain")
         createTxtLauncher.launch(intent)
     }
 
@@ -336,7 +336,7 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handlePrintFile(){
-        val intent = FileSAFHelper.createPdfFileIntent(binding.edtTitle.text.toString())
+        val intent = FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "pdf", "application/pdf")
         createPdfLauncher.launch(intent)
     }
 

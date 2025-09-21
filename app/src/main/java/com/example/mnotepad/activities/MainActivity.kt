@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private val noteViewModel: NoteViewModel by viewModels()
     private var selectedSortTypeIndex: Int = 0
     private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
+    private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotes: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +57,27 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         setupObservers()
         initSelectFolderLauncher()
+        initImportMultipleTxtLauncher()
         handleClickAdd()
+    }
+
+    private fun initImportMultipleTxtLauncher() {
+        importMultipleTxtLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val notes = FileSAFHelper.importMultipleTxt(this, data)
+
+                val noteEntities = notes.map { (title, content) ->
+                    Note(title = title, content = content)
+                }
+
+                noteViewModel.insertNotes(noteEntities)
+
+                showToast( "Imported ${notes.size} files", this)
+            }
+        }
     }
 
     private fun initSelectFolderLauncher() {
@@ -187,8 +208,17 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.navImportTxtFiles -> {
+                handleImportTxtFiles(); true
+            }
+
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun handleImportTxtFiles() {
+        val intent = FileSAFHelper.createMultipleImportIntent()
+        importMultipleTxtLauncher.launch(intent)
     }
 
     private fun handleExportSelected() {

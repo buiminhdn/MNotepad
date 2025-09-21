@@ -51,6 +51,10 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun insertNotes(notes: List<Note>) = viewModelScope.launch(Dispatchers.IO) {
+        noteDao.insertAll(notes)
+    }
+
     fun filter(query: String) {
         _filteredNotes.value =
             if (query.isBlank()) currentNotes
@@ -80,4 +84,5 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun undeleteAllNotes() = viewModelScope.launch(Dispatchers.IO) {
         noteDao.undeleteAll()
     }
+
 }

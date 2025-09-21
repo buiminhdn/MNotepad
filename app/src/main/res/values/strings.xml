@@ -43,4 +43,5 @@
     <string name="button_to_select_all_android_title">Button to Select All android:title=</string>
     <string name="button_to_delete_all">Button to Delete All</string>
     <string name="export_notes_to_text_files">Export notes to text files</string>
+    <string name="import_text_files">Import Text Files</string>
 </resources>

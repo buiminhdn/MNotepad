@@ -40,11 +40,19 @@ object FileSAFHelper {
         return Pair(title, stringBuilder.toString())
     }
 
-    fun createTxtFileIntent(fileName: String, initialUri: Uri? = null): Intent {
+    fun createFileIntent(
+        fileName: String,
+        extension: String,
+        mimeType: String,
+        initialUri: Uri? = null
+    ): Intent {
         return Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, if (fileName.isNotBlank()) "$fileName.txt" else "note.txt")
+            type = mimeType
+            putExtra(
+                Intent.EXTRA_TITLE,
+                if (fileName.isNotBlank()) "$fileName.$extension" else "note.$extension"
+            )
             initialUri?.let {
                 putExtra(DocumentsContract.EXTRA_INITIAL_URI, it)
             }
@@ -60,17 +68,6 @@ object FileSAFHelper {
             }
         } catch (e: IOException) {
             e.printStackTrace()
-        }
-    }
-
-    fun createPdfFileIntent(fileName: String, initialUri: Uri? = null): Intent {
-        return Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_TITLE, if (fileName.isNotBlank()) "$fileName.pdf" else "note.pdf")
-            initialUri?.let {
-                putExtra(DocumentsContract.EXTRA_INITIAL_URI, it)
-            }
         }
     }
 
@@ -143,6 +140,35 @@ object FileSAFHelper {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun createMultipleImportIntent(): Intent {
+        return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
+    }
+
+    fun importMultipleTxt(context: Context, data: Intent?): List<Pair<String, String>> {
+        val results = mutableListOf<Pair<String, String>>()
+
+        if (data == null) return results
+
+        // chọn 1 file
+        data.data?.let { uri ->
+            importTxt(context, uri)?.let { results.add(it) }
+        }
+
+        // chọn nhiều file
+        data.clipData?.let { clipData ->
+            for (i in 0 until clipData.itemCount) {
+                val uri = clipData.getItemAt(i).uri
+                importTxt(context, uri)?.let { results.add(it) }
+            }
+        }
+
+        return results
     }
 
 }
