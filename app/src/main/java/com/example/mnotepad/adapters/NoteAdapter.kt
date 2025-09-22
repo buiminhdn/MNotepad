@@ -1,8 +1,12 @@
 package com.example.mnotepad.adapters
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
 import com.example.mnotepad.databinding.NoteItemBinding
@@ -43,7 +47,15 @@ class NoteAdapter(
             txtTitle.text = note.title
             txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
 
-            itemNote.isSelected = isSelected
+            itemNote.backgroundTintList =
+                if (isSelected)
+                    ContextCompat.getColorStateList(
+                        root.context,
+                        R.color.primary
+                    )
+                else
+                    note.color?.let { ColorStateList.valueOf(it) }
+
 
             root.setOnLongClickListener {
                 if (!multiSelect) {

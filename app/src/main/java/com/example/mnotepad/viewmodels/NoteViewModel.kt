@@ -55,10 +55,20 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         noteDao.insertAll(notes)
     }
 
-    fun filter(query: String) {
+    fun updateNotes(notes: List<Note>) = viewModelScope.launch (Dispatchers.IO) {
+        noteDao.updateAll(notes.map { it.copy(updatedAt = System.currentTimeMillis()) })
+    }
+
+    fun filterByQuery(query: String) {
         _filteredNotes.value =
             if (query.isBlank()) currentNotes
             else currentNotes.filter { it.title.contains(query, ignoreCase = true) }
+    }
+
+    fun filterByCategory(categoryId: Int) {
+        _filteredNotes.value =
+            if (categoryId <= 0) currentNotes
+            else currentNotes.filter { it.categoryIds?.contains(categoryId) ?: false }
     }
 
     fun sortBy(type: String) {

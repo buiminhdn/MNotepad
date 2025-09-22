@@ -2,33 +2,48 @@ package com.example.mnotepad.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
+import com.example.mnotepad.adapters.ColorAdapter
 import com.example.mnotepad.adapters.NoteAdapter
+import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
+import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
-import com.example.mnotepad.helpers.FileHelper
+import com.example.mnotepad.helpers.BLACK_THEME
+import com.example.mnotepad.helpers.BROWN_THEME
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
+import com.example.mnotepad.helpers.KEY_THEME
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.YELLOW_THEME
 import com.example.mnotepad.helpers.showToast
+import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,10 +51,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var noteAdapter: NoteAdapter
     private val noteViewModel: NoteViewModel by viewModels()
+    private var listCategories: List<Category> = emptyList()
+    private val categoryViewModel: CategoryViewModel by viewModels()
     private var selectedSortTypeIndex: Int = 0
+    private lateinit var colorPickerDialog: AlertDialog
     private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
-    private var selectedNotes: List<Pair<String, String>> = emptyList()
+    private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +77,8 @@ class MainActivity : AppCompatActivity() {
         initSelectFolderLauncher()
         initImportMultipleTxtLauncher()
         handleClickAdd()
+
+
     }
 
     private fun initImportMultipleTxtLauncher() {
@@ -75,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
                 noteViewModel.insertNotes(noteEntities)
 
-                showToast( "Imported ${notes.size} files", this)
+                showToast("Imported ${notes.size} files", this)
             }
         }
     }
@@ -88,8 +108,8 @@ class MainActivity : AppCompatActivity() {
                 val treeUri = result.data?.data
                 if (treeUri != null) {
                     // Ghi notes ra thư mục
-                    FileSAFHelper.exportSelectedNotesToTxt(this, treeUri, selectedNotes)
-                    Toast.makeText(this, "Export thành công!", Toast.LENGTH_SHORT).show()
+                    FileSAFHelper.exportSelectedNotesToTxt(this, treeUri, selectedNotesToExport)
+                    showToast("Export successfully!", this)
                 }
             }
         }
@@ -107,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            emptyList(), ::openNoteDetail,::updateMenuForMultiSelect
+            emptyList(), ::openNoteDetail, ::updateMenuForMultiSelect
         )
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
         binding.rvNotes.adapter = noteAdapter
@@ -138,6 +158,10 @@ class MainActivity : AppCompatActivity() {
         noteViewModel.filteredNotes.observe(this) { notes ->
             noteAdapter.setNotes(notes)
         }
+        categoryViewModel.categories.observe(this) {
+            listCategories = it
+            addMenuItemInNavMenuDrawer();
+        }
     }
 
     private fun setupToolbarAndDrawer() {
@@ -148,15 +172,30 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout,
             binding.toolbar,
             R.string.nav_open,
-            R.string.nav_close
+            R.string.nav_close,
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         binding.navView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navEditCategories -> startActivity(Intent(this, CategoryActivity::class.java))
-                R.id.navTrash -> startActivity(Intent(this, TrashActivity::class.java))
+            if (item.groupId == 2) {
+                showToast("ID ${item.itemId}", this)
+                noteViewModel.filterByCategory(item.itemId)
+            } else {
+                when (item.itemId) {
+                    R.id.navNotes -> {
+                        noteViewModel.filterByCategory(0)
+                    }
+
+                    R.id.navEditCategories -> startActivity(
+                        Intent(
+                            this,
+                            CategoryActivity::class.java
+                        )
+                    )
+
+                    R.id.navTrash -> startActivity(Intent(this, TrashActivity::class.java))
+                }
             }
             binding.drawerLayout.closeDrawers()
             true
@@ -212,8 +251,65 @@ class MainActivity : AppCompatActivity() {
                 handleImportTxtFiles(); true
             }
 
+            R.id.navCategorizeSelected -> {
+                handleCategorize()
+                true
+            }
+
+            R.id.navColorizeSelected -> {
+                showColorPickerDialog(); true
+            }
+
+
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showColorPickerDialog() {
+        val colors = colorOptions
+
+        val recyclerView = RecyclerView(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            layoutManager = GridLayoutManager(this@MainActivity, 6)
+            setPadding(50, 50, 50,50)
+            adapter = ColorAdapter(this@MainActivity, colors) { selectedColor ->
+                val selectedNotes = noteAdapter.getSelectedNotes()
+                noteViewModel.updateNotes(selectedNotes.map { it.copy(color = selectedColor) })
+                noteAdapter.toggleSelectMode(false)
+                colorPickerDialog.dismiss()
+            }
+        }
+
+        colorPickerDialog = AlertDialog.Builder(this)
+            .setTitle("Choose a color")
+            .setView(recyclerView)
+            .setPositiveButton("Reset") { dialog, _ ->
+                val selectedNotes = noteAdapter.getSelectedNotes()
+                noteViewModel.updateNotes(selectedNotes.map { it.copy(color = null) })
+                noteAdapter.toggleSelectMode(false)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+        colorPickerDialog.show()
+    }
+
+    private fun addMenuItemInNavMenuDrawer() {
+        val navView = findViewById<View?>(R.id.navView) as NavigationView
+
+        val menu = navView.menu
+        val submenu: Menu = menu.addSubMenu("Categories")
+
+        for (category in listCategories) {
+            submenu.add(2, category.id, category.orderIndex, category.name)
+        }
+
+        navView.invalidate()
     }
 
     private fun handleImportTxtFiles() {
@@ -225,7 +321,7 @@ class MainActivity : AppCompatActivity() {
         val selected = noteAdapter.getSelectedNotes()
         if (selected.isEmpty()) return
 
-        selectedNotes = selected.map { note ->
+        selectedNotesToExport = selected.map { note ->
             note.title to note.content
         }
 
@@ -273,7 +369,7 @@ class MainActivity : AppCompatActivity() {
         edtSearch.requestFocus()
 
         edtSearch.doOnTextChanged { text, _, _, _ ->
-            noteViewModel.filter(text?.toString() ?: "")
+            noteViewModel.filterByQuery(text?.toString() ?: "")
         }
 
         btnClear.setOnClickListener {
@@ -284,6 +380,38 @@ class MainActivity : AppCompatActivity() {
             btnSearch.visibility = View.VISIBLE
             btnSort.visibility = View.VISIBLE
         }
+    }
+
+    private fun handleCategorize() {
+        if (listCategories.isEmpty()) {
+            showToast("Please add at least 1 category first", this)
+            return
+        }
+
+        val names = listCategories.map { it.name }.toTypedArray()
+        val checkedItems = BooleanArray(listCategories.size)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Select Categories")
+            .setMultiChoiceItems(names, checkedItems) { _, which, isChecked ->
+                checkedItems[which] = isChecked
+            }
+            .setPositiveButton("Confirm") { _, _ ->
+                val checkedIds = arrayListOf<Int>()
+
+                for (i in 0..checkedItems.size - 1) {
+                    if (checkedItems[i]) {
+                        checkedIds.add(listCategories[i].id)
+                    }
+                }
+
+                val selectedNotes = noteAdapter.getSelectedNotes()
+
+                noteViewModel.updateNotes(selectedNotes.map { it.copy(categoryIds = checkedIds) })
+                showToast("Update Categories successfully", this)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
 

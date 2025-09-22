@@ -11,14 +11,14 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        app:title="Notepad"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:popupTheme="@style/ToolbarPopupTheme"
         app:menu="@menu/toolbar_detail_menu"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/white"
+        app:popupTheme="@style/ToolbarPopupTheme"
+        app:title="Notepad"
         app:titleTextColor="@color/white">
 
         <LinearLayout
@@ -32,53 +32,63 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:inputType="text"
-                android:visibility="gone"
                 android:hint="Search..."
+                android:inputType="text"
                 android:singleLine="true"
+                android:visibility="gone"
                 tools:ignore="LabelFor" />
 
             <ImageButton
                 android:id="@+id/btnClearSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_x"
-                android:layout_gravity="center_vertical"
-                app:tint="@color/white"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/white" />
 
         </LinearLayout>
 
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:background="@drawable/rounded_item_bg"
-        android:padding="10dp"
-        android:layout_margin="4dp"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:background="@drawable/bg_outline_item_note">
 
-        <EditText
-            android:id="@+id/edtTitle"
-            android:backgroundTint="@color/primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="Today Note"
-            android:inputType="text"
-            android:hint="@string/enter_title" />
-
-        <EditText
-            android:id="@+id/edtContent"
-            android:backgroundTint="@color/primary"
-            android:inputType="textCapSentences|textMultiLine"
+        <LinearLayout
+            android:id="@+id/noteDetailLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:autofillHints="Nothing to Say"
-            android:gravity="top"
-            android:hint="@string/enter_content"/>
+            android:background="@drawable/bg_note_default"
+            android:orientation="vertical"
+            android:layout_margin="1dp"
+            android:padding="10dp">
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="Today Note"
+                android:backgroundTint="@color/primary"
+                android:hint="@string/enter_title"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/edtContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:autofillHints="Nothing to Say"
+                android:backgroundTint="@color/primary"
+                android:gravity="top"
+                android:hint="@string/enter_content"
+                android:inputType="textCapSentences|textMultiLine" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
 
 </LinearLayout>

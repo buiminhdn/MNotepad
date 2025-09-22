@@ -2,7 +2,9 @@ package com.example.mnotepad.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +16,7 @@ import android.text.style.BackgroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -21,12 +24,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
+import com.example.mnotepad.adapters.ColorAdapter
 import com.example.mnotepad.databinding.ActivityNoteDetailBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
@@ -41,6 +49,8 @@ import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.core.graphics.drawable.toDrawable
+import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -54,6 +64,8 @@ class NoteDetailActivity : AppCompatActivity() {
     private lateinit var importTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createPdfLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var colorPickerDialog: AlertDialog
     private val history = HistoryManager()
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
@@ -92,35 +104,43 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun initImportLauncher() {
-        importTxtLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    val (title, content) = FileSAFHelper.importTxt(this, uri) ?: return@let
-                    binding.edtTitle.setText(title)
-                    binding.edtContent.setText(content)
+        importTxtLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    result.data?.data?.let { uri ->
+                        val (title, content) = FileSAFHelper.importTxt(this, uri) ?: return@let
+                        binding.edtTitle.setText(title)
+                        binding.edtContent.setText(content)
+                    }
                 }
             }
-        }
     }
 
     private fun initCreateTxtLauncher() {
-        createTxtLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    FileSAFHelper.exportTxt(this, uri, binding.edtContent.text.toString())
+        createTxtLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    result.data?.data?.let { uri ->
+                        FileSAFHelper.exportTxt(this, uri, binding.edtContent.text.toString())
+                    }
                 }
             }
-        }
     }
 
     private fun initCreatePdfLauncher() {
-        createPdfLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    FileSAFHelper.exportPdf(this, uri, binding.edtTitle.text.toString(), binding.edtContent.text.toString())
+        createPdfLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    result.data?.data?.let { uri ->
+                        FileSAFHelper.exportPdf(
+                            this,
+                            uri,
+                            binding.edtTitle.text.toString(),
+                            binding.edtContent.text.toString()
+                        )
+                    }
                 }
             }
-        }
     }
 
     private fun initObservers() {
@@ -166,6 +186,10 @@ class NoteDetailActivity : AppCompatActivity() {
             handleCategorize(); true
         }
 
+        R.id.navColorize -> {
+            showColorPickerDialog(); true
+        }
+
         R.id.navImport -> {
             handleImportFile(); true
         }
@@ -201,6 +225,47 @@ class NoteDetailActivity : AppCompatActivity() {
         else -> super.onOptionsItemSelected(item)
     }
 
+    private fun showColorPickerDialog() {
+        val colors = colorOptions
+
+        val recyclerView = RecyclerView(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            layoutManager = GridLayoutManager(this@NoteDetailActivity, 6)
+            setPadding(50, 50, 50,50)
+            adapter = ColorAdapter(this@NoteDetailActivity, colors) { selectedColor ->
+//                showToast("$selectedColor", applicationContext)
+
+                curNoteItem?.let {
+                    noteViewModel.upsertNote(it.copy(color = selectedColor))
+                    binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(selectedColor)
+                }
+                colorPickerDialog.dismiss()
+            }
+        }
+
+        colorPickerDialog = AlertDialog.Builder(this)
+            .setTitle("Choose a color")
+            .setView(recyclerView)
+            .setPositiveButton("Reset") { dialog, _ ->
+                curNoteItem?.let {
+                    noteViewModel.upsertNote(it.copy(color = null))
+                }
+                binding.noteDetailLayout.backgroundTintList = ContextCompat.getColorStateList(
+                    this,
+                    R.color.secondary
+                )
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+        colorPickerDialog.show()
+    }
+
     private fun showInfoDialog() {
         val content = binding.edtContent.text.toString()
         val numOfWords = content.split("\\s+".toRegex()).size
@@ -208,8 +273,8 @@ class NoteDetailActivity : AppCompatActivity() {
         val numOfCharacters = content.length
         val numOfCharactersWithoutWhitespaces = content
             .trim()
-            .replace(" ","")
-            .replace("\n","").length
+            .replace(" ", "")
+            .replace("\n", "").length
         val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
         val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
         val contentInfo = "Words: $numOfWords \n" +
@@ -234,6 +299,14 @@ class NoteDetailActivity : AppCompatActivity() {
             curNoteItem?.let {
                 binding.edtTitle.setText(it.title)
                 binding.edtContent.setText(it.content)
+                if (it.color != null) {
+                    binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(it.color)
+                } else {
+                    binding.noteDetailLayout.backgroundTintList = ContextCompat.getColorStateList(
+                        this,
+                        R.color.secondary
+                    )
+                }
             }
         }
     }
@@ -253,11 +326,11 @@ class NoteDetailActivity : AppCompatActivity() {
         }
 
         val names = listCategories.map { it.name }.toTypedArray()
-        val checkedCategories = curNoteItem?.categoryIds?:emptyList()
+        val checkedCategories = curNoteItem?.categoryIds ?: emptyList()
 
         val checkedItems = BooleanArray(listCategories.size)
 
-        for ( i in 0 ..checkedItems.size-1){
+        for (i in 0..checkedItems.size - 1) {
             checkedItems[i] = checkedCategories.contains(listCategories[i].id)
         }
 
@@ -270,8 +343,8 @@ class NoteDetailActivity : AppCompatActivity() {
                 curNoteItem?.let {
                     val checkedId = arrayListOf<Int>()
 
-                    for ( i in 0 ..checkedItems.size-1){
-                        if (checkedItems[i]){
+                    for (i in 0..checkedItems.size - 1) {
+                        if (checkedItems[i]) {
                             checkedId.add(listCategories[i].id)
                         }
                     }
@@ -319,7 +392,8 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
-        val intent = FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", "text/plain")
+        val intent =
+            FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", "text/plain")
         createTxtLauncher.launch(intent)
     }
 
@@ -335,8 +409,12 @@ class NoteDetailActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(shareIntent, "Share note via"))
     }
 
-    private fun handlePrintFile(){
-        val intent = FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "pdf", "application/pdf")
+    private fun handlePrintFile() {
+        val intent = FileSAFHelper.createFileIntent(
+            binding.edtTitle.text.toString(),
+            "pdf",
+            "application/pdf"
+        )
         createPdfLauncher.launch(intent)
     }
 

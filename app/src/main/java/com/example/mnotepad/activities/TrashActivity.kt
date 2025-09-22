@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,16 +18,21 @@ import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.databinding.ActivityTrashBinding
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.NoteViewModel
+import java.io.File
 import kotlin.getValue
 
 class TrashActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTrashBinding
     private val noteViewModel: NoteViewModel by viewModels()
     private lateinit var noteAdapter: NoteAdapter
+    private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
+
+    private var selectedNotes: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +48,21 @@ class TrashActivity : AppCompatActivity() {
         initToolbar()
         setupRecyclerView()
         observeViewModel()
+        initSelectFolderLauncher()
+    }
+
+    private fun initSelectFolderLauncher() {
+        selectFolderLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val treeUri = result.data?.data
+                if (treeUri != null) {
+                    FileSAFHelper.exportSelectedNotesToTxt(this, treeUri, selectedNotes)
+                    showToast("Export successfully!", this)
+                }
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -92,7 +115,24 @@ class TrashActivity : AppCompatActivity() {
                 true
             }
 
+            R.id.navExportAll -> {
+                handleExportSelected()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun handleExportSelected() {
+        val selected = noteAdapter.getSelectedNotes()
+        if (selected.isEmpty()) return
+
+        selectedNotes = selected.map { note ->
+            note.title to note.content
+        }
+
+        val intent = FileSAFHelper.createDirectoryIntent()
+        selectFolderLauncher.launch(intent)
     }
 }

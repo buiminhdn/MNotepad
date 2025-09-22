@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
 
 @Dao
@@ -25,6 +26,9 @@ interface NoteDao {
 
     @Update
     suspend fun update(note: Note)
+
+    @Update
+    suspend fun updateAll(notes: List<Note>)
 
     @Query("UPDATE notes SET isDeleted = 1 WHERE id = :id")
     suspend fun softDelete(id: Int)
