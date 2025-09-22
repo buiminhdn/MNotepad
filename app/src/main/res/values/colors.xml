@@ -9,6 +9,7 @@
     <color name="colorPrimaryBrown">#917754</color>
     <color name="colorPrimaryBrownDark">#000000</color>
     <color name="colorAccentBrown">#796A43</color>
+    <color name="colorSecondaryBrown">#FFFFDB</color>
     <color name="colorWindowBackgroundBrown">#FFFFDB</color>
 
     <!-- Black Theme -->

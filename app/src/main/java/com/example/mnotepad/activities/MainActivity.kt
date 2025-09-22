@@ -2,13 +2,10 @@ package com.example.mnotepad.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,28 +13,23 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
-import com.example.mnotepad.adapters.ColorAdapter
 import com.example.mnotepad.adapters.NoteAdapter
-import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
+import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
+import com.example.mnotepad.entities.enums.AppTheme
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
-import com.example.mnotepad.helpers.BLACK_THEME
-import com.example.mnotepad.helpers.BROWN_THEME
+import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
-import com.example.mnotepad.helpers.KEY_THEME
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
-import com.example.mnotepad.helpers.YELLOW_THEME
+import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
@@ -60,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -260,43 +253,47 @@ class MainActivity : AppCompatActivity() {
                 showColorPickerDialog(); true
             }
 
+            R.id.navTheme -> {
+                showThemePicker(); true
+
+            }
 
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showColorPickerDialog() {
-        val colors = colorOptions
+    private fun showThemePicker() {
+        val themes = AppTheme.entries.toTypedArray()
+        val names = themes.map { it.displayName }.toTypedArray()
+        val current = ThemeManager.getSavedTheme(this)
+        val checkedIndex = themes.indexOf(current)
 
-        val recyclerView = RecyclerView(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            layoutManager = GridLayoutManager(this@MainActivity, 6)
-            setPadding(50, 50, 50,50)
-            adapter = ColorAdapter(this@MainActivity, colors) { selectedColor ->
+        AlertDialog.Builder(this)
+            .setTitle("Chọn giao diện")
+            .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
+                val selected = themes[which]
+                ThemeManager.setTheme(this, selected) // sẽ lưu và recreate()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Huỷ", null)
+            .show()
+    }
+
+    private fun showColorPickerDialog() {
+        ColorPickerDialogHelper.show(
+            this,
+            colorPalette,
+            onColorSelected = { selectedColor ->
                 val selectedNotes = noteAdapter.getSelectedNotes()
                 noteViewModel.updateNotes(selectedNotes.map { it.copy(color = selectedColor) })
                 noteAdapter.toggleSelectMode(false)
-                colorPickerDialog.dismiss()
-            }
-        }
-
-        colorPickerDialog = AlertDialog.Builder(this)
-            .setTitle("Choose a color")
-            .setView(recyclerView)
-            .setPositiveButton("Reset") { dialog, _ ->
+            },
+            onReset = {
                 val selectedNotes = noteAdapter.getSelectedNotes()
                 noteViewModel.updateNotes(selectedNotes.map { it.copy(color = null) })
                 noteAdapter.toggleSelectMode(false)
-                dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-        colorPickerDialog.show()
+        )
     }
 
     private fun addMenuItemInNavMenuDrawer() {

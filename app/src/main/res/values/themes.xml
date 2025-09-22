@@ -1,57 +1,59 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.MNotepad.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryBrown</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryBrownDark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/colorSecondaryBrown</item>
+        <item name="android:windowBackground">@color/colorWindowBackgroundBrown</item>
+        <!-- statusBar color -->
+        <item name="android:statusBarColor">@color/colorPrimaryBrownDark</item>
     </style>
 
-<!--    <style name="Base.Theme.MNotepad" parent="Theme.Material3.DayNight.NoActionBar">-->
-<!--        &lt;!&ndash;-->
-<!--            This is a dummy Theme extending from The Default Android Theme-->
-<!--            This will not be used in this tutorial but would be useful in defining the properties you would-->
-<!--            want as common in all the themes.-->
-<!--         &ndash;&gt;-->
-<!--    </style>-->
+    <style name="Theme.MNotepad.Brown" parent="Theme.MNotepad.Base">
+    </style>
 
-    <style name="Theme.MNotepad" parent="Base.Theme.MNotepad" />
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+        <item name="android:textColorSecondary">?attr/colorOnPrimary</item>
+    </style>
 
     <style name="ToolbarPopupTheme" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:colorBackground">@color/white</item>
     </style>
 
-    <style name="AppTheme.Brown" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimaryBrown</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryBrownDark</item>
-        <item name="colorAccent">@color/colorAccentBrown</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundBrown</item>
-    </style>
-
-    <style name="AppTheme.Black" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MNotepad.Black" parent="Theme.MNotepad.Base">
         <item name="colorPrimary">@color/colorPrimaryBlack</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryBlackDark</item>
-        <item name="colorAccent">@color/colorAccentBlack</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryBlackDark</item>
+        <item name="colorSecondary">@color/colorAccentBlack</item>
         <item name="android:windowBackground">@color/colorWindowBackgroundBlack</item>
+        <item name="android:statusBarColor">@color/colorPrimaryBlackDark</item>
     </style>
 
-    <style name="AppTheme.Yellow" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MNotepad.Yellow" parent="Theme.MNotepad.Base">
         <item name="colorPrimary">@color/colorPrimaryYellow</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryYellowDark</item>
-        <item name="colorAccent">@color/colorAccentYellow</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryYellowDark</item>
+        <item name="colorSecondary">@color/colorAccentYellow</item>
         <item name="android:windowBackground">@color/colorWindowBackgroundYellow</item>
+        <item name="android:statusBarColor">@color/colorPrimaryYellowDark</item>
+        <item name="colorOnPrimary">@color/colorPrimaryYellowDark</item>
     </style>
 
-    <style name="AppTheme.Grey" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MNotepad.Grey" parent="Theme.MNotepad.Base">
         <item name="colorPrimary">@color/colorPrimaryGrey</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryGreyDark</item>
-        <item name="colorAccent">@color/colorAccentGrey</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryGreyDark</item>
+        <item name="colorSecondary">@color/colorAccentGrey</item>
         <item name="android:windowBackground">@color/colorWindowBackgroundGrey</item>
+        <item name="android:statusBarColor">@color/colorPrimaryGreyDark</item>
     </style>
 
-    <style name="AppTheme.System" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MNotepad.System" parent="Theme.MNotepad.Base">
         <item name="colorPrimary">@color/colorPrimarySystem</item>
-        <item name="colorPrimaryDark">@color/colorPrimarySystemDark</item>
-        <item name="colorAccent">@color/colorAccentSystem</item>
+        <item name="colorPrimaryVariant">@color/colorPrimarySystemDark</item>
+        <item name="colorSecondary">@color/colorAccentSystem</item>
         <item name="android:windowBackground">@color/colorWindowBackgroundSystem</item>
+        <item name="android:statusBarColor">@color/colorPrimarySystemDark</item>
     </style>
 </resources>

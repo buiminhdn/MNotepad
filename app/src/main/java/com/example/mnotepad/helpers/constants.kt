@@ -11,10 +11,3 @@ const val SORT_TITLE_Z_A = "title: Z to A"
 const val SORT_CREATE_DATE_FROM_NEWEST = "creation date: from newest"
 const val SORT_CREATE_DATE_FROM_OLDEST = "creation date: from oldest"
 
-
-const val KEY_THEME = "Theme"
-val BROWN_THEME = R.style.AppTheme_Brown
-val BLACK_THEME = R.style.AppTheme_Black
-val YELLOW_THEME = R.style.AppTheme_Yellow
-val GREY_THEME = R.style.AppTheme_Grey
-val SYSTEM_THEME = R.style.AppTheme_System

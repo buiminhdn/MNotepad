@@ -51,6 +51,8 @@ import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.graphics.drawable.toDrawable
 import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
+import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
+import com.example.mnotepad.helpers.ColorPickerDialogHelper
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -226,44 +228,22 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun showColorPickerDialog() {
-        val colors = colorOptions
-
-        val recyclerView = RecyclerView(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            layoutManager = GridLayoutManager(this@NoteDetailActivity, 6)
-            setPadding(50, 50, 50,50)
-            adapter = ColorAdapter(this@NoteDetailActivity, colors) { selectedColor ->
-//                showToast("$selectedColor", applicationContext)
-
+        ColorPickerDialogHelper.show(
+            this,
+            colorPalette,
+            onColorSelected = { selectedColor ->
+                showToast("Selected: $selectedColor", applicationContext)
                 curNoteItem?.let {
                     noteViewModel.upsertNote(it.copy(color = selectedColor))
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(selectedColor)
                 }
-                colorPickerDialog.dismiss()
+            },
+            onReset = {
+                curNoteItem?.let { noteViewModel.upsertNote(it.copy(color = null)) }
+                binding.noteDetailLayout.backgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.secondary)
             }
-        }
-
-        colorPickerDialog = AlertDialog.Builder(this)
-            .setTitle("Choose a color")
-            .setView(recyclerView)
-            .setPositiveButton("Reset") { dialog, _ ->
-                curNoteItem?.let {
-                    noteViewModel.upsertNote(it.copy(color = null))
-                }
-                binding.noteDetailLayout.backgroundTintList = ContextCompat.getColorStateList(
-                    this,
-                    R.color.secondary
-                )
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-        colorPickerDialog.show()
+        )
     }
 
     private fun showInfoDialog() {

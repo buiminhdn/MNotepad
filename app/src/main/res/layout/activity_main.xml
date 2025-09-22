@@ -19,14 +19,13 @@
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            android:theme="@style/ToolbarTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIconTint="@color/white"
+            app:navigationIconTint="?attr/colorOnPrimary"
             app:popupTheme="@style/ToolbarPopupTheme"
-            app:title="MNotepad"
-            app:titleTextColor="@color/white">
+            app:title="MNotepad">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +37,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="?attr/colorOnPrimary"
                     android:inputType="text"
                     android:visibility="gone"
                     android:hint="Search..."
@@ -52,7 +51,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_x"
                     android:layout_gravity="center_vertical"
-                    app:tint="@color/white"
+                    app:tint="?attr/colorOnPrimary"
                     android:visibility="gone" />
 
             </LinearLayout>

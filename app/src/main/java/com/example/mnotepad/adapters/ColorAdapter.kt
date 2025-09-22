@@ -1,6 +1,7 @@
 package com.example.mnotepad.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
@@ -9,21 +10,23 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
+import androidx.core.graphics.toColorInt
 
 class ColorAdapter(
     private val context: Context,
-    private val colors: List<Int>,
+    private val colors: List<String>,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
 
     inner class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val colorView: View = itemView.findViewById(R.id.colorView)
 
-        fun bind(color: Int) {
+        fun bind(colorHex: String) {
+            val colorInt = colorHex.toColorInt()
             val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.square_rounded_corners)?.mutate()
-            backgroundDrawable?.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+            backgroundDrawable?.colorFilter = PorterDuffColorFilter(colorInt, PorterDuff.Mode.SRC_IN)
             colorView.background = backgroundDrawable
-            itemView.setOnClickListener { onItemClick(color) }
+            itemView.setOnClickListener { onItemClick(colorInt) }
         }
     }
 

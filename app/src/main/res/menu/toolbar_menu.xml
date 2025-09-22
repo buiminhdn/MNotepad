@@ -48,4 +48,9 @@
         android:id="@+id/navColorizeSelected"
         android:title="@string/colorize"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/navTheme"
+        android:title="Theme"
+        app:showAsAction="never" />
 </menu>
