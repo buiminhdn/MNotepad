@@ -9,7 +9,7 @@ import com.example.mnotepad.database.DAO.CategoryDao
 import com.example.mnotepad.database.DAO.NoteDao
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
-import com.example.mnotepad.helpers.IntListConverter
+import com.example.mnotepad.entities.converters.IntListConverter
 
 @Database(entities = [Note::class, Category::class], version = 1)
 @TypeConverters(IntListConverter::class)

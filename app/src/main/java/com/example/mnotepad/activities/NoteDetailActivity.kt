@@ -52,6 +52,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.graphics.drawable.toDrawable
 import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
+import com.example.mnotepad.entities.enums.NoteType
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 
 
@@ -67,7 +68,6 @@ class NoteDetailActivity : AppCompatActivity() {
     private lateinit var createTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createPdfLauncher: ActivityResultLauncher<Intent>
 
-    private lateinit var colorPickerDialog: AlertDialog
     private val history = HistoryManager()
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
@@ -162,8 +162,25 @@ class NoteDetailActivity : AppCompatActivity() {
             optionsMenu = menu
             menu.findItem(R.id.navEdit).isVisible = false
             handleContentChange()
+            updateConvertMenuTitle()
         }
         return true
+    }
+
+    private fun updateConvertMenuTitle() {
+        val convertItem = optionsMenu.findItem(R.id.navChangeType)
+        val noteType = curNoteItem?.type ?: NoteType.TEXT
+
+        when (noteType) {
+            NoteType.TEXT -> {
+                convertItem.isVisible = true
+                convertItem.title = "Convert to Checklist"
+            }
+            NoteType.CHECKLIST -> {
+                convertItem.isVisible = true
+                convertItem.title = "Convert to Text"
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -224,7 +241,16 @@ class NoteDetailActivity : AppCompatActivity() {
             showInfoDialog(); true
         }
 
+        R.id.navChangeType -> {
+            handleConvertNoteType()
+            true
+        }
+
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun handleConvertNoteType() {
+        TODO("Not yet implemented")
     }
 
     private fun showColorPickerDialog() {

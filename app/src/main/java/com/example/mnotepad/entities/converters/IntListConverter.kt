@@ -1,4 +1,4 @@
-package com.example.mnotepad.helpers
+package com.example.mnotepad.entities.converters
 
 import androidx.room.TypeConverter
 

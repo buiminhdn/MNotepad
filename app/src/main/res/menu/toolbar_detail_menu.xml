@@ -40,6 +40,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/navChangeType"
+        android:title="@string/covert_to_checklist"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/navImport"
         android:title="@string/import_file"
         app:showAsAction="never" />

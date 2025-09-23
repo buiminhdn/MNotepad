@@ -44,4 +44,5 @@
     <string name="button_to_delete_all">Button to Delete All</string>
     <string name="export_notes_to_text_files">Export notes to text files</string>
     <string name="import_text_files">Import Text Files</string>
+    <string name="covert_to_checklist">Covert to Checklist</string>
 </resources>
