@@ -5,6 +5,7 @@
         <item name="colorPrimaryVariant">@color/colorPrimaryBrownDark</item>
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSecondary">@color/colorSecondaryBrown</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariantBrown</item>
         <item name="android:windowBackground">@color/colorWindowBackgroundBrown</item>
         <!-- statusBar color -->
         <item name="android:statusBarColor">@color/colorPrimaryBrownDark</item>
