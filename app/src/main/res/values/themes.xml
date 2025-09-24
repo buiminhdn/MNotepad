@@ -1,18 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.MNotepad.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryBrown</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryBrownDark</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-        <item name="colorSecondary">@color/colorSecondaryBrown</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariantBrown</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundBrown</item>
-        <!-- statusBar color -->
-        <item name="android:statusBarColor">@color/colorPrimaryBrownDark</item>
+        <item name="colorPrimary">@color/colorBrown</item>
+        <!-- Text on Primary -->
+        <item name="colorOutline">@color/colorBrown</item>
+        <item name="textFillColor">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="backgroundTint">@color/colorBrown</item>
+        <!-- Checkbox -->
+        <item name="buttonTint">@color/colorBrown</item>
+        <!-- Container -->
+        <item name="colorSecondaryContainer">@color/colorBrownPale</item>
+        <item name="colorButtonNormal">@color/colorBrownDark</item>
+        <!-- Background -->
+        <item name="android:windowBackground">@color/colorBrownPale</item>
     </style>
 
-    <style name="Theme.MNotepad.Brown" parent="Theme.MNotepad.Base">
-    </style>
+    <style name="Theme.MNotepad.Brown" parent="Theme.MNotepad.Base"></style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
@@ -26,35 +30,50 @@
     </style>
 
     <style name="Theme.MNotepad.Black" parent="Theme.MNotepad.Base">
-        <item name="colorPrimary">@color/colorPrimaryBlack</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryBlackDark</item>
-        <item name="colorSecondary">@color/colorAccentBlack</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundBlack</item>
-        <item name="android:statusBarColor">@color/colorPrimaryBlackDark</item>
+        <item name="colorPrimary">@color/colorBlack</item>
+        <item name="colorOutline">@color/white</item>
+        <item name="textFillColor">@color/white</item>
+        <item name="colorButtonNormal">@color/colorBlackGreen</item>
+        <item name="backgroundTint">@color/colorBlackGreen</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="buttonTint">@color/white</item>
+        <item name="colorSecondaryContainer">@color/colorBlackDark</item>
+        <item name="android:windowBackground">@color/colorBlackDark</item>
     </style>
 
     <style name="Theme.MNotepad.Yellow" parent="Theme.MNotepad.Base">
-        <item name="colorPrimary">@color/colorPrimaryYellow</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryYellowDark</item>
-        <item name="colorSecondary">@color/colorAccentYellow</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundYellow</item>
-        <item name="android:statusBarColor">@color/colorPrimaryYellowDark</item>
-        <item name="colorOnPrimary">@color/colorPrimaryYellowDark</item>
+        <item name="colorPrimary">@color/colorYellow</item>
+        <item name="colorOutline">@color/colorYellowGreen</item>
+        <item name="textFillColor">@color/colorYellowGreen</item>
+        <item name="colorButtonNormal">@color/colorYellowDark</item>
+        <item name="backgroundTint">@color/colorYellowDark</item>
+        <item name="colorOnPrimary">@color/colorYellowGreen</item>
+        <item name="buttonTint">@color/colorYellowDark</item>
+        <item name="colorSecondaryContainer">@color/colorYellow</item>
+        <item name="android:windowBackground">@color/colorYellowPale</item>
     </style>
 
     <style name="Theme.MNotepad.Grey" parent="Theme.MNotepad.Base">
-        <item name="colorPrimary">@color/colorPrimaryGrey</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryGreyDark</item>
-        <item name="colorSecondary">@color/colorAccentGrey</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundGrey</item>
-        <item name="android:statusBarColor">@color/colorPrimaryGreyDark</item>
+        <item name="colorPrimary">@color/colorGreyPale</item>
+        <item name="colorOutline">@color/white</item>
+        <item name="textFillColor">@color/black</item>
+        <item name="colorButtonNormal">@color/colorGreyDark</item>
+        <item name="backgroundTint">@color/black</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="buttonTint">@color/black</item>
+        <item name="colorSecondaryContainer">@color/white</item>
+        <item name="android:windowBackground">@color/colorGrey</item>
     </style>
 
     <style name="Theme.MNotepad.System" parent="Theme.MNotepad.Base">
-        <item name="colorPrimary">@color/colorPrimarySystem</item>
-        <item name="colorPrimaryVariant">@color/colorPrimarySystemDark</item>
-        <item name="colorSecondary">@color/colorAccentSystem</item>
-        <item name="android:windowBackground">@color/colorWindowBackgroundSystem</item>
-        <item name="android:statusBarColor">@color/colorPrimarySystemDark</item>
+        <item name="colorPrimary">@color/colorSystemDark</item>
+        <item name="colorOutline">@color/colorSystemBluePale</item>
+        <item name="textFillColor">@color/colorSystemBluePale</item>
+        <item name="colorButtonNormal">@color/colorSystemBlue</item>
+        <item name="backgroundTint">@color/colorSystemBlue</item>
+        <item name="colorOnPrimary">@color/colorSystemBluePale</item>
+        <item name="buttonTint">@color/colorSystemBlue</item>
+        <item name="colorSecondaryContainer">@color/colorSystem</item>
+        <item name="android:windowBackground">@color/colorSystem</item>
     </style>
 </resources>

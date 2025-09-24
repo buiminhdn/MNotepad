@@ -6,34 +6,29 @@
     <color name="secondary">#FDFDD3</color>
 
     <!-- Main theme color -->
-    <color name="colorPrimaryBrown">#917754</color>
-    <color name="colorPrimaryBrownDark">#000000</color>
-    <color name="colorAccentBrown">#796A43</color>
-    <color name="colorSecondaryBrown">#FFFFDB</color>
-    <color name="colorSecondaryVariantBrown">#faf8c4</color>
-    <color name="colorWindowBackgroundBrown">#FFFFDB</color>
+    <color name="colorBrown">#917754</color>
+    <color name="colorBrownDark">#796A43</color>
+    <color name="colorBrownPale">#FFFFDB</color>
 
     <!-- Black Theme -->
-    <color name="colorPrimaryBlack">#303030</color>
-    <color name="colorPrimaryBlackDark">#000000</color>
-    <color name="colorAccentBlack">#8AA175</color>
-    <color name="colorWindowBackgroundBlack">#000000</color>
+    <color name="colorBlack">#303030</color>
+    <color name="colorBlackDark">#000000</color>
+    <color name="colorBlackGreen">#8AA175</color>
 
     <!-- Yellow Theme -->
-    <color name="colorPrimaryYellow">#F0E7D6</color>
-    <color name="colorPrimaryYellowDark">#576D70</color>
-    <color name="colorAccentYellow">#B58A07</color>
-    <color name="colorWindowBackgroundYellow">#FCF6E6</color>
+    <color name="colorYellow">#F0E7D6</color>
+    <color name="colorYellowPale">#FCF6E6</color>
+    <color name="colorYellowDark">#B58A07</color>
+    <color name="colorYellowGreen">#576D70</color>
 
     <!-- Grey Theme -->
-    <color name="colorPrimaryGrey">#EEEEEE</color>
-    <color name="colorPrimaryGreyDark">#040404</color>
-    <color name="colorAccentGrey">#676767</color>
-    <color name="colorWindowBackgroundGrey">#DDDDDD</color>
+    <color name="colorGrey">#DDDDDD</color>
+    <color name="colorGreyPale">#EEEEEE</color>
+    <color name="colorGreyDark">#676767</color>
 
     <!-- System Theme -->
-    <color name="colorPrimarySystem">#053444</color>
-    <color name="colorPrimarySystemDark">#002B34</color>
-    <color name="colorAccentSystem">#268BD1</color>
-    <color name="colorWindowBackgroundSystem">#002B34</color>
+    <color name="colorSystem">#053444</color>
+    <color name="colorSystemDark">#002B34</color>
+    <color name="colorSystemBluePale">#8CA4A7</color>
+    <color name="colorSystemBlue">#268BD1</color>
 </resources>

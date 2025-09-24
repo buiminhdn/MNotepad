@@ -16,17 +16,11 @@ object ThemeManager {
         return AppTheme.fromId(id)
     }
 
-    /**
-     * Áp theme lên activity. Gọi trước setContentView / trước super.onCreate nếu muốn tránh flicker.
-     */
     fun applyTheme(activity: Activity) {
         val theme = getSavedTheme(activity)
         activity.setTheme(theme.styleRes)
     }
 
-    /**
-     * Lưu lựa chọn và recreate() activity để áp dụng.
-     */
     fun setTheme(activity: Activity, appTheme: AppTheme) {
         val prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit { putInt(KEY_THEME, appTheme.id) }

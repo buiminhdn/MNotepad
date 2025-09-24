@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -11,9 +12,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        app:srcCompat="@drawable/ic_drag" />
+        app:srcCompat="@drawable/ic_drag"
+        app:tint="?attr/textFillColor"
+        tools:ignore="PrivateResource" />
 
     <CheckBox
+        android:buttonTint="?attr/buttonTint"
         android:id="@+id/ckbContentItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -21,18 +25,23 @@
     <EditText
         android:id="@+id/edtContentItem"
         android:layout_width="0dp"
+        android:textColor="?attr/textFillColor"
+        android:textColorHint="?attr/textFillColor"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
         android:gravity="top"
         android:hint="@string/enter_content"
-        android:inputType="textCapSentences|textMultiLine" />
+        android:inputType="textCapSentences|textMultiLine"
+        tools:ignore="PrivateResource" />
 
     <ImageView
         android:id="@+id/btnDelete"
+        app:tint="?attr/textFillColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/ic_x" />
+        app:srcCompat="@drawable/ic_x"
+        tools:ignore="PrivateResource" />
 </LinearLayout>

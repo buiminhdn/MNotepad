@@ -58,11 +58,13 @@ import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.entities.enums.NoteType
+import com.example.mnotepad.entities.models.ChecklistItem
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
 import com.example.mnotepad.helpers.TextConvertHelper.convertContentToCheckList
+import com.example.mnotepad.helpers.ThemeManager
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -90,6 +92,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityNoteDetailBinding.inflate(layoutInflater)
@@ -109,9 +112,16 @@ class NoteDetailActivity : AppCompatActivity() {
         initCreateTxtLauncher()
         initCreatePdfLauncher()
         handleButtonDeleteSearch()
+        handleAddNewItemToCheckList()
         setupDragAndDrop()
 
         handler.post(saveRunnable)
+    }
+
+    private fun handleAddNewItemToCheckList() {
+        binding.btnAddChecklistItem.setOnClickListener {
+            checkListAdapter.addItem(ChecklistItem("", false))
+        }
     }
 
     private fun setupRecyclerView() {
@@ -199,10 +209,19 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun updateConvertMenuTitle() {
         val convertItem = optionsMenu.findItem(R.id.navChangeType)
-        noteType = curNoteItem?.type ?: NoteType.TEXT
+        when (noteType) {
+            NoteType.TEXT -> {
+                binding.checklistLayout.visibility = View.GONE
+                binding.edtContent.visibility = View.VISIBLE
+                convertItem.title = "Convert to Checklist"
+            }
 
-        val title = if (noteType == NoteType.TEXT) "Convert to Checklist" else "Convert to Text"
-        convertItem.title = title
+            NoteType.CHECKLIST -> {
+                binding.edtContent.visibility = View.GONE
+                binding.checklistLayout.visibility = View.VISIBLE
+                convertItem.title = "Convert to Text"
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -354,9 +373,9 @@ class NoteDetailActivity : AppCompatActivity() {
                     binding.edtContent.setText(it.content)
                 } else {
                     checkListAdapter.setCheckListItems(convertCheckListContentToText(it.content))
-                    binding.edtContent.visibility = View.GONE
-                    binding.checklistLayout.visibility = View.VISIBLE
                 }
+
+                noteType = it.type
 
                 if (it.color != null) {
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(it.color)
@@ -435,7 +454,7 @@ class NoteDetailActivity : AppCompatActivity() {
             content = content,
             updatedAt = System.currentTimeMillis(),
             type = noteType
-        ) ?: Note(title = title, content = content,  type = noteType)
+        ) ?: Note(title = title, content = content, type = noteType)
 
         noteViewModel.upsertNote(updatedNote)
         showToast("$title Saved", this)

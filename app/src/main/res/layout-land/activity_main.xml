@@ -59,22 +59,104 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <!-- Nội dung -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvNotes"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:weightSum="4"
+            android:orientation="horizontal">
+
+            <!-- Nội dung -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_weight="1"
+                android:id="@+id/rvNotes"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_outline_item_note">
+
+                <LinearLayout
+                    android:id="@+id/noteDetailLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_note_default"
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:padding="10dp">
+
+                    <EditText
+                        android:id="@+id/edtTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="Today Note"
+                        android:backgroundTint="@color/primary"
+                        android:hint="@string/enter_title"
+                        android:inputType="text" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/edtContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:autofillHints="Nothing to Say"
+                            android:backgroundTint="@color/primary"
+                            android:gravity="top"
+                            android:hint="@string/enter_content"
+                            android:inputType="textCapSentences|textMultiLine" />
+
+                        <LinearLayout
+                            android:id="@+id/checklistLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rvCheckListItems"
+                                android:layout_width="match_parent"
+                                android:layout_weight="1"
+                                android:layout_height="0dp">
+
+                            </androidx.recyclerview.widget.RecyclerView>
+
+                            <Button
+                                android:id="@+id/btnAddChecklistItem"
+                                android:background="?attr/colorSecondary"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="+ ADD ITEM" />
+                        </LinearLayout>
+
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+
+        </LinearLayout>
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:backgroundTint="?attr/colorButtonNormal"
+            android:backgroundTint="@color/primary"
             android:contentDescription="@string/button_to_add_note"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

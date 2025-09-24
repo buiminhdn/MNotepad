@@ -72,6 +72,12 @@ class CheckListAdapter (
         notifyDataSetChanged()
     }
 
+    fun addItem(item: ChecklistItem) {
+        checklistItems.add(item)
+        notifyItemInserted(checklistItems.size - 1)
+    }
+
+
     fun getCheckListItems(): List<ChecklistItem> = checklistItems
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
         if (fromPosition < toPosition) {

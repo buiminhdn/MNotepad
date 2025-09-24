@@ -12,14 +12,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ToolbarTheme"
         app:menu="@menu/toolbar_detail_menu"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/white"
+        app:navigationIconTint="?attr/colorOnPrimary"
         app:popupTheme="@style/ToolbarPopupTheme"
-        app:title="Notepad"
-        app:titleTextColor="@color/white">
+        app:title="Notepad">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,9 +71,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="Today Note"
-                android:backgroundTint="@color/primary"
+                android:textColor="?attr/textFillColor"
+                android:textColorHint="?attr/textFillColor"
+                android:backgroundTint="?attr/backgroundTint"
                 android:hint="@string/enter_title"
-                android:inputType="text" />
+                android:inputType="text"
+                tools:ignore="PrivateResource" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -85,10 +87,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:autofillHints="Nothing to Say"
-                    android:backgroundTint="@color/primary"
+                    android:backgroundTint="?attr/backgroundTint"
+                    android:textColor="?attr/textFillColor"
+                    android:textColorHint="?attr/textFillColor"
                     android:gravity="top"
                     android:hint="@string/enter_content"
-                    android:inputType="textCapSentences|textMultiLine" />
+                    android:inputType="textCapSentences|textMultiLine"
+                    tools:ignore="PrivateResource" />
 
                 <LinearLayout
                     android:id="@+id/checklistLayout"
@@ -100,18 +105,24 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvCheckListItems"
                         android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:layout_height="0dp">
+                        android:layout_height="wrap_content">
 
                     </androidx.recyclerview.widget.RecyclerView>
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
+                        style="@android:style/Widget.Button"
                         android:id="@+id/btnAddChecklistItem"
-                        android:background="?attr/colorSecondary"
+                        android:background="?attr/colorSecondaryContainer"
+                        android:textColor="?attr/textFillColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:padding="6dp"
+                        android:elevation="10dp"
                         android:layout_marginTop="8dp"
-                        android:text="+ ADD ITEM" />
+                        android:text="+ ADD ITEM"
+                        tools:ignore="PrivateResource" />
                 </LinearLayout>
 
 
