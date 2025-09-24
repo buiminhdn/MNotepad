@@ -27,6 +27,15 @@
             app:popupTheme="@style/ToolbarPopupTheme"
             app:title="MNotepad">
 
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MNotepad"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_gravity="center_vertical" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

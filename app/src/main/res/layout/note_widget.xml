@@ -1,16 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Widget.MNotepad.AppWidget.Container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSecondaryContainer">
+    android:background="@color/secondary"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvNoteTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text" />
-</RelativeLayout>
+        android:text="Note Title"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <TextView
+        android:id="@+id/tvNoteContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Note content preview..."
+        android:textSize="14sp"
+        android:maxLines="5"
+        android:ellipsize="end"/>
+</LinearLayout>

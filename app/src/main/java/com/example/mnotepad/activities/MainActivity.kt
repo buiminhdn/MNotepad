@@ -160,6 +160,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbarAndDrawer() {
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.title = "MNotepad"
 
         toggle = ActionBarDrawerToggle(
             this,
