@@ -45,4 +45,7 @@
     <string name="export_notes_to_text_files">Export notes to text files</string>
     <string name="import_text_files">Import Text Files</string>
     <string name="covert_to_checklist">Covert to Checklist</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
     private var listCategories: List<Category> = emptyList()
     private val categoryViewModel: CategoryViewModel by viewModels()
     private var selectedSortTypeIndex: Int = 0
-    var currentOrientation = 0
     private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
@@ -205,10 +204,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (currentOrientation == ORIENTATION_LANDSCAPE)
-            menuInflater.inflate(R.menu.toolbar_detail_menu, menu)
-        else
-            menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
         menu.findItem(R.id.navSelectAll)?.isVisible = false
         menu.findItem(R.id.navDeleteAll)?.isVisible = false
         return true
@@ -417,14 +413,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        currentOrientation = newConfig.orientation
-        invalidateOptionsMenu()
-        if (newConfig.orientation == ORIENTATION_LANDSCAPE) {
-            showToast("On Config Change LANDSCAPE", this);
-        } else {
-            showToast("On Config Change PORTRAIT", this);
-        }
-    }
 }

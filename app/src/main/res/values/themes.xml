@@ -14,6 +14,7 @@
         <item name="colorButtonNormal">@color/colorBrownDark</item>
         <!-- Background -->
         <item name="android:windowBackground">@color/colorBrownPale</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
     </style>
 
     <style name="Theme.MNotepad.Brown" parent="Theme.MNotepad.Base"></style>
@@ -75,5 +76,20 @@
         <item name="buttonTint">@color/colorSystemBlue</item>
         <item name="colorSecondaryContainer">@color/colorSystem</item>
         <item name="android:windowBackground">@color/colorSystem</item>
+    </style>
+
+    <style name="Theme.MNotepad.Base.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+        <!-- Radius of the outer bound of widgets to make the rounded corners -->
+        <item name="appWidgetRadius">16dp</item>
+        <!--
+        Radius of the inner view's bound of widgets to make the rounded corners.
+        It needs to be 8dp or less than the value of appWidgetRadius
+        -->
+        <item name="appWidgetInnerRadius">8dp</item>
+    </style>
+
+    <style name="Theme.MNotepad.Base.AppWidgetContainer" parent="Theme.MNotepad.Base.AppWidgetContainerParent">
+        <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
+        <item name="appWidgetPadding">16dp</item>
     </style>
 </resources>

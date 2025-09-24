@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="Widget.MNotepad.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.MNotepad.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">@color/colorBrownPale</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+</resources>
