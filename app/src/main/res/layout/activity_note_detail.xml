@@ -61,9 +61,9 @@
             android:id="@+id/noteDetailLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="1dp"
             android:background="@drawable/bg_note_default"
             android:orientation="vertical"
-            android:layout_margin="1dp"
             android:padding="10dp">
 
             <EditText
@@ -71,36 +71,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="Today Note"
-                android:textColor="?attr/textFillColor"
-                android:textColorHint="?attr/textFillColor"
                 android:backgroundTint="?attr/backgroundTint"
                 android:hint="@string/enter_title"
                 android:inputType="text"
+                android:textColor="?attr/textFillColor"
+                android:textColorHint="?attr/textFillColor"
                 tools:ignore="PrivateResource" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <EditText
-                    android:id="@+id/edtContent"
+                <LinearLayout
+                    android:id="@+id/noteContentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:autofillHints="Nothing to Say"
-                    android:backgroundTint="?attr/backgroundTint"
-                    android:textColor="?attr/textFillColor"
-                    android:textColorHint="?attr/textFillColor"
-                    android:gravity="top"
-                    android:hint="@string/enter_content"
-                    android:inputType="textCapSentences|textMultiLine"
-                    tools:ignore="PrivateResource" />
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edtContent"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:layout_height="0dp"
+                        android:autofillHints="Nothing to Say"
+                        android:backgroundTint="?attr/backgroundTint"
+                        android:gravity="top"
+                        android:hint="@string/enter_content"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:textColor="?attr/textFillColor"
+                        android:textColorHint="?attr/textFillColor"
+                        tools:ignore="PrivateResource" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_marginHorizontal="4dp"
+                            android:padding="6dp"
+                            android:id="@+id/ivBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_selector"
+                            app:srcCompat="@drawable/ic_bold" />
+
+                        <ImageView
+                            android:layout_marginHorizontal="4dp"
+                            android:padding="6dp"
+                            android:id="@+id/ivItalic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_selector"
+                            app:srcCompat="@drawable/ic_italic" />
+
+                        <ImageView
+                            android:layout_marginHorizontal="4dp"
+                            android:padding="6dp"
+                            android:id="@+id/icUnderline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_selector"
+                            app:srcCompat="@drawable/ic_underline" />
+
+                        <ImageView
+                            android:layout_marginHorizontal="4dp"
+                            android:padding="6dp"
+                            android:id="@+id/ivColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_button_selector"
+                            app:srcCompat="@drawable/ic_palette" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/checklistLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvCheckListItems"
@@ -110,18 +166,18 @@
                     </androidx.recyclerview.widget.RecyclerView>
 
                     <androidx.appcompat.widget.AppCompatButton
-                        style="@android:style/Widget.Button"
                         android:id="@+id/btnAddChecklistItem"
-                        android:background="?attr/colorSecondaryContainer"
-                        android:textColor="?attr/textFillColor"
+                        style="@android:style/Widget.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        android:padding="6dp"
-                        android:elevation="10dp"
                         android:layout_marginTop="8dp"
+                        android:background="?attr/colorSecondaryContainer"
+                        android:elevation="10dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:padding="6dp"
                         android:text="+ ADD ITEM"
+                        android:textColor="?attr/textFillColor"
                         tools:ignore="PrivateResource" />
                 </LinearLayout>
 

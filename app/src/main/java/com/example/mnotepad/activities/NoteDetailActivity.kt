@@ -9,10 +9,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Html
 import android.text.InputType
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -64,6 +66,7 @@ import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToT
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
 import com.example.mnotepad.helpers.TextConvertHelper.convertContentToCheckList
+import com.example.mnotepad.helpers.TextEditorHelper
 import com.example.mnotepad.helpers.ThemeManager
 
 
@@ -114,8 +117,43 @@ class NoteDetailActivity : AppCompatActivity() {
         handleButtonDeleteSearch()
         handleAddNewItemToCheckList()
         setupDragAndDrop()
+        handleTextEditor()
 
         handler.post(saveRunnable)
+    }
+
+    private fun handleTextEditor() {
+        TextEditorHelper.attachTo(binding.edtContent)
+
+        binding.ivBold.setOnClickListener {
+            val active = TextEditorHelper.toggleBold(binding.edtContent)
+            binding.ivBold.isSelected = active
+        }
+
+        binding.ivItalic.setOnClickListener {
+            val active = TextEditorHelper.toggleItalic(binding.edtContent)
+            binding.ivItalic.isSelected = active
+        }
+
+        binding.icUnderline.setOnClickListener {
+            val active = TextEditorHelper.toggleUnderline(binding.edtContent)
+            binding.icUnderline.isSelected = active
+        }
+
+        binding.ivColor.setOnClickListener {
+            ColorPickerDialogHelper.show(
+                this,
+                colorPalette,
+                onColorSelected = { selectedColor ->
+                    val active = TextEditorHelper.toggleColor(binding.edtContent, selectedColor)
+                    binding.ivColor.isSelected = active
+                },
+                onReset = {
+                    TextEditorHelper.activeColor = null
+                    binding.ivColor.isSelected = false
+                }
+            )
+        }
     }
 
     private fun handleAddNewItemToCheckList() {
@@ -212,12 +250,12 @@ class NoteDetailActivity : AppCompatActivity() {
         when (noteType) {
             NoteType.TEXT -> {
                 binding.checklistLayout.visibility = View.GONE
-                binding.edtContent.visibility = View.VISIBLE
+                binding.noteContentLayout.visibility = View.VISIBLE
                 convertItem.title = "Convert to Checklist"
             }
 
             NoteType.CHECKLIST -> {
-                binding.edtContent.visibility = View.GONE
+                binding.noteContentLayout.visibility = View.GONE
                 binding.checklistLayout.visibility = View.VISIBLE
                 convertItem.title = "Convert to Text"
             }
@@ -296,7 +334,7 @@ class NoteDetailActivity : AppCompatActivity() {
         when (noteType) {
             NoteType.TEXT -> {
                 noteType = NoteType.CHECKLIST
-                binding.edtContent.visibility = View.GONE
+                binding.noteContentLayout.visibility = View.GONE
                 binding.checklistLayout.visibility = View.VISIBLE
                 convertItem.title = "Convert to Text"
 
@@ -308,7 +346,7 @@ class NoteDetailActivity : AppCompatActivity() {
             NoteType.CHECKLIST -> {
                 noteType = NoteType.TEXT
                 binding.checklistLayout.visibility = View.GONE
-                binding.edtContent.visibility = View.VISIBLE
+                binding.noteContentLayout.visibility = View.VISIBLE
                 convertItem.title = "Convert to Checklist"
 
                 val text = convertCheckListToContent(checkListAdapter.getCheckListItems())
@@ -365,12 +403,16 @@ class NoteDetailActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getNoteDataIfUpdate() {
+        TextEditorHelper.reset()
+
         if (intent.getBooleanExtra(IS_EDITED_ACTION, false)) {
             curNoteItem = intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)
             curNoteItem?.let {
                 binding.edtTitle.setText(it.title)
                 if (it.type == NoteType.TEXT && it.content.isNotEmpty()) {
-                    binding.edtContent.setText(it.content)
+                    binding.edtContent.setText(
+                        Html.fromHtml(it.content, Html.FROM_HTML_MODE_COMPACT)
+                    )
                 } else {
                     checkListAdapter.setCheckListItems(convertCheckListContentToText(it.content))
                 }
@@ -388,7 +430,6 @@ class NoteDetailActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun handleContentChange() {
         binding.edtContent.addTextChangedListener { text ->
@@ -439,7 +480,7 @@ class NoteDetailActivity : AppCompatActivity() {
         var content = ""
 
         content = if (noteType == NoteType.TEXT) {
-            binding.edtContent.text.toString()
+            Html.toHtml(binding.edtContent.text, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
         } else {
             convertCheckListToContentForSave(checkListAdapter.getCheckListItems())
         }

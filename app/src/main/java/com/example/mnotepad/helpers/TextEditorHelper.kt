@@ -1,0 +1,99 @@
+package com.example.mnotepad.helpers
+
+import android.graphics.Typeface
+import android.graphics.Typeface.BOLD
+import android.graphics.Typeface.ITALIC
+import android.text.Editable
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
+import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
+
+object TextEditorHelper {
+
+    var isBold = false
+    var isItalic = false
+    var isUnderline = false
+    var activeColor: Int? = null
+
+    private fun applySpan(editText: EditText, span: Any) {
+        val start = editText.selectionStart
+        val end = editText.selectionEnd
+        if (start < end) {
+            val spannable: Editable = editText.text
+            spannable.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+
+    fun toggleBold(editText: EditText): Boolean {
+        isBold = !isBold
+        if (editText.hasSelection()) {
+            applySpan(editText, StyleSpan(BOLD))
+        }
+        return isBold
+    }
+
+    fun toggleItalic(editText: EditText): Boolean {
+        isItalic = !isItalic
+        if (editText.hasSelection()) {
+            applySpan(editText, StyleSpan(ITALIC))
+        }
+        return isItalic
+    }
+
+    fun toggleUnderline(editText: EditText): Boolean {
+        isUnderline = !isUnderline
+        if (editText.hasSelection()) {
+            applySpan(editText, UnderlineSpan())
+        }
+        return isUnderline
+    }
+
+    fun toggleColor(editText: EditText, color: Int): Boolean {
+        activeColor = if (color != activeColor) color else activeColor
+        if (editText.hasSelection() && activeColor != null) {
+            applySpan(editText, ForegroundColorSpan(color))
+        }
+        return activeColor != null
+    }
+
+    fun reset() {
+        isBold = false
+        isItalic = false
+        isUnderline = false
+        activeColor = null
+    }
+
+    fun attachTo(editText: EditText) {
+        editText.addTextChangedListener { text ->
+            if (text == null || text.isEmpty()) return@addTextChangedListener
+            val start = text.length - 1
+            val end = text.length
+
+            if (isBold) text.setSpan(
+                StyleSpan(BOLD),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            if (isItalic) text.setSpan(
+                StyleSpan(ITALIC),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            if (isUnderline) text.setSpan(
+                UnderlineSpan(),
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            activeColor?.let {
+                text.setSpan(ForegroundColorSpan(it), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+
+    }
+}
