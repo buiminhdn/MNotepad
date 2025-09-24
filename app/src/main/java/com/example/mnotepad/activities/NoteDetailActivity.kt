@@ -50,10 +50,19 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.graphics.drawable.toDrawable
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mnotepad.adapters.CategoryAdapter
+import com.example.mnotepad.adapters.CheckListAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.colorOptions
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
+import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.entities.enums.NoteType
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
+import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
+import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
+import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
+import com.example.mnotepad.helpers.TextConvertHelper.convertContentToCheckList
 
 
 class NoteDetailActivity : AppCompatActivity() {
@@ -62,12 +71,14 @@ class NoteDetailActivity : AppCompatActivity() {
     private lateinit var optionsMenu: Menu
     private val noteViewModel: NoteViewModel by viewModels()
     private val categoryViewModel: CategoryViewModel by viewModels()
+    private lateinit var checkListAdapter: CheckListAdapter
     private var listCategories: List<Category> = emptyList()
     private var curNoteItem: Note? = null
     private lateinit var importTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createPdfLauncher: ActivityResultLauncher<Intent>
-
+    var noteType = NoteType.TEXT
+    var touchHelper: ItemTouchHelper? = null
     private val history = HistoryManager()
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
@@ -91,14 +102,26 @@ class NoteDetailActivity : AppCompatActivity() {
         }
 
         initToolbar()
+        setupRecyclerView()
         initObservers()
         getNoteDataIfUpdate()
         initImportLauncher()
         initCreateTxtLauncher()
         initCreatePdfLauncher()
         handleButtonDeleteSearch()
+        setupDragAndDrop()
 
         handler.post(saveRunnable)
+    }
+
+    private fun setupRecyclerView() {
+        checkListAdapter = CheckListAdapter(mutableListOf()) { viewHolder ->
+            touchHelper?.startDrag(viewHolder)
+        }
+        binding.rvCheckListItems.apply {
+            layoutManager = LinearLayoutManager(this@NoteDetailActivity)
+            adapter = checkListAdapter
+        }
     }
 
     private fun handleButtonDeleteSearch() {
@@ -156,6 +179,13 @@ class NoteDetailActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { finish() }
     }
 
+    fun setupDragAndDrop() {
+        touchHelper = ItemTouchHelper(
+            ItemMoveCallback(checkListAdapter)
+        )
+        touchHelper?.attachToRecyclerView(binding.rvCheckListItems)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_detail_menu, menu)
         if (menu != null) {
@@ -169,18 +199,10 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun updateConvertMenuTitle() {
         val convertItem = optionsMenu.findItem(R.id.navChangeType)
-        val noteType = curNoteItem?.type ?: NoteType.TEXT
+        noteType = curNoteItem?.type ?: NoteType.TEXT
 
-        when (noteType) {
-            NoteType.TEXT -> {
-                convertItem.isVisible = true
-                convertItem.title = "Convert to Checklist"
-            }
-            NoteType.CHECKLIST -> {
-                convertItem.isVisible = true
-                convertItem.title = "Convert to Text"
-            }
-        }
+        val title = if (noteType == NoteType.TEXT) "Convert to Checklist" else "Convert to Text"
+        convertItem.title = title
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -250,7 +272,30 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handleConvertNoteType() {
-        TODO("Not yet implemented")
+        val convertItem = optionsMenu.findItem(R.id.navChangeType)
+
+        when (noteType) {
+            NoteType.TEXT -> {
+                noteType = NoteType.CHECKLIST
+                binding.edtContent.visibility = View.GONE
+                binding.checklistLayout.visibility = View.VISIBLE
+                convertItem.title = "Convert to Text"
+
+                val items = convertContentToCheckList(binding.edtContent.text.toString())
+
+                checkListAdapter.setCheckListItems(items)
+            }
+
+            NoteType.CHECKLIST -> {
+                noteType = NoteType.TEXT
+                binding.checklistLayout.visibility = View.GONE
+                binding.edtContent.visibility = View.VISIBLE
+                convertItem.title = "Convert to Checklist"
+
+                val text = convertCheckListToContent(checkListAdapter.getCheckListItems())
+                binding.edtContent.setText(text)
+            }
+        }
     }
 
     private fun showColorPickerDialog() {
@@ -261,7 +306,8 @@ class NoteDetailActivity : AppCompatActivity() {
                 showToast("Selected: $selectedColor", applicationContext)
                 curNoteItem?.let {
                     noteViewModel.upsertNote(it.copy(color = selectedColor))
-                    binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(selectedColor)
+                    binding.noteDetailLayout.backgroundTintList =
+                        ColorStateList.valueOf(selectedColor)
                 }
             },
             onReset = {
@@ -304,7 +350,14 @@ class NoteDetailActivity : AppCompatActivity() {
             curNoteItem = intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)
             curNoteItem?.let {
                 binding.edtTitle.setText(it.title)
-                binding.edtContent.setText(it.content)
+                if (it.type == NoteType.TEXT && it.content.isNotEmpty()) {
+                    binding.edtContent.setText(it.content)
+                } else {
+                    checkListAdapter.setCheckListItems(convertCheckListContentToText(it.content))
+                    binding.edtContent.visibility = View.GONE
+                    binding.checklistLayout.visibility = View.VISIBLE
+                }
+
                 if (it.color != null) {
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(it.color)
                 } else {
@@ -364,7 +417,13 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun upsertNote() {
         val title = binding.edtTitle.text.toString()
-        val content = binding.edtContent.text.toString()
+        var content = ""
+
+        content = if (noteType == NoteType.TEXT) {
+            binding.edtContent.text.toString()
+        } else {
+            convertCheckListToContentForSave(checkListAdapter.getCheckListItems())
+        }
 
         if (title.isEmpty() && content.isEmpty()) {
             showToast("Type Something", this)
@@ -374,8 +433,9 @@ class NoteDetailActivity : AppCompatActivity() {
         val updatedNote = curNoteItem?.copy(
             title = title,
             content = content,
-            updatedAt = System.currentTimeMillis()
-        ) ?: Note(title = title, content = content)
+            updatedAt = System.currentTimeMillis(),
+            type = noteType
+        ) ?: Note(title = title, content = content,  type = noteType)
 
         noteViewModel.upsertNote(updatedNote)
         showToast("$title Saved", this)

@@ -24,8 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:inputType="text"
-        android:hint="Nhập nội dung..." />
+        android:gravity="top"
+        android:hint="@string/enter_content"
+        android:inputType="textCapSentences|textMultiLine" />
 
     <ImageView
         android:id="@+id/btnDelete"
