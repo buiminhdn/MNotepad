@@ -1,7 +1,5 @@
 package com.example.mnotepad.activities
 
-import android.content.DialogInterface
-import android.content.DialogInterface.OnShowListener
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -11,16 +9,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.mnotepad.R
+import com.example.mnotepad.assets.OptionsData.Companion.unlockTimes
 import com.example.mnotepad.database.PasswordStorage.getPassword
 import com.example.mnotepad.database.PasswordStorage.getRecoveryEmail
+import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.database.PasswordStorage.isSetPassword
 import com.example.mnotepad.database.PasswordStorage.removePassword
 import com.example.mnotepad.database.PasswordStorage.setPassword
 import com.example.mnotepad.database.PasswordStorage.setRecoveryEmail
+import com.example.mnotepad.database.PasswordStorage.setUnlockTime
 import com.example.mnotepad.databinding.ActivityPasswordBinding
 import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.showToast
+import com.example.mnotepad.workers.PasswordWorker
+import java.util.concurrent.TimeUnit
 
 
 class PasswordActivity : AppCompatActivity() {
@@ -55,10 +61,44 @@ class PasswordActivity : AppCompatActivity() {
     private fun handleBtnClicks() {
         binding.btnSetPassword.setOnClickListener { handleSetPassword() }
 
-        if (isSetPassword(this))
+        if (isSetPassword(this)) {
             binding.btnRemovePassword.setOnClickListener { handleRemovePassword() }
-        else
+            binding.btnUnlockTime.setOnClickListener { handleUnlockTime() }
+        } else {
             binding.btnRemovePassword.isEnabled = false
+            binding.btnUnlockTime.isEnabled = false
+        }
+    }
+
+    private fun handleUnlockTime() {
+            val names = unlockTimes.map { it.second }.toTypedArray()
+            val periods = unlockTimes.map { it.first }.toTypedArray()
+            val current = getUnlockTime(this)
+            val checkedIndex = periods.indexOf(current)
+
+            AlertDialog.Builder(this)
+                .setTitle("Unlock time")
+                .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
+                    val selected = periods[which]
+                    setUnlockTime(this, selected)
+                    reSchedulePeriodicSyncWork(selected)
+                    dialog.dismiss()
+                    showToast("Set period successfully", this)
+                }
+                .setNegativeButton("Huỷ", null)
+                .show()
+    }
+
+    private fun reSchedulePeriodicSyncWork(period: Int) {
+        val periodicRequest = PeriodicWorkRequestBuilder<PasswordWorker>(
+            period.toLong(), TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "PeriodicSyncWork",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            periodicRequest
+        )
     }
 
     private fun handleRemovePassword() {
@@ -163,4 +203,5 @@ class PasswordActivity : AppCompatActivity() {
         }
     }
 }
+
 

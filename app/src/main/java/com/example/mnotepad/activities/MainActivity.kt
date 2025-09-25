@@ -1,6 +1,5 @@
 package com.example.mnotepad.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -11,33 +10,36 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.get
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
-import com.example.mnotepad.database.PasswordStorage.isSetPassword
+import com.example.mnotepad.database.PasswordStorage.getIsLocked
+import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.databinding.ActivityMainBinding
-import com.example.mnotepad.entities.enums.AppTheme
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
-import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
+import com.example.mnotepad.workers.PasswordWorker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeManager.applyTheme(this)
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -66,9 +68,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        if (isSetPassword(this))
+        if (!getIsLocked(this)) {
+            finish();
             startActivity(Intent(this, LockActivity::class.java))
-
+        }
 
         setupToolbarAndDrawer()
         setupRecyclerView()
@@ -76,13 +79,27 @@ class MainActivity : AppCompatActivity() {
         initSelectFolderLauncher()
         initImportMultipleTxtLauncher()
         handleClickAdd()
+        schedulePeriodicSyncWork()
+    }
+
+    private fun schedulePeriodicSyncWork() {
+        val period = getUnlockTime(this) ?: 10
+        val periodicRequest = PeriodicWorkRequestBuilder<PasswordWorker>(
+            1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "PeriodicSyncWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicRequest
+        )
     }
 
     private fun initImportMultipleTxtLauncher() {
         importMultipleTxtLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val data = result.data
                 val notes = FileSAFHelper.importMultipleTxt(this, data)
 

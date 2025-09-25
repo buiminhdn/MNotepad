@@ -7,6 +7,36 @@ import com.example.mnotepad.helpers.PREFS_NAME
 object PasswordStorage {
     private const val KEY_PASSWORD = "app_password"
     private const val KEY_RECOVERY_EMAIL = "app_email"
+    private const val KEY_UNLOCK_TIME = "app_unlock"
+    private const val KEY_IS_LOCKED = "app_isLocked"
+
+    fun getIsLocked(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isLocked = prefs.getBoolean(KEY_IS_LOCKED, false)
+        return isLocked;
+    }
+
+    fun setIsLocked(context: Context, isLocked: Boolean) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit {
+            putBoolean(KEY_IS_LOCKED, isLocked)
+            apply()
+        }
+    }
+
+    fun getUnlockTime(context: Context): Int? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val period = prefs.getInt(KEY_UNLOCK_TIME, 10)
+        return period;
+    }
+
+    fun setUnlockTime(context: Context, period: Int) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit {
+            putInt(KEY_UNLOCK_TIME, period)
+            apply()
+        }
+    }
 
     fun getPassword(context: Context): String? {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

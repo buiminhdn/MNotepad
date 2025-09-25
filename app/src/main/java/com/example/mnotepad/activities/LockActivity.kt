@@ -2,25 +2,27 @@ package com.example.mnotepad.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.mnotepad.database.PasswordStorage.getPassword
+import com.example.mnotepad.database.PasswordStorage.getUnlockTime
+import com.example.mnotepad.database.PasswordStorage.setIsLocked
 import com.example.mnotepad.databinding.ActivityLockBinding
+import com.example.mnotepad.workers.PasswordWorker
+import java.util.Timer
+import java.util.TimerTask
+import java.util.concurrent.TimeUnit
+
 
 class LockActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLockBinding
-    private val handler = Handler(Looper.getMainLooper())
-    private val saveRunnable = object : Runnable {
-        override fun run() {
-            handleTextChange()
-            handler.postDelayed(this, 2000)
-        }
-    }
+    private var timer: Timer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,16 +38,23 @@ class LockActivity : AppCompatActivity() {
         }
 
         setUpToolbar()
+        handleTextChange()
 
-        handler.post(saveRunnable)
     }
 
     private fun handleTextChange() {
         val password = getPassword(this)
         binding.edtPassword.addTextChangedListener {  text ->
-            if (text == null || text.isEmpty()) return@addTextChangedListener
-            if (text.equals(password))
-                startActivity(Intent(this, MainActivity::class.java))
+            timer = Timer()
+            timer?.schedule(object : TimerTask() {
+                override fun run() {
+                    if (text == null || text.isEmpty()) return
+                    if (text.toString() == password) {
+                        setIsLocked(applicationContext, true)
+                        startActivity(Intent(this@LockActivity, MainActivity::class.java))
+                    }
+                }
+            }, 600)
         }
     }
 
