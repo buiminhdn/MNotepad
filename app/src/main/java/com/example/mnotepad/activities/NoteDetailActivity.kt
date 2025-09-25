@@ -485,13 +485,13 @@ class NoteDetailActivity : AppCompatActivity() {
         noteViewModel.upsertNote(updatedNote)
         showToast("$title Saved", this)
 
-        val intent =
-            Intent(applicationContext, NoteWidget::class.java)
-        intent.putExtra("Title", title);
-        intent.putExtra("Content", content);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-        applicationContext.sendBroadcast(intent);
-
+        updatedNote.id.let { noteId ->
+            val intent = Intent(applicationContext, NoteWidget::class.java).apply {
+                action = NoteWidget.ACTION_NOTE_CHANGED
+                putExtra(NoteWidget.EXTRA_NOTE_ID, noteId)
+            }
+            applicationContext.sendBroadcast(intent)
+        }
 
         finish()
     }

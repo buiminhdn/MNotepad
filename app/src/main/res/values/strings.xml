@@ -54,4 +54,5 @@
     <string name="password_settings">Password Settings</string>
     <string name="select_all_notes">Select all notes</string>
     <string name="mnotepad">MNotepad</string>
+    <string name="select_note_widget">Select a note or create a new one (with the \'+\' button):</string>
 </resources>

@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MNotepad.Base">
         <activity
+            android:name=".activities.NoteWidgetActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.LockActivity"
             android:exported="false" />
         <activity
@@ -28,9 +31,11 @@
 
         <receiver
             android:name=".widgets.NoteWidget"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.mnotepad.ACTION_SET_NOTE" />
+                <action android:name="com.example.mnotepad.ACTION_NOTE_CHANGED" />
             </intent-filter>
 
             <meta-data

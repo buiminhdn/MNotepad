@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        if (!getIsLocked(this)) {
+        if (getIsLocked(this)) {
             finish();
             startActivity(Intent(this, LockActivity::class.java))
         }
