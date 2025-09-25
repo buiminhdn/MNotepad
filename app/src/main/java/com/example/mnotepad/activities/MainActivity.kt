@@ -42,6 +42,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import java.util.concurrent.TimeUnit
 import androidx.core.view.get
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 
 
 class MainActivity : AppCompatActivity() {
@@ -97,14 +99,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun schedulePeriodicSyncWork() {
         val period = getUnlockTime(this) ?: 10
-        val periodicRequest = PeriodicWorkRequestBuilder<PasswordWorker>(
-            1, TimeUnit.MINUTES)
+        val request = OneTimeWorkRequestBuilder<PasswordWorker>()
+            .setInitialDelay(period.toLong(), TimeUnit.MINUTES)
             .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "PeriodicSyncWork",
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicRequest
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            "PasswordWorker",
+            ExistingWorkPolicy.REPLACE,
+            request
         )
     }
 

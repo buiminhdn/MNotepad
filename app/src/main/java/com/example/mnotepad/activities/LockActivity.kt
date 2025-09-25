@@ -7,17 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.mnotepad.database.PasswordStorage.getPassword
-import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.database.PasswordStorage.setIsLocked
 import com.example.mnotepad.databinding.ActivityLockBinding
-import com.example.mnotepad.workers.PasswordWorker
 import java.util.Timer
 import java.util.TimerTask
-import java.util.concurrent.TimeUnit
 
 
 class LockActivity : AppCompatActivity() {

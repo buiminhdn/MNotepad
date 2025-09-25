@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.mnotepad.R
@@ -90,14 +92,14 @@ class PasswordActivity : AppCompatActivity() {
     }
 
     private fun reSchedulePeriodicSyncWork(period: Int) {
-        val periodicRequest = PeriodicWorkRequestBuilder<PasswordWorker>(
-            period.toLong(), TimeUnit.MINUTES)
+        val request = OneTimeWorkRequestBuilder<PasswordWorker>()
+            .setInitialDelay(period.toLong(), TimeUnit.MINUTES)
             .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "PeriodicSyncWork",
-            ExistingPeriodicWorkPolicy.REPLACE,
-            periodicRequest
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "PasswordWorker",
+            ExistingWorkPolicy.REPLACE,
+            request
         )
     }
 
