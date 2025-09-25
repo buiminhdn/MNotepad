@@ -342,6 +342,10 @@ class MainActivity : AppCompatActivity() {
         val navView = findViewById<View?>(R.id.navView) as NavigationView
         val menu = navView.menu
 
+        menu.clear()
+
+        navView.inflateMenu(R.menu.drawer_menu)
+
         val submenu: Menu = menu.addSubMenu("Categories")
 
         for (category in listCategories) {
