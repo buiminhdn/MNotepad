@@ -1,5 +1,6 @@
 package com.example.mnotepad.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -16,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.mnotepad.R
@@ -33,6 +33,7 @@ import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
+import com.example.mnotepad.helpers.ThemeManager.toggleThemeChange
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
@@ -40,6 +41,7 @@ import com.example.mnotepad.workers.PasswordWorker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import java.util.concurrent.TimeUnit
+import androidx.core.view.get
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,9 +56,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
+    private lateinit var resultLauncher : ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
+        toggleThemeChange(false)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -78,8 +82,17 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         initSelectFolderLauncher()
         initImportMultipleTxtLauncher()
+        initSettingLauncher()
         handleClickAdd()
         schedulePeriodicSyncWork()
+    }
+
+    private fun initSettingLauncher() {
+        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                recreate()
+            }
+        }
     }
 
     private fun schedulePeriodicSyncWork() {
@@ -222,7 +235,10 @@ class MainActivity : AppCompatActivity() {
 
                     R.id.navTrash -> startActivity(Intent(this, TrashActivity::class.java))
 
-                    R.id.navSettings -> startActivity(Intent(this, SettingsActivity::class.java))
+                    R.id.navSettings -> {
+                        val intent = Intent(this, SettingsActivity::class.java)
+                        resultLauncher.launch(intent)
+                    }
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -324,15 +340,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun addMenuItemInNavMenuDrawer() {
         val navView = findViewById<View?>(R.id.navView) as NavigationView
-
         val menu = navView.menu
+
         val submenu: Menu = menu.addSubMenu("Categories")
 
         for (category in listCategories) {
-            submenu.add(2, category.id, category.orderIndex, category.name)
+            submenu.add(5, category.id, category.orderIndex, category.name)
         }
-
-        navView.invalidate()
     }
 
     private fun handleImportTxtFiles() {
@@ -438,4 +452,5 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 }

@@ -1,5 +1,6 @@
 package com.example.mnotepad.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,8 @@ import com.example.mnotepad.R
 import com.example.mnotepad.databinding.ActivitySettingsBinding
 import com.example.mnotepad.entities.enums.AppTheme
 import com.example.mnotepad.helpers.ThemeManager
+import com.example.mnotepad.helpers.ThemeManager.isThemeChange
+import com.example.mnotepad.helpers.ThemeManager.toggleThemeChange
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -54,7 +57,8 @@ class SettingsActivity : AppCompatActivity() {
             .setTitle("Chọn giao diện")
             .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
                 val selected = themes[which]
-                ThemeManager.setTheme(this, selected) // sẽ lưu và recreate()
+                ThemeManager.setTheme(this, selected)
+                toggleThemeChange(true)
                 dialog.dismiss()
             }
             .setNegativeButton("Huỷ", null)
@@ -64,6 +68,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun setUpToolbar() {
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setNavigationOnClickListener {
+            if (isThemeChange) setResult(RESULT_OK)
             finish()
         }
     }

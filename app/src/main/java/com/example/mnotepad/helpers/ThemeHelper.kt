@@ -8,11 +8,16 @@ import com.example.mnotepad.entities.enums.AppTheme
 
 object ThemeManager {
     private const val KEY_THEME = "app_theme"
+     var isThemeChange = false
 
     fun getSavedTheme(context: Context): AppTheme {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val id = prefs.getInt(KEY_THEME, AppTheme.BROWN.id)
         return AppTheme.fromId(id)
+    }
+
+    fun toggleThemeChange(isChange: Boolean) {
+        isThemeChange = isChange
     }
 
     fun applyTheme(activity: Activity) {

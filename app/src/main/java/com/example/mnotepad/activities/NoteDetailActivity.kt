@@ -1,5 +1,6 @@
 package com.example.mnotepad.activities
 
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -54,6 +55,7 @@ import com.example.mnotepad.helpers.applyHistory
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
+import com.example.mnotepad.widgets.NoteWidget
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -482,6 +484,15 @@ class NoteDetailActivity : AppCompatActivity() {
 
         noteViewModel.upsertNote(updatedNote)
         showToast("$title Saved", this)
+
+        val intent =
+            Intent(applicationContext, NoteWidget::class.java)
+        intent.putExtra("Title", title);
+        intent.putExtra("Content", content);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        applicationContext.sendBroadcast(intent);
+
+
         finish()
     }
 
