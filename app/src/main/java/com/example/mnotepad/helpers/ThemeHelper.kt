@@ -7,7 +7,6 @@ import androidx.core.content.edit
 import com.example.mnotepad.entities.enums.AppTheme
 
 object ThemeManager {
-    private const val PREFS_NAME = "app_prefs"
     private const val KEY_THEME = "app_theme"
 
     fun getSavedTheme(context: Context): AppTheme {

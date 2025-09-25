@@ -17,7 +17,8 @@ import com.example.mnotepad.helpers.DateTimeHelper
 class NoteAdapter(
     private var notes: List<Note>,
     private val onItemClick: (Note) -> Unit,
-    private val onSelectModeChange: (Boolean) -> Unit
+    private val onSelectModeChange: (Boolean) -> Unit,
+    private val notifySelectCount: (Int) -> Unit
 ) :
     RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
@@ -61,6 +62,7 @@ class NoteAdapter(
                 if (!multiSelect) {
                     toggleSelectMode(true)
                     toggleSelection(note, position)
+                    notifySelectCount(getSelectedNotesCount())
                 }
                 true
             }
@@ -68,6 +70,7 @@ class NoteAdapter(
             root.setOnClickListener {
                 if (multiSelect) {
                     toggleSelection(note, position)
+                    notifySelectCount(getSelectedNotesCount())
                 } else {
                     onItemClick.invoke(note)
                 }
@@ -104,6 +107,7 @@ class NoteAdapter(
 
 
     override fun getItemCount(): Int = notes.size
+    fun getSelectedNotesCount(): Int = selectedItems.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun setNotes(newNotes: List<Note>) {

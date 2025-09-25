@@ -11,3 +11,5 @@ const val SORT_TITLE_Z_A = "title: Z to A"
 const val SORT_CREATE_DATE_FROM_NEWEST = "creation date: from newest"
 const val SORT_CREATE_DATE_FROM_OLDEST = "creation date: from oldest"
 
+
+const val PREFS_NAME = "app_prefs"

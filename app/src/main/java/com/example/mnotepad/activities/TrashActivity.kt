@@ -74,10 +74,14 @@ class TrashActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            emptyList(), ::startToNoteDetail, ::updateMenuForMultiSelect
+            emptyList(), ::startToNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
         )
         binding.rvDeletedNotes.layoutManager = LinearLayoutManager(this)
         binding.rvDeletedNotes.adapter = noteAdapter
+    }
+
+    private fun updateSelectCount(size: Int) {
+//        binding.toolbarTitle.text = size.toString()
     }
 
     private fun observeViewModel() {

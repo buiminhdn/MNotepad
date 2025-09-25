@@ -28,6 +28,10 @@
         android:contentDescription="@string/button_to_sort_note"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/navSelectAllNotes"
+        android:title="@string/select_all_notes"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/navImportTxtFiles"
@@ -42,15 +46,12 @@
     <item
         android:id="@+id/navCategorizeSelected"
         android:title="@string/categorize"
+        android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navColorizeSelected"
         android:title="@string/colorize"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/navTheme"
-        android:title="Theme"
+        android:visible="false"
         app:showAsAction="never" />
 </menu>

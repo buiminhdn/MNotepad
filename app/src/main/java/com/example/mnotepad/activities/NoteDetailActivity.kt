@@ -114,7 +114,6 @@ class NoteDetailActivity : AppCompatActivity() {
         initImportLauncher()
         initCreateTxtLauncher()
         initCreatePdfLauncher()
-        handleButtonDeleteSearch()
         handleAddNewItemToCheckList()
         setupDragAndDrop()
         handleTextEditor()
@@ -170,10 +169,6 @@ class NoteDetailActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@NoteDetailActivity)
             adapter = checkListAdapter
         }
-    }
-
-    private fun handleButtonDeleteSearch() {
-
     }
 
     private fun initImportLauncher() {
@@ -470,6 +465,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
                     noteViewModel.upsertNote(it.copy(categoryIds = checkedId))
                 }
+                finish()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -584,9 +580,8 @@ class NoteDetailActivity : AppCompatActivity() {
         optionsMenu.findItem(R.id.navUndo).isVisible = enable
         optionsMenu.findItem(R.id.navEdit).isVisible = !enable
 
-        binding.edtTitle.inputType = if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
-        binding.edtContent.inputType =
-            if (enable) InputType.TYPE_CLASS_TEXT else InputType.TYPE_NULL
+        binding.edtTitle.isEnabled = enable
+        binding.edtContent.isEnabled = enable
     }
 
     override fun onDestroy() {

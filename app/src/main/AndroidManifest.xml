@@ -16,6 +16,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MNotepad.Base">
+        <activity
+            android:name=".activities.LockActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".widgets.NoteWidget"

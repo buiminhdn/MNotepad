@@ -2,8 +2,6 @@ package com.example.mnotepad.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -17,12 +15,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.get
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
+import com.example.mnotepad.database.PasswordStorage.isSetPassword
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.enums.AppTheme
 import com.example.mnotepad.entities.models.Category
@@ -32,6 +32,7 @@ import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.ThemeManager
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
@@ -65,14 +66,16 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        if (isSetPassword(this))
+            startActivity(Intent(this, LockActivity::class.java))
+
+
         setupToolbarAndDrawer()
         setupRecyclerView()
         setupObservers()
         initSelectFolderLauncher()
         initImportMultipleTxtLauncher()
         handleClickAdd()
-
-
     }
 
     private fun initImportMultipleTxtLauncher() {
@@ -121,10 +124,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            emptyList(), ::openNoteDetail, ::updateMenuForMultiSelect
+            emptyList(), ::openNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
         )
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
         binding.rvNotes.adapter = noteAdapter
+    }
+
+    private fun updateSelectCount(size: Int) {
+        binding.toolbarTitle.text = size.toString()
     }
 
     private fun updateMenuForMultiSelect(isMultiSelect: Boolean) {
@@ -134,17 +141,24 @@ class MainActivity : AppCompatActivity() {
         val sortItem = menu.findItem(R.id.navSort)
         val selectAllItem = menu.findItem(R.id.navSelectAll)
         val deleteAllItem = menu.findItem(R.id.navDeleteAll)
+        val categorizeItem = menu.findItem(R.id.navCategorizeSelected)
+        val colorizeItem = menu.findItem(R.id.navColorizeSelected)
 
         if (isMultiSelect) {
             searchItem?.isVisible = false
             sortItem?.isVisible = false
             selectAllItem?.isVisible = true
             deleteAllItem?.isVisible = true
+            categorizeItem.isVisible = true
+            colorizeItem.isVisible = true
         } else {
+            binding.toolbarTitle.text = getString(R.string.project_title)
             searchItem?.isVisible = true
             sortItem?.isVisible = true
             selectAllItem?.isVisible = false
             deleteAllItem?.isVisible = false
+            categorizeItem.isVisible = false
+            colorizeItem.isVisible = false
         }
     }
 
@@ -190,6 +204,8 @@ class MainActivity : AppCompatActivity() {
                     )
 
                     R.id.navTrash -> startActivity(Intent(this, TrashActivity::class.java))
+
+                    R.id.navSettings -> startActivity(Intent(this, SettingsActivity::class.java))
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -228,6 +244,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     noteAdapter.selectAll()
                     item.title = getString(R.string.unselect_all)
+                    binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
                 }
                 true
             }
@@ -255,30 +272,20 @@ class MainActivity : AppCompatActivity() {
                 showColorPickerDialog(); true
             }
 
-            R.id.navTheme -> {
-                showThemePicker(); true
-
+            R.id.navSelectAllNotes -> {
+                if (noteAdapter.isAllSelected()) {
+                    noteAdapter.clearSelection()
+                    item.title = getString(R.string.select_all_notes)
+                } else {
+                    noteAdapter.selectAll()
+                    item.title = getString(R.string.unselect_all)
+                    binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
+                }
+                true
             }
 
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun showThemePicker() {
-        val themes = AppTheme.entries.toTypedArray()
-        val names = themes.map { it.displayName }.toTypedArray()
-        val current = ThemeManager.getSavedTheme(this)
-        val checkedIndex = themes.indexOf(current)
-
-        AlertDialog.Builder(this)
-            .setTitle("Chọn giao diện")
-            .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
-                val selected = themes[which]
-                ThemeManager.setTheme(this, selected) // sẽ lưu và recreate()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Huỷ", null)
-            .show()
     }
 
     private fun showColorPickerDialog() {
@@ -356,6 +363,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSearchBar() {
+        binding.toolbarTitle.visibility = View.GONE
         val btnSearch = findViewById<View>(R.id.navSearch)
         val btnSort = findViewById<View>(R.id.navSort)
         val edtSearch = binding.edtSearch
@@ -378,6 +386,7 @@ class MainActivity : AppCompatActivity() {
             btnClear.visibility = View.GONE
             btnSearch.visibility = View.VISIBLE
             btnSort.visibility = View.VISIBLE
+            binding.toolbarTitle.visibility = View.VISIBLE
         }
     }
 
@@ -412,6 +421,4 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
-
 }

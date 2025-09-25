@@ -31,11 +31,11 @@
             android:title="@string/trash" />
     </group>
 
-<!--    <group>-->
-<!--        <item-->
-<!--            android:id="@+id/navSettings"-->
-<!--            android:icon="@drawable/ic_settings"-->
-<!--            android:title="@string/settings" />-->
+    <group>
+        <item
+            android:id="@+id/navSettings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
 
 <!--        <item-->
 <!--            android:id="@+id/navRate"-->
@@ -50,5 +50,5 @@
 <!--            android:id="@+id/navPrivacy"-->
 <!--            android:icon="@drawable/ic_privacy"-->
 <!--            android:title="@string/privacy_policy" />-->
-<!--    </group>-->
+    </group>
 </menu>

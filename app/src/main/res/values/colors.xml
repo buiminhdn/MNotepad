@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#917753</color>
     <color name="secondary">#FDFDD3</color>
+    <color name="red">#f70000</color>
 
     <!-- Main theme color -->
     <color name="colorBrown">#917754</color>
