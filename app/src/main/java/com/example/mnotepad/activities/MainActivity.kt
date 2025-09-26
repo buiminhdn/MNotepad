@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -160,8 +162,13 @@ class MainActivity : AppCompatActivity() {
         noteAdapter = NoteAdapter(
             emptyList(), ::openNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
         )
+
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
         binding.rvNotes.adapter = noteAdapter
+
+        val resId = R.anim.layout_animation_slide_up
+        val animation: LayoutAnimationController? = AnimationUtils.loadLayoutAnimation(this, resId)
+        binding.rvNotes.setLayoutAnimation(animation)
     }
 
     private fun updateSelectCount(size: Int) {
