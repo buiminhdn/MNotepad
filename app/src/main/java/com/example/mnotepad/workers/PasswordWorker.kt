@@ -11,7 +11,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.mnotepad.activities.LockActivity
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
-import com.example.mnotepad.database.PasswordStorage.setIsLocked
 import java.util.concurrent.TimeUnit
 
 class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(context,
@@ -20,7 +19,6 @@ class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(
 
     override fun doWork(): Result {
         Log.e("Worker", "Do work")
-        setIsLocked(applicationContext, true)
         val period = getUnlockTime(applicationContext)
 
         val request = OneTimeWorkRequestBuilder<PasswordWorker>()

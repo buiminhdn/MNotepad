@@ -3,23 +3,23 @@ package com.example.mnotepad.database
 import android.content.Context
 import androidx.core.content.edit
 import com.example.mnotepad.helpers.PREFS_NAME
+import java.time.Instant
 
 object PasswordStorage {
     private const val KEY_PASSWORD = "app_password"
     private const val KEY_RECOVERY_EMAIL = "app_email"
     private const val KEY_UNLOCK_TIME = "app_unlock"
-    private const val KEY_IS_LOCKED = "app_isLocked"
+    private const val KEY_LASTEST_TIME = "app_lastest_time"
 
-    fun getIsLocked(context: Context): Boolean {
+    fun getLastestTime(context: Context): Long {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val isLocked = prefs.getBoolean(KEY_IS_LOCKED, false)
-        return isLocked;
+        return prefs.getLong(KEY_LASTEST_TIME, 0)
     }
 
-    fun setIsLocked(context: Context, isLocked: Boolean) {
+    fun setLastestTime(context: Context, time: Long) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit {
-            putBoolean(KEY_IS_LOCKED, isLocked)
+            putLong(KEY_LASTEST_TIME, time)
             apply()
         }
     }

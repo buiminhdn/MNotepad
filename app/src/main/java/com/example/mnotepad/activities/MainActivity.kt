@@ -16,14 +16,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
-import com.example.mnotepad.database.PasswordStorage.getIsLocked
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
@@ -41,9 +40,6 @@ import com.example.mnotepad.workers.PasswordWorker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import java.util.concurrent.TimeUnit
-import androidx.core.view.get
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 
 
 class MainActivity : AppCompatActivity() {
@@ -74,10 +70,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        if (getIsLocked(this)) {
-            finish();
-            startActivity(Intent(this, LockActivity::class.java))
-        }
+//        if (getIsLocked(this) && getPassword(this) != "") {
+//            finish();
+//            startActivity(Intent(this, LockActivity::class.java))
+//        }
 
         setupToolbarAndDrawer()
         setupRecyclerView()
@@ -87,6 +83,12 @@ class MainActivity : AppCompatActivity() {
         initSettingLauncher()
         handleClickAdd()
         schedulePeriodicSyncWork()
+
+//        val serviceIntent: Intent = Intent(
+//            this,
+//            LogBackgroundService::class.java
+//        )
+//        startService(serviceIntent);
     }
 
     private fun initSettingLauncher() {

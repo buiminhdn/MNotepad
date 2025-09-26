@@ -49,7 +49,6 @@ class NoteWidgetActivity : AppCompatActivity() {
         widgetManager = AppWidgetManager.getInstance(this)
         views = RemoteViews(this.packageName, R.layout.note_widget)
 
-//        val startedFromWidget = intent?.getBooleanExtra("from_widget", false) ?: false
         val widgetId = intent?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
         if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {

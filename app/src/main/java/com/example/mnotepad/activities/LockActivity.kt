@@ -8,7 +8,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.mnotepad.database.PasswordStorage.getPassword
-import com.example.mnotepad.database.PasswordStorage.setIsLocked
 import com.example.mnotepad.databinding.ActivityLockBinding
 import java.util.Timer
 import java.util.TimerTask
@@ -44,7 +43,7 @@ class LockActivity : AppCompatActivity() {
                 override fun run() {
                     if (text == null || text.isEmpty()) return
                     if (text.toString() == password) {
-                        setIsLocked(applicationContext, false)
+//                        setIsLocked(applicationContext, false)
                         startActivity(Intent(this@LockActivity, MainActivity::class.java))
                     }
                 }

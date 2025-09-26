@@ -135,6 +135,7 @@ class PasswordActivity : AppCompatActivity() {
                 dialog.dismiss()
                 showToast("Remove password successfully", this)
                 binding.btnRemovePassword.isEnabled = false
+                binding.btnUnlockTime.isEnabled = false
             }
         }
 
@@ -192,6 +193,7 @@ class PasswordActivity : AppCompatActivity() {
                 dialog.dismiss()
                 showToast("Update password successfully", this)
                 binding.btnRemovePassword.isEnabled = true
+                binding.btnUnlockTime.isEnabled = true
             }
         }
 
