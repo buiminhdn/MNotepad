@@ -7,32 +7,26 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.text.Html
 import android.widget.RemoteViews
-import android.widget.Toast
 import com.example.mnotepad.R
-import com.example.mnotepad.activities.MainActivity
-import com.example.mnotepad.activities.NoteWidgetActivity
 import androidx.core.content.edit
 import com.example.mnotepad.activities.NoteDetailActivity
 import com.example.mnotepad.database.AppDatabase
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.PREFS_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-/**
- * Implementation of App Widget functionality.
- */
 class NoteWidget : AppWidgetProvider() {
 
     companion object {
-        const val ACTION_SET_NOTE = "com.example.mnotepad.ACTION_SET_NOTE"
-        const val ACTION_NOTE_CHANGED = "com.example.mnotepad.ACTION_NOTE_CHANGED"
+        const val ACTION_NOTE_CHANGED = "ACTION_NOTE_CHANGED"
         const val EXTRA_NOTE_ID = "extra_note_id"
-        const val PREFS_NAME = "com.example.mnotepad.NoteWidgetPrefs"
 
         fun updateAppWidget(
             context: Context,
@@ -54,17 +48,9 @@ class NoteWidget : AppWidgetProvider() {
                     R.id.tvNoteContent,
                     Html.fromHtml(note?.content ?: "", Html.FROM_HTML_MODE_LEGACY).toString()
                 )
-
-                val intent = if (noteId != -1) {
-                    Intent(context, NoteDetailActivity::class.java).apply {
-                        putExtra(NOTE_DETAIL_OBJECT, note)
-                        putExtra(IS_EDITED_ACTION, true)
-                    }
-                } else {
-                    Intent(context, NoteWidgetActivity::class.java).apply {
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                        putExtra("from_widget", true)
-                    }
+                val intent = Intent(context, NoteDetailActivity::class.java).apply {
+                    putExtra(NOTE_DETAIL_OBJECT, note)
+                    putExtra(IS_EDITED_ACTION, true)
                 }
 
                 val pendingIntent = PendingIntent.getActivity(
@@ -94,42 +80,24 @@ class NoteWidget : AppWidgetProvider() {
         if (context == null || intent == null) return
 
         when (intent.action) {
-            ACTION_SET_NOTE -> {
-                val appWidgetId = intent.getIntExtra(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID
-                )
-                val noteId = intent.getIntExtra(EXTRA_NOTE_ID, -1)
-
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && noteId != -1) {
-                    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                    prefs.edit {
-                        putInt("widget_$appWidgetId", noteId)
-                    }
-
-                    val manager = AppWidgetManager.getInstance(context)
-                    updateAppWidget(context, manager, appWidgetId)
-                }
-            }
-
             ACTION_NOTE_CHANGED -> {
                 val noteId = intent.getIntExtra(EXTRA_NOTE_ID, -1)
                 if (noteId != -1) {
-                    val manager = AppWidgetManager.getInstance(context)
-                    val cn = ComponentName(context, NoteWidget::class.java)
-                    val allWidgetIds = manager.getAppWidgetIds(cn)
+                    val widgetManager = AppWidgetManager.getInstance(context)
+                    val component = ComponentName(context, NoteWidget::class.java)
+                    val allWidgetIds = widgetManager.getAppWidgetIds(component)
                     val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
                     allWidgetIds.forEach { wid ->
                         val saved = prefs.getInt("widget_$wid", -1)
                         if (saved == noteId) {
-                            updateAppWidget(context, manager, wid)
+                            updateAppWidget(context, widgetManager, wid)
                         }
                     }
                 }
             }
 
-            AppWidgetManager.ACTION_APPWIDGET_UPDATE -> {}
+            ACTION_APPWIDGET_UPDATE -> {}
         }
     }
 

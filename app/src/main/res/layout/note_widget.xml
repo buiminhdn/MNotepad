@@ -3,25 +3,36 @@
     android:layout_height="match_parent"
     android:background="@color/secondary"
     android:orientation="vertical"
-    android:id="@+id/layoutWidget"
-    android:padding="8dp">
+    android:id="@+id/layoutWidget">
 
-    <TextView
-        android:id="@+id/tvNoteTitle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Note Title"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:maxLines="1"
-        android:ellipsize="end"/>
+        android:layout_height="match_parent"
+        android:background="@color/secondary"
+        android:orientation="vertical"
+        android:id="@+id/background"
+        android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tvNoteContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Note content preview..."
-        android:textSize="14sp"
-        android:maxLines="5"
-        android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tvNoteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Note Title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNoteContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:text="Note content preview..."
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
 </LinearLayout>

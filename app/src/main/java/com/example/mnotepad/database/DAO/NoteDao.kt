@@ -17,6 +17,8 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE isDeleted = 1 ORDER BY updatedAt DESC")
     fun getDeletedNotes(): LiveData<List<Note>>
 
+    @Query("SELECT * FROM notes WHERE id = :id LIMIT 1")
+    fun getNoteByIdSync(id: Int): Note?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: Note)
@@ -41,7 +43,4 @@ interface NoteDao {
 
     @Query("UPDATE notes SET isDeleted = 0 WHERE isDeleted = 1")
     suspend fun undeleteAll()
-
-    @Query("SELECT * FROM notes WHERE id = :id LIMIT 1")
-    fun getNoteByIdSync(id: Int): Note?
 }

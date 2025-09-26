@@ -44,7 +44,7 @@ class LockActivity : AppCompatActivity() {
                 override fun run() {
                     if (text == null || text.isEmpty()) return
                     if (text.toString() == password) {
-                        setIsLocked(applicationContext, true)
+                        setIsLocked(applicationContext, false)
                         startActivity(Intent(this@LockActivity, MainActivity::class.java))
                     }
                 }

@@ -349,10 +349,14 @@ class NoteDetailActivity : AppCompatActivity() {
                     noteViewModel.upsertNote(it.copy(color = selectedColor))
                     binding.noteDetailLayout.backgroundTintList =
                         ColorStateList.valueOf(selectedColor)
+                    curNoteItem = it.copy(color = selectedColor)
                 }
             },
             onReset = {
-                curNoteItem?.let { noteViewModel.upsertNote(it.copy(color = null)) }
+                curNoteItem?.let {
+                    noteViewModel.upsertNote(it.copy(color = null))
+                    curNoteItem = it.copy(color = null)
+                }
                 binding.noteDetailLayout.backgroundTintList =
                     ContextCompat.getColorStateList(this, R.color.secondary)
             }

@@ -19,7 +19,8 @@ class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(
 ) {
 
     override fun doWork(): Result {
-        setIsLocked(applicationContext, false)
+        Log.e("Worker", "Do work")
+        setIsLocked(applicationContext, true)
         val period = getUnlockTime(applicationContext)
 
         val request = OneTimeWorkRequestBuilder<PasswordWorker>()

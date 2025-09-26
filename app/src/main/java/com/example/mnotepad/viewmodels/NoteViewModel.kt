@@ -42,6 +42,10 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         noteDao.softDelete(id)
     }
 
+    fun getNoteById(id: Int) : Note? {
+        return noteDao.getNoteByIdSync(id)
+    }
+
     fun upsertNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         if (note.id == 0) {
             noteDao.insert(note)
