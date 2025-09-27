@@ -51,7 +51,7 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        categoryAdapter = CategoryAdapter(emptyList(), object : OnItemCategoryClickListener {
+        categoryAdapter = CategoryAdapter(object : OnItemCategoryClickListener {
             override fun onItemUpdate(category: Category) {
                 categoryViewModel.updateCategory(category)
                 toast("Updated: ${category.name}")
@@ -75,11 +75,11 @@ class CategoryActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@CategoryActivity)
             adapter = categoryAdapter
         }
-
     }
 
+
     private fun updateOrderIndexes() {
-        val updatedList = categoryAdapter.getCategories()
+        val updatedList = categoryAdapter.currentList
             .mapIndexed { index, category ->
                 category.copy(orderIndex = index + 1)
             }
@@ -88,6 +88,7 @@ class CategoryActivity : AppCompatActivity() {
 
         showToast("Order updated", applicationContext)
     }
+
 
     fun setupDragAndDrop() {
         touchHelper = ItemTouchHelper(
@@ -98,9 +99,10 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         categoryViewModel.categories.observe(this) { categories ->
-            categoryAdapter.setCategories(categories)
+            categoryAdapter.submitList(categories)
         }
     }
+
 
     private fun handleClickAdd() {
         binding.btnAdd.setOnClickListener {

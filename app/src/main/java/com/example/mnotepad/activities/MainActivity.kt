@@ -72,11 +72,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        if (getIsLocked(this) && getPassword(this) != "") {
-//            finish();
-//            startActivity(Intent(this, LockActivity::class.java))
-//        }
-
         setupToolbarAndDrawer()
         setupRecyclerView()
         setupObservers()
@@ -85,17 +80,11 @@ class MainActivity : AppCompatActivity() {
         initSettingLauncher()
         handleClickAdd()
         schedulePeriodicSyncWork()
-
-//        val serviceIntent: Intent = Intent(
-//            this,
-//            LogBackgroundService::class.java
-//        )
-//        startService(serviceIntent);
     }
 
     private fun initSettingLauncher() {
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 recreate()
             }
         }
@@ -228,13 +217,17 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         binding.navView.setNavigationItemSelectedListener { item ->
-            if (item.groupId == 2) {
+            if (item.groupId == 5) {
                 showToast("ID ${item.itemId}", this)
                 noteViewModel.filterByCategory(item.itemId)
             } else {
                 when (item.itemId) {
                     R.id.navNotes -> {
                         noteViewModel.filterByCategory(0)
+                    }
+
+                    R.id.navUncategorized -> {
+                        noteViewModel.filterByCategory(-1)
                     }
 
                     R.id.navEditCategories -> startActivity(

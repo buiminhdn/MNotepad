@@ -70,9 +70,11 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun filterByCategory(categoryId: Int) {
-        _filteredNotes.value =
-            if (categoryId <= 0) currentNotes
-            else currentNotes.filter { it.categoryIds?.contains(categoryId) ?: false }
+        _filteredNotes.value = when {
+            categoryId == 0 -> currentNotes // tất cả
+            categoryId == -1 -> currentNotes.filter { it.categoryIds.isNullOrEmpty() } // uncategorized
+            else -> currentNotes.filter { it.categoryIds?.contains(categoryId) ?: false } // theo category
+        }
     }
 
     fun sortBy(type: String) {

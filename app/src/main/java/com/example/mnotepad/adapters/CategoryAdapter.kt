@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mnotepad.callbacks.CategoryDiffCallback
 import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.callbacks.OnItemCategoryClickListener
 import com.example.mnotepad.databinding.CategoryItemBinding
@@ -12,14 +14,13 @@ import com.example.mnotepad.entities.models.Category
 import java.util.Collections
 
 class CategoryAdapter(
-    private var categories: List<Category>,
     private val onCategoryClickListener: OnItemCategoryClickListener
-) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract {
+) : ListAdapter<Category, CategoryAdapter.ViewHolder>(CategoryDiffCallback), ItemMoveCallback.ItemTouchHelperContract {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
+    inner class ViewHolder(val binding: CategoryItemBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = CategoryItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -33,7 +34,7 @@ class CategoryAdapter(
         holder: ViewHolder,
         position: Int
     ) {
-        val category = categories[position]
+        val category = getItem(position)
         holder.binding.apply {
             edtName.setText(category.name)
 
@@ -59,15 +60,17 @@ class CategoryAdapter(
     }
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
+        val currentList = currentList.toMutableList()
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
-                Collections.swap(categories, i, i + 1)
+                Collections.swap(currentList, i, i + 1)
             }
         } else {
             for (i in fromPosition downTo toPosition + 1) {
-                Collections.swap(categories, i, i - 1)
+                Collections.swap(currentList, i, i - 1)
             }
         }
+        submitList(currentList) // Reupdate List
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -75,16 +78,13 @@ class CategoryAdapter(
         onCategoryClickListener.onUpdateOrder()
     }
 
-    override fun getItemCount(): Int = categories.size
-
-    inner class ViewHolder(val binding: CategoryItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setCategories(newCategories: List<Category>) {
-        categories = newCategories
-        notifyDataSetChanged()
-    }
-
-    fun getCategories(): List<Category> = categories
+//    override fun getItemCount(): Int = categories.size
+//
+//    @SuppressLint("NotifyDataSetChanged")
+//    fun setCategories(newCategories: List<Category>) {
+//        categories = newCategories
+//        notifyDataSetChanged()
+//    }
+//
+//    fun getCategories(): List<Category> = categories
 }
