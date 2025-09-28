@@ -7,26 +7,62 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
+import com.example.mnotepad.callbacks.NoteDiffCallback
 import com.example.mnotepad.databinding.NoteItemBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.DateTimeHelper
 
 
 class NoteAdapter(
-    private var notes: List<Note>,
     private val onItemClick: (Note) -> Unit,
     private val onSelectModeChange: (Boolean) -> Unit,
     private val notifySelectCount: (Int) -> Unit
 ) :
-    RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
+    ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffCallback) {
 
     private var multiSelect = false
     private val selectedItems = arrayListOf<Note>()
 
     inner class ViewHolder(val binding: NoteItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(note: Note, isSelected: Boolean) {
+            binding.apply {
+                txtTitle.text = note.title
+                txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
+
+                itemNote.backgroundTintList =
+                    if (isSelected)
+                        ContextCompat.getColorStateList(
+                            root.context,
+                            R.color.primary
+                        )
+                    else
+                        note.color?.let { ColorStateList.valueOf(it) }
+
+                root.setOnLongClickListener {
+                    if (!multiSelect) {
+                        toggleSelectMode(true)
+                        toggleSelection(note, bindingAdapterPosition)
+                        notifySelectCount(getSelectedNotesCount())
+                    }
+                    true
+                }
+
+                root.setOnClickListener {
+                    if (multiSelect) {
+                        toggleSelection(note, bindingAdapterPosition)
+                        notifySelectCount(getSelectedNotesCount())
+                    } else {
+                        onItemClick.invoke(note)
+                    }
+                }
+            }
+        }
+    }
 
 
     override fun onCreateViewHolder(
@@ -39,43 +75,10 @@ class NoteAdapter(
         return ViewHolder(binding)
     }
 
-    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val note = notes[position]
+        val note = getItem(position)
         val isSelected = isSelectedItem(note)
-
-        holder.binding.apply {
-            txtTitle.text = note.title
-            txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
-
-            itemNote.backgroundTintList =
-                if (isSelected)
-                    ContextCompat.getColorStateList(
-                        root.context,
-                        R.color.primary
-                    )
-                else
-                    note.color?.let { ColorStateList.valueOf(it) }
-
-
-            root.setOnLongClickListener {
-                if (!multiSelect) {
-                    toggleSelectMode(true)
-                    toggleSelection(note, position)
-                    notifySelectCount(getSelectedNotesCount())
-                }
-                true
-            }
-
-            root.setOnClickListener {
-                if (multiSelect) {
-                    toggleSelection(note, position)
-                    notifySelectCount(getSelectedNotesCount())
-                } else {
-                    onItemClick.invoke(note)
-                }
-            }
-        }
+        holder.bind(note, isSelected)
     }
 
     private fun toggleSelection(note: Note, position: Int) {
@@ -93,7 +96,6 @@ class NoteAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun toggleSelectMode(isEnable: Boolean) {
         multiSelect = isEnable
         if (!isEnable) {
@@ -105,22 +107,14 @@ class NoteAdapter(
 
     private fun isSelectedItem(note: Note): Boolean = selectedItems.contains(note)
 
-
-    override fun getItemCount(): Int = notes.size
     fun getSelectedNotesCount(): Int = selectedItems.size
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setNotes(newNotes: List<Note>) {
-        notes = newNotes
-        notifyDataSetChanged()
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun selectAll() {
         selectedItems.clear()
-        selectedItems.addAll(notes)
+        selectedItems.addAll(currentList)
         notifyDataSetChanged()
-        if (notes.isNotEmpty()) toggleSelectMode(true)
+        if (currentList.isNotEmpty()) toggleSelectMode(true)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -132,7 +126,6 @@ class NoteAdapter(
 
     fun getSelectedNotes(): List<Note> = selectedItems.toList()
 
-
-    fun isAllSelected(): Boolean = notes.isNotEmpty() && selectedItems.size == notes.size
-
+    fun isAllSelected(): Boolean =
+        currentList.isNotEmpty() && selectedItems.size == currentList.size
 }

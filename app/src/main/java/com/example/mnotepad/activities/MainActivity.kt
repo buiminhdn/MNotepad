@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            emptyList(), ::openNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
+            ::openNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
         )
 
         binding.rvNotes.layoutManager = LinearLayoutManager(this)
@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         noteViewModel.filteredNotes.observe(this) { notes ->
-            noteAdapter.setNotes(notes)
+            noteAdapter.submitList(notes)
         }
         categoryViewModel.categories.observe(this) {
             listCategories = it

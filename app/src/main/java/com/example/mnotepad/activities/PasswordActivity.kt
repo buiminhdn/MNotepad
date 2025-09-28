@@ -62,11 +62,10 @@ class PasswordActivity : AppCompatActivity() {
 
     private fun handleBtnClicks() {
         binding.btnSetPassword.setOnClickListener { handleSetPassword() }
+        binding.btnRemovePassword.setOnClickListener { handleRemovePassword() }
+        binding.btnUnlockTime.setOnClickListener { handleUnlockTime() }
 
-        if (isSetPassword(this)) {
-            binding.btnRemovePassword.setOnClickListener { handleRemovePassword() }
-            binding.btnUnlockTime.setOnClickListener { handleUnlockTime() }
-        } else {
+        if (!isSetPassword(this)) {
             binding.btnRemovePassword.isEnabled = false
             binding.btnUnlockTime.isEnabled = false
         }

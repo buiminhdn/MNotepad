@@ -8,6 +8,7 @@ import android.util.Log
 import com.example.mnotepad.activities.LockActivity
 import com.example.mnotepad.database.PasswordStorage.getLastestTime
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
+import com.example.mnotepad.database.PasswordStorage.isSetPassword
 import com.example.mnotepad.database.PasswordStorage.setLastestTime
 import com.example.mnotepad.helpers.DateTimeHelper
 import java.util.concurrent.TimeUnit
@@ -19,6 +20,9 @@ class ActivityLifecycleHandler(private val application: Application) :
     }
 
     override fun onActivityStarted(p0: Activity) {
+
+        if (!isSetPassword(application)) return
+
         val currentTime = DateTimeHelper.getCurrentTime()
         val lastestTime = getLastestTime(application)
         val lockTime = getUnlockTime(application) ?: 10

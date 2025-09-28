@@ -614,4 +614,3 @@ class NoteDetailActivity : AppCompatActivity() {
         editText.setText(spannable, TextView.BufferType.SPANNABLE)
     }
 }
-

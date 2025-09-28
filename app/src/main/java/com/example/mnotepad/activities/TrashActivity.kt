@@ -74,7 +74,7 @@ class TrashActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            emptyList(), ::startToNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
+            ::startToNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
         )
         binding.rvDeletedNotes.layoutManager = LinearLayoutManager(this)
         binding.rvDeletedNotes.adapter = noteAdapter
@@ -85,7 +85,7 @@ class TrashActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        noteViewModel.deletedNotes.observe(this, noteAdapter::setNotes)
+        noteViewModel.deletedNotes.observe(this, noteAdapter::submitList)
     }
 
     private fun startToNoteDetail(note: Note) {

@@ -53,13 +53,13 @@ class NoteWidgetActivity : AppCompatActivity() {
 
         if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
             noteAdapter = NoteAdapter(
-                emptyList(), { note -> sendNoteToWidget(widgetId, note) }, {}, {}
+                { note -> sendNoteToWidget(widgetId, note) }, {}, {}
             )
             binding.rvNotes.layoutManager = LinearLayoutManager(this)
             binding.rvNotes.adapter = noteAdapter
 
             noteViewModel.filteredNotes.observe(this) { notes ->
-                noteAdapter.setNotes(notes)
+                noteAdapter.submitList(notes)
             }
         }
     }
