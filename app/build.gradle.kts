@@ -53,18 +53,24 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation ("androidx.room:room-ktx:2.8.0")
-    kapt("androidx.room:room-compiler:2.8.0")
+    implementation(libs.room.ktx)
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.gson)
 
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
+//    implementation ("androidx.room:room-ktx:2.8.0")
+//    kapt("androidx.room:room-compiler:2.8.0")
+//
+//    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+//    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.4")
+//
+//    implementation ("com.google.android.material:material:1.13.0")
 
-    implementation ("com.google.android.material:material:1.13.0")
+//    implementation("androidx.activity:activity-ktx:1.11.0")
+//    implementation("androidx.fragment:fragment-ktx:1.8.9")
 
-    implementation("androidx.activity:activity-ktx:1.11.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.9")
-
-    implementation("com.google.code.gson:gson:2.13.2")
-
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
+//    implementation("com.google.code.gson:gson:2.13.2")
+//
+//    implementation("androidx.work:work-runtime-ktx:2.7.1")
 }

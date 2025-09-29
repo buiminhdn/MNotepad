@@ -2,11 +2,9 @@ package com.example.mnotepad.adapters
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
@@ -93,9 +91,11 @@ class NoteAdapter(
         // Nếu không còn item nào thì thoát select mode
         if (multiSelect && selectedItems.isEmpty()) {
             toggleSelectMode(false)
+            notifySelectCount(0)
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun toggleSelectMode(isEnable: Boolean) {
         multiSelect = isEnable
         if (!isEnable) {

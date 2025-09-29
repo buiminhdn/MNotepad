@@ -1,6 +1,5 @@
 package com.example.mnotepad.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -18,14 +17,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
 import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
 import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
-import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
@@ -38,10 +33,8 @@ import com.example.mnotepad.helpers.ThemeManager.toggleThemeChange
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
-import com.example.mnotepad.workers.PasswordWorker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -56,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectFolderLauncher: ActivityResultLauncher<Intent>
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
-    private lateinit var resultLauncher : ActivityResultLauncher<Intent>
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -79,28 +72,15 @@ class MainActivity : AppCompatActivity() {
         initImportMultipleTxtLauncher()
         initSettingLauncher()
         handleClickAdd()
-        schedulePeriodicSyncWork()
     }
 
     private fun initSettingLauncher() {
-        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                recreate()
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    recreate()
+                }
             }
-        }
-    }
-
-    private fun schedulePeriodicSyncWork() {
-        val period = getUnlockTime(this) ?: 10
-        val request = OneTimeWorkRequestBuilder<PasswordWorker>()
-            .setInitialDelay(period.toLong(), TimeUnit.MINUTES)
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniqueWork(
-            "PasswordWorker",
-            ExistingWorkPolicy.REPLACE,
-            request
-        )
     }
 
     private fun initImportMultipleTxtLauncher() {
@@ -161,7 +141,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSelectCount(size: Int) {
-        binding.toolbarTitle.text = size.toString()
+        if (size == 0) binding.toolbarTitle.text = getResources().getString(R.string.project_title);
+        else
+            binding.toolbarTitle.text = size.toString()
     }
 
     private fun updateMenuForMultiSelect(isMultiSelect: Boolean) {
@@ -316,6 +298,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     noteAdapter.selectAll()
                     item.title = getString(R.string.unselect_all)
+                    binding.toolbar.menu.findItem(R.id.navSelectAll).title = getString(R.string.unselect_all)
                     binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
                 }
                 true

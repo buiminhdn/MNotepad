@@ -6,10 +6,8 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mnotepad.R
 import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.databinding.CheckItemBinding
-import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.ChecklistItem
 import java.util.Collections
 

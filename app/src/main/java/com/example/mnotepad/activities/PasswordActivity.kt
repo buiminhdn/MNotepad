@@ -9,11 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.mnotepad.R
 import com.example.mnotepad.assets.OptionsData.Companion.unlockTimes
 import com.example.mnotepad.database.PasswordStorage.getPassword
@@ -27,8 +22,6 @@ import com.example.mnotepad.database.PasswordStorage.setUnlockTime
 import com.example.mnotepad.databinding.ActivityPasswordBinding
 import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.showToast
-import com.example.mnotepad.workers.PasswordWorker
-import java.util.concurrent.TimeUnit
 
 
 class PasswordActivity : AppCompatActivity() {
@@ -82,24 +75,11 @@ class PasswordActivity : AppCompatActivity() {
                 .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
                     val selected = periods[which]
                     setUnlockTime(this, selected)
-                    reSchedulePeriodicSyncWork(selected)
                     dialog.dismiss()
                     showToast("Set period successfully", this)
                 }
                 .setNegativeButton("Huỷ", null)
                 .show()
-    }
-
-    private fun reSchedulePeriodicSyncWork(period: Int) {
-        val request = OneTimeWorkRequestBuilder<PasswordWorker>()
-            .setInitialDelay(period.toLong(), TimeUnit.MINUTES)
-            .build()
-
-        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            "PasswordWorker",
-            ExistingWorkPolicy.REPLACE,
-            request
-        )
     }
 
     private fun handleRemovePassword() {

@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.widget.RemoteViews
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -20,7 +19,6 @@ import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.PREFS_NAME
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.viewmodels.NoteViewModel
-import com.example.mnotepad.widgets.NoteWidget
 import com.example.mnotepad.widgets.NoteWidget.Companion.updateAppWidget
 
 
@@ -65,13 +63,6 @@ class NoteWidgetActivity : AppCompatActivity() {
     }
 
     private fun sendNoteToWidget(appWidgetId: Int, note: Note) {
-//        views = RemoteViews(packageName, R.layout.note_widget)
-//        views.setTextViewText(R.id.tvNoteTitle, note?.title ?: "No title")
-//        views.setTextViewText(
-//            R.id.tvNoteContent,
-//            Html.fromHtml(note?.content ?: "", Html.FROM_HTML_MODE_LEGACY).toString()
-//        )
-//        widgetManager.updateAppWidget(appWidgetId, views);
         val prefs = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit {
             putInt("widget_$appWidgetId", note.id)
@@ -81,19 +72,8 @@ class NoteWidgetActivity : AppCompatActivity() {
 
         val resultValue = Intent()
 
-//        resultValue.action = NoteWidget.ACTION_SET_NOTE
-//        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-//        resultValue.putExtra(NoteWidget.EXTRA_NOTE_ID, note.id)
         setResult(RESULT_OK, resultValue)
         finish()
-//        val i = Intent(this, NoteWidget::class.java).apply {
-//            action = NoteWidget.ACTION_SET_NOTE
-//            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-//            putExtra(NoteWidget.EXTRA_NOTE_ID, note.id)
-//        }
-//        sendBroadcast(i)
-//        finish()
-//        finishAffinity()
     }
 
     private fun setupToolbar() {

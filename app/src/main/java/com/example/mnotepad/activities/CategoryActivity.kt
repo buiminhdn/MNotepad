@@ -16,7 +16,6 @@ import com.example.mnotepad.databinding.ActivityCategoryBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
-import kotlinx.coroutines.Dispatchers
 
 
 class CategoryActivity : AppCompatActivity() {

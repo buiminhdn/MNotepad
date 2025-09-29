@@ -29,16 +29,6 @@ class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouch
         target: RecyclerView.ViewHolder
     ): Boolean {
         adapter.onRowMoved(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
-
-//        val adapter = recyclerView.adapter as CategoryAdapter
-//        val from = viewHolder.bindingAdapterPosition
-//        val to = target.bindingAdapterPosition
-////        adapter.notifyItemMoved(from, to)
-//
-//        val list = adapter.currentList.toMutableList()
-//        Collections.swap(list, from, to)
-//
-//        adapter.submitList(list)
         return true
     }
 
