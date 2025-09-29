@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import android.os.Build
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
+import androidx.annotation.RequiresApi
 import java.io.BufferedReader
 import java.io.FileOutputStream
 import java.io.IOException
@@ -43,6 +45,7 @@ object FileSAFHelper {
         return Pair(title, stringBuilder.toString())
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun createFileIntent(
         fileName: String,
         extension: String,
@@ -114,7 +117,11 @@ object FileSAFHelper {
         }
     }
 
-    fun exportSelectedNotesToTxt(context: Context, treeUri: Uri, notes: List<Pair<String, String>>) {
+    fun exportSelectedNotesToTxt(
+        context: Context,
+        treeUri: Uri,
+        notes: List<Pair<String, String>>
+    ) {
         val contentResolver = context.contentResolver
         val docId = DocumentsContract.getTreeDocumentId(treeUri)
         val dirUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, docId)
@@ -173,5 +180,4 @@ object FileSAFHelper {
 
         return results
     }
-
 }

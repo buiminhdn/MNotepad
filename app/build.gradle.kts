@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+//    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -14,7 +15,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0Testing"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

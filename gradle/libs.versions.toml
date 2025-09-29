@@ -12,15 +12,14 @@ constraintlayout = "2.2.1"
 recyclerview = "1.4.0"
 workRuntimeKtx = "2.10.5"
 
-roomKtx = "2.8.1"
-roomCompiler = "2.8.1"
+room = "2.8.1"
 lifecycleViewmodelKtx = "2.9.4"
 lifecycleLivedataKtx = "2.9.4"
 gson = "2.13.2"
 
 [libraries]
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }

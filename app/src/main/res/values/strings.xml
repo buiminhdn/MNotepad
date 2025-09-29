@@ -16,10 +16,10 @@
     <string name="save">SAVE</string>
     <string name="undo">UNDO</string>
     <string name="delete">Delete</string>
-    <string name="enter_content">Enter content...</string>
-    <string name="enter_title">Enter title...</string>
+    <string name="enter_content">Enter content…</string>
+    <string name="enter_title">Enter title…</string>
     <string name="project_title">MNotepad</string>
-    <string name="enter_category">Enter category...</string>
+    <string name="enter_category">Enter category…</string>
     <string name="add">ADD</string>
     <string name="button_to_update_category">Button to Update Category</string>
     <string name="button_to_delete_category">Button to Delete Category</string>

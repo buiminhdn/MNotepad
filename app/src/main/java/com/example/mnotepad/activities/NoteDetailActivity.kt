@@ -20,7 +20,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -41,6 +40,7 @@ import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.DELAY_TYPING
 import com.example.mnotepad.helpers.DateTimeHelper
+import com.example.mnotepad.helpers.FileHelper
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
@@ -82,7 +82,6 @@ class NoteDetailActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
@@ -404,12 +403,15 @@ class NoteDetailActivity : AppCompatActivity() {
             .show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getNoteDataIfUpdate() {
         TextEditorHelper.reset()
 
         if (intent.getBooleanExtra(IS_EDITED_ACTION, false)) {
-            curNoteItem = intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)
+            curNoteItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(NOTE_DETAIL_OBJECT, Note::class.java)
+            } else {
+                intent.getParcelableExtra(NOTE_DETAIL_OBJECT)
+            }
             curNoteItem?.let {
                 binding.edtTitle.setText(it.title)
                 if (it.type == NoteType.TEXT && it.content.isNotEmpty()) {
@@ -528,9 +530,13 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
-        val intent =
-            FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", PLAIN_TYPE)
-        createTxtLauncher.launch(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent =
+                FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", PLAIN_TYPE)
+            createTxtLauncher.launch(intent)
+        } else {
+            FileHelper.exportToTxtFile(title, "$title\n$content")
+        }
     }
 
     private fun shareNote() {
