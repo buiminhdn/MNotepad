@@ -28,8 +28,6 @@
             android:id="@+id/tvNoteContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="5"
             android:text="Note content preview..."
             android:textSize="14sp" />
 

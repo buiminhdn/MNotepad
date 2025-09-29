@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.callbacks.CategoryDiffCallback
@@ -61,17 +62,19 @@ class CategoryAdapter(
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
         val currentList = currentList.toMutableList()
-        if (fromPosition < toPosition) {
-            for (i in fromPosition until toPosition) {
-                Collections.swap(currentList, i, i + 1)
-            }
-        } else {
-            for (i in fromPosition downTo toPosition + 1) {
-                Collections.swap(currentList, i, i - 1)
-            }
-        }
-        submitList(currentList) // Reupdate List
-        notifyItemMoved(fromPosition, toPosition)
+        Collections.swap(currentList, fromPosition, toPosition)
+        submitList(currentList)
+//        if (fromPosition < toPosition) {
+//            for (i in fromPosition until toPosition) {
+//                Collections.swap(currentList, i, i + 1)
+//            }
+//        } else {
+//            for (i in fromPosition downTo toPosition + 1) {
+//                Collections.swap(currentList, i, i - 1)
+//            }
+//        }
+//        notifyItemMoved(fromPosition, toPosition)
+//        submitList(currentList) // Reupdate List
     }
 
     override fun onRowClear(viewHolder: RecyclerView.ViewHolder) {

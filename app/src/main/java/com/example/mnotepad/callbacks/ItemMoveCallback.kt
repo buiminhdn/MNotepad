@@ -2,6 +2,8 @@ package com.example.mnotepad.callbacks
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mnotepad.adapters.CategoryAdapter
+import java.util.Collections
 
 class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouchHelper.Callback() {
     override fun isLongPressDragEnabled(): Boolean {
@@ -26,7 +28,17 @@ class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouch
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        adapter.onRowMoved(viewHolder.adapterPosition, target.adapterPosition)
+        adapter.onRowMoved(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
+
+//        val adapter = recyclerView.adapter as CategoryAdapter
+//        val from = viewHolder.bindingAdapterPosition
+//        val to = target.bindingAdapterPosition
+////        adapter.notifyItemMoved(from, to)
+//
+//        val list = adapter.currentList.toMutableList()
+//        Collections.swap(list, from, to)
+//
+//        adapter.submitList(list)
         return true
     }
 
