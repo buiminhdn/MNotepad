@@ -426,11 +426,6 @@ class NoteDetailActivity : AppCompatActivity() {
 
                 if (it.color != null) {
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(it.color)
-                } else {
-                    binding.noteDetailLayout.backgroundTintList = ContextCompat.getColorStateList(
-                        this,
-                        R.color.secondary
-                    )
                 }
             }
         }
