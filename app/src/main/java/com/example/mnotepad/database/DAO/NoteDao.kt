@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
 
 @Dao

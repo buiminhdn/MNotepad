@@ -13,10 +13,11 @@ object TextConvertHelper {
         val content: MutableList<String> = mutableListOf()
         val filterItems = items.filter { it.text.isNotBlank() }
         for (item in filterItems) {
-            if (item.isChecked)
+            if (item.isChecked) {
                 content.add("-[x] ${item.text}")
-            else
+            } else {
                 content.add("-[o] ${item.text}")
+            }
         }
         return content.joinToString("\n")
     }
@@ -29,7 +30,7 @@ object TextConvertHelper {
         }
     }
 
-    fun convertCheckListContentToText(content: String) : MutableList<ChecklistItem> {
+    fun convertCheckListContentToText(content: String): MutableList<ChecklistItem> {
         val listItems: MutableList<ChecklistItem> = mutableListOf()
         val lines = content.split("\n")
         for (line in lines) {

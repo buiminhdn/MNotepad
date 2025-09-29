@@ -7,7 +7,10 @@ import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
-import java.io.*
+import java.io.BufferedReader
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
 
 object FileSAFHelper {
     fun importTxt(context: Context, uri: Uri): Pair<String, String>? {

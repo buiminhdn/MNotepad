@@ -13,7 +13,7 @@ interface CategoryDao {
     fun getAll(): LiveData<List<Category>>
 
     @Insert
-    suspend fun insert(category: Category) : Long
+    suspend fun insert(category: Category): Long
 
     @Update
     suspend fun update(category: Category)

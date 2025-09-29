@@ -1,19 +1,17 @@
 package com.example.mnotepad.workers
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.mnotepad.activities.LockActivity
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import java.util.concurrent.TimeUnit
 
-class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(context,
+class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(
+    context,
     workerParams
 ) {
 
@@ -31,6 +29,6 @@ class PasswordWorker(context: Context, workerParams: WorkerParameters) : Worker(
             request
         )
 
-        return Result.success();
+        return Result.success()
     }
 }

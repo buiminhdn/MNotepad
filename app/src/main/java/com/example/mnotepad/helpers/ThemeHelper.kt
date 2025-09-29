@@ -2,13 +2,12 @@ package com.example.mnotepad.helpers
 
 import android.app.Activity
 import android.content.Context
-import android.preference.PreferenceManager
 import androidx.core.content.edit
 import com.example.mnotepad.entities.enums.AppTheme
 
 object ThemeManager {
     private const val KEY_THEME = "app_theme"
-     var isThemeChange = false
+    var isThemeChange = false
 
     fun getSavedTheme(context: Context): AppTheme {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

@@ -1,6 +1,5 @@
 package com.example.mnotepad.helpers
 
-import android.graphics.Typeface
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.ITALIC
 import android.text.Editable
@@ -72,28 +71,33 @@ object TextEditorHelper {
             val start = text.length - 1
             val end = text.length
 
-            if (isBold) text.setSpan(
-                StyleSpan(BOLD),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            if (isItalic) text.setSpan(
-                StyleSpan(ITALIC),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            if (isUnderline) text.setSpan(
-                UnderlineSpan(),
-                start,
-                end,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            if (isBold) {
+                text.setSpan(
+                    StyleSpan(BOLD),
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            if (isItalic) {
+                text.setSpan(
+                    StyleSpan(ITALIC),
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            if (isUnderline) {
+                text.setSpan(
+                    UnderlineSpan(),
+                    start,
+                    end,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
             activeColor?.let {
                 text.setSpan(ForegroundColorSpan(it), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
-
     }
 }

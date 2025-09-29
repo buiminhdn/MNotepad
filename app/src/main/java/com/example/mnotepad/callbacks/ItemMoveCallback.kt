@@ -12,10 +12,13 @@ class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouch
         return false
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {}
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
+        return
+    }
 
     override fun getMovementFlags(
-        recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
     ): Int {
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
         return makeMovementFlags(dragFlags, 0)
@@ -31,7 +34,8 @@ class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouch
     }
 
     override fun clearView(
-        recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
     ) {
         super.clearView(recyclerView, viewHolder)
         adapter.onRowClear(viewHolder)

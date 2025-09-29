@@ -2,16 +2,14 @@ package com.example.mnotepad.widgets
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.text.Html
 import android.widget.RemoteViews
-import com.example.mnotepad.R
 import androidx.core.content.edit
+import com.example.mnotepad.R
 import com.example.mnotepad.activities.NoteDetailActivity
 import com.example.mnotepad.database.AppDatabase
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
@@ -20,7 +18,6 @@ import com.example.mnotepad.helpers.PREFS_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 class NoteWidget : AppWidgetProvider() {
 
@@ -40,7 +37,9 @@ class NoteWidget : AppWidgetProvider() {
                 val db = AppDatabase.getDatabase(context)
                 val note = if (noteId != -1) {
                     db.getNoteDao().getNoteByIdSync(noteId)
-                } else null
+                } else {
+                    null
+                }
 
                 val views = RemoteViews(context.packageName, R.layout.note_widget)
                 views.setTextViewText(R.id.tvNoteTitle, note?.title ?: "No title")
@@ -54,7 +53,9 @@ class NoteWidget : AppWidgetProvider() {
                 }
 
                 val pendingIntent = PendingIntent.getActivity(
-                    context, appWidgetId, intent,
+                    context,
+                    appWidgetId,
+                    intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
                 views.setOnClickPendingIntent(R.id.layoutWidget, pendingIntent)
@@ -63,7 +64,6 @@ class NoteWidget : AppWidgetProvider() {
             }
         }
     }
-
 
     override fun onUpdate(
         context: Context,

@@ -29,8 +29,6 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     val filteredNotes: LiveData<List<Note>> get() = _filteredNotes
 
     private var currentNotes: List<Note> = emptyList()
-
-
     init {
         notes.observeForever { list ->
             currentNotes = list
@@ -40,10 +38,6 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteNote(id: Int) = viewModelScope.launch(Dispatchers.IO) {
         noteDao.softDelete(id)
-    }
-
-    fun getNoteById(id: Int) : Note? {
-        return noteDao.getNoteByIdSync(id)
     }
 
     fun upsertNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
@@ -59,14 +53,17 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         noteDao.insertAll(notes)
     }
 
-    fun updateNotes(notes: List<Note>) = viewModelScope.launch (Dispatchers.IO) {
+    fun updateNotes(notes: List<Note>) = viewModelScope.launch(Dispatchers.IO) {
         noteDao.updateAll(notes.map { it.copy(updatedAt = System.currentTimeMillis()) })
     }
 
     fun filterByQuery(query: String) {
         _filteredNotes.value =
-            if (query.isBlank()) currentNotes
-            else currentNotes.filter { it.title.contains(query, ignoreCase = true) }
+            if (query.isBlank()) {
+                currentNotes
+            } else {
+                currentNotes.filter { it.title.contains(query, ignoreCase = true) }
+            }
     }
 
     fun filterByCategory(categoryId: Int) {
@@ -100,5 +97,4 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun undeleteAllNotes() = viewModelScope.launch(Dispatchers.IO) {
         noteDao.undeleteAll()
     }
-
 }

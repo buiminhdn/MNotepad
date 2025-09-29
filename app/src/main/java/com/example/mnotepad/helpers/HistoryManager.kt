@@ -32,7 +32,9 @@ class HistoryManager {
         undoStack.push(redoText)
         lastSaved = redoText
         redoText
-    } else lastSaved
+    } else {
+        lastSaved
+    }
 }
 
 fun EditText.applyHistory(text: String) {

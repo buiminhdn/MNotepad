@@ -12,6 +12,9 @@ class IntListConverter {
     @TypeConverter
     fun toListInt(data: String?): List<Int> {
         if (data == "") return emptyList()
-        return listOf(*data?.split(",")?.map { it.toInt() }?.toTypedArray() as Array<out Int>)
+        return listOf(*data?.split(",")
+            ?.map { it.toInt() }
+            ?.toTypedArray() as Array<out Int>
+        )
     }
 }
