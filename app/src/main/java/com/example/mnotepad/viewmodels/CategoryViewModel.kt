@@ -33,10 +33,6 @@ class CategoryViewModel(application: Application) : AndroidViewModel(application
         categoryDao.updateAll(categories)
     }
 
-//    fun addCategory(category: Category): Long = runBlocking {
-//        categoryDao.insert(category)
-//    }
-
     suspend fun addCategory(category: Category): Long {
         return categoryDao.insert(category)
     }

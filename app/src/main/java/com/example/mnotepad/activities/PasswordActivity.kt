@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mnotepad.R
-import com.example.mnotepad.assets.OptionsData.Companion.unlockTimes
+import com.example.mnotepad.assets.OptionsData.unlockTimes
 import com.example.mnotepad.database.PasswordStorage.getPassword
 import com.example.mnotepad.database.PasswordStorage.getRecoveryEmail
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
@@ -20,9 +20,12 @@ import com.example.mnotepad.database.PasswordStorage.setPassword
 import com.example.mnotepad.database.PasswordStorage.setRecoveryEmail
 import com.example.mnotepad.database.PasswordStorage.setUnlockTime
 import com.example.mnotepad.databinding.ActivityPasswordBinding
+import com.example.mnotepad.helpers.INCORRECT_OLD_PASSWORD
+import com.example.mnotepad.helpers.INCORRECT_PASSWORD
+import com.example.mnotepad.helpers.INVALID_NEW_PASSWORD
+import com.example.mnotepad.helpers.RECOVERY_EMAIL_REQUIRED
 import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.showToast
-
 
 class PasswordActivity : AppCompatActivity() {
 
@@ -52,7 +55,6 @@ class PasswordActivity : AppCompatActivity() {
         handleBtnClicks()
     }
 
-
     private fun handleBtnClicks() {
         binding.btnSetPassword.setOnClickListener { handleSetPassword() }
         binding.btnRemovePassword.setOnClickListener { handleRemovePassword() }
@@ -65,21 +67,21 @@ class PasswordActivity : AppCompatActivity() {
     }
 
     private fun handleUnlockTime() {
-            val names = unlockTimes.map { it.second }.toTypedArray()
-            val periods = unlockTimes.map { it.first }.toTypedArray()
-            val current = getUnlockTime(this)
-            val checkedIndex = periods.indexOf(current)
+        val names = unlockTimes.map { it.second }.toTypedArray()
+        val periods = unlockTimes.map { it.first }.toTypedArray()
+        val current = getUnlockTime(this)
+        val checkedIndex = periods.indexOf(current)
 
-            AlertDialog.Builder(this)
-                .setTitle("Unlock time")
-                .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
-                    val selected = periods[which]
-                    setUnlockTime(this, selected)
-                    dialog.dismiss()
-                    showToast("Set period successfully", this)
-                }
-                .setNegativeButton("Huỷ", null)
-                .show()
+        AlertDialog.Builder(this)
+            .setTitle("Unlock time")
+            .setSingleChoiceItems(names, checkedIndex) { dialog, which ->
+                val selected = periods[which]
+                setUnlockTime(this, selected)
+                dialog.dismiss()
+                showToast("Set period successfully", this)
+            }
+            .setNegativeButton("Huỷ", null)
+            .show()
     }
 
     private fun handleRemovePassword() {
@@ -106,7 +108,7 @@ class PasswordActivity : AppCompatActivity() {
                         this
                     )
                 ) {
-                    errorMessage?.text = "Incorrect password"
+                    errorMessage?.text = INCORRECT_PASSWORD
                     errorMessage?.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
@@ -140,7 +142,6 @@ class PasswordActivity : AppCompatActivity() {
         }
         edtRecoveryEmail?.setText(getRecoveryEmail(this))
 
-
         builder.setView(customLayout)
 
         builder.setPositiveButton("OK", null)
@@ -153,17 +154,20 @@ class PasswordActivity : AppCompatActivity() {
             val button = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             button.setOnClickListener {
                 if (currentPassword != null && edtCurrentPassword?.text.toString() != currentPassword) {
-                    errorMessage?.text = "Incorrect old password"
+                    errorMessage?.text = INCORRECT_OLD_PASSWORD
                     errorMessage?.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
-                if (edtNewPassword?.text.isNullOrEmpty() || edtRepeatNewPassword?.text.isNullOrEmpty() || edtRepeatNewPassword!!.text.toString() != edtNewPassword!!.text.toString()) {
-                    errorMessage?.text = "Invalid new password"
+                if (edtNewPassword?.text.isNullOrEmpty() ||
+                    edtRepeatNewPassword?.text.isNullOrEmpty() ||
+                    edtRepeatNewPassword!!.text.toString() != edtNewPassword!!.text.toString()
+                ) {
+                    errorMessage?.text = INVALID_NEW_PASSWORD
                     errorMessage?.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
                 if (edtRecoveryEmail?.text.isNullOrEmpty()) {
-                    errorMessage?.text = "Recovery Email is required"
+                    errorMessage?.text = RECOVERY_EMAIL_REQUIRED
                     errorMessage?.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
@@ -186,5 +190,3 @@ class PasswordActivity : AppCompatActivity() {
         }
     }
 }
-
-

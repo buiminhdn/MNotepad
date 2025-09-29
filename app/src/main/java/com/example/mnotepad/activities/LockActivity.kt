@@ -9,14 +9,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.mnotepad.database.PasswordStorage.getPassword
 import com.example.mnotepad.databinding.ActivityLockBinding
+import com.example.mnotepad.helpers.DELAY_TYPING
 import java.util.Timer
 import java.util.TimerTask
-
 
 class LockActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLockBinding
     private var timer: Timer? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,21 +31,23 @@ class LockActivity : AppCompatActivity() {
 
         setUpToolbar()
         handleTextChange()
-
     }
 
     private fun handleTextChange() {
         val password = getPassword(this)
-        binding.edtPassword.addTextChangedListener {  text ->
+        binding.edtPassword.addTextChangedListener { text ->
             timer = Timer()
-            timer?.schedule(object : TimerTask() {
-                override fun run() {
-                    if (text == null || text.isEmpty()) return
-                    if (text.toString() == password) {
-                        startActivity(Intent(this@LockActivity, MainActivity::class.java))
+            timer?.schedule(
+                object : TimerTask() {
+                    override fun run() {
+                        if (text == null || text.isEmpty()) return
+                        if (text.toString() == password) {
+                            startActivity(Intent(this@LockActivity, MainActivity::class.java))
+                        }
                     }
-                }
-            }, 600)
+                },
+                DELAY_TYPING
+            )
         }
     }
 

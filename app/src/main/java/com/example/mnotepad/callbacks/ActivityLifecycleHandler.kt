@@ -10,6 +10,7 @@ import com.example.mnotepad.database.PasswordStorage.getLastestTime
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.database.PasswordStorage.isSetPassword
 import com.example.mnotepad.database.PasswordStorage.setLastestTime
+import com.example.mnotepad.helpers.DEFAULT_UNLOCK_TIME
 import com.example.mnotepad.helpers.DateTimeHelper
 import java.util.concurrent.TimeUnit
 
@@ -20,15 +21,11 @@ class ActivityLifecycleHandler(private val application: Application) :
     }
 
     override fun onActivityStarted(p0: Activity) {
-
         if (!isSetPassword(application)) return
 
         val currentTime = DateTimeHelper.getCurrentTime()
         val lastestTime = getLastestTime(application)
-        val lockTime = getUnlockTime(application) ?: 10
-
-//        val distance = TimeUnit.MILLISECONDS.toMinutes(currentTime - lastestTime)
-//        val isLocked = ( distance - lockTime ) >= 0
+        val lockTime = getUnlockTime(application) ?: DEFAULT_UNLOCK_TIME
 
         // Không khác gì mấy nhưng chuẩn từng li từng tí hơn 😂
         val distance = currentTime - lastestTime

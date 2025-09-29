@@ -50,12 +50,11 @@ class CategoryAdapter(
 
             btnDrag.setOnTouchListener { v, event ->
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> onCategoryClickListener.onItemDrag(holder);
+                    MotionEvent.ACTION_DOWN -> onCategoryClickListener.onItemDrag(holder)
                 }
 
                 v?.onTouchEvent(event) ?: true
             }
-
         }
     }
 
@@ -68,5 +67,4 @@ class CategoryAdapter(
     override fun onRowClear(viewHolder: RecyclerView.ViewHolder) {
         onCategoryClickListener.onUpdateOrder()
     }
-
 }

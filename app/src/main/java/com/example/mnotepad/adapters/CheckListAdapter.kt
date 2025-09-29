@@ -11,7 +11,7 @@ import com.example.mnotepad.databinding.CheckItemBinding
 import com.example.mnotepad.entities.models.ChecklistItem
 import java.util.Collections
 
-class CheckListAdapter (
+class CheckListAdapter(
     private var checklistItems: MutableList<ChecklistItem>,
     private val onStartDrag: (RecyclerView.ViewHolder) -> Unit
 ) : RecyclerView.Adapter<CheckListAdapter.ViewHolder>(), ItemMoveCallback.ItemTouchHelperContract {
@@ -49,12 +49,12 @@ class CheckListAdapter (
             btnDelete.setOnClickListener {
                 checklistItems.remove(checkListItem)
                 notifyItemRemoved(position)
-                notifyItemRangeChanged(position, getItemCount());
+                notifyItemRangeChanged(position, getItemCount())
             }
 
             btnDrag.setOnTouchListener { v, event ->
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> onStartDrag(holder);
+                    MotionEvent.ACTION_DOWN -> onStartDrag(holder)
                 }
 
                 v?.onTouchEvent(event) ?: true
@@ -65,8 +65,8 @@ class CheckListAdapter (
     override fun getItemCount(): Int = checklistItems.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setCheckListItems(newCheckListItems: MutableList<ChecklistItem>) {
-        checklistItems = newCheckListItems
+    fun setCheckListItems(newCheckListItems: List<ChecklistItem>) {
+        checklistItems = newCheckListItems.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -74,7 +74,6 @@ class CheckListAdapter (
         checklistItems.add(item)
         notifyItemInserted(checklistItems.size - 1)
     }
-
 
     fun getCheckListItems(): List<ChecklistItem> = checklistItems
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
@@ -91,6 +90,6 @@ class CheckListAdapter (
     }
 
     override fun onRowClear(viewHolder: RecyclerView.ViewHolder) {
-
+        return
     }
 }

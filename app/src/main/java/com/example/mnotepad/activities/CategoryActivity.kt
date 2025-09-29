@@ -17,14 +17,11 @@ import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 
-
 class CategoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategoryBinding
     private lateinit var categoryAdapter: CategoryAdapter
     private val categoryViewModel: CategoryViewModel by viewModels()
     var touchHelper: ItemTouchHelper? = null
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -75,8 +72,6 @@ class CategoryActivity : AppCompatActivity() {
             adapter = categoryAdapter
         }
     }
-
-
     private fun updateOrderIndexes() {
         val updatedList = categoryAdapter.currentList
             .mapIndexed { index, category ->
@@ -87,8 +82,6 @@ class CategoryActivity : AppCompatActivity() {
 
         showToast("Order updated", applicationContext)
     }
-
-
     fun setupDragAndDrop() {
         touchHelper = ItemTouchHelper(
             ItemMoveCallback(categoryAdapter)
@@ -101,8 +94,6 @@ class CategoryActivity : AppCompatActivity() {
             categoryAdapter.submitList(categories)
         }
     }
-
-
     private fun handleClickAdd() {
         binding.btnAdd.setOnClickListener {
             val name = binding.edtName.text.toString().trim()
@@ -134,5 +125,4 @@ class CategoryActivity : AppCompatActivity() {
     private fun toast(message: String) {
         showToast(message, applicationContext)
     }
-
 }

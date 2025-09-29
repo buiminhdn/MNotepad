@@ -21,13 +21,12 @@ import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.example.mnotepad.widgets.NoteWidget.Companion.updateAppWidget
 
-
 class NoteWidgetActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteWidgetBinding
     private lateinit var noteAdapter: NoteAdapter
     private val noteViewModel: NoteViewModel by viewModels()
 
-    private lateinit var widgetManager : AppWidgetManager
+    private lateinit var widgetManager: AppWidgetManager
     private lateinit var views: RemoteViews
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -47,7 +46,11 @@ class NoteWidgetActivity : AppCompatActivity() {
         widgetManager = AppWidgetManager.getInstance(this)
         views = RemoteViews(this.packageName, R.layout.note_widget)
 
-        val widgetId = intent?.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+        val widgetId =
+            intent?.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
         if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
             noteAdapter = NoteAdapter(

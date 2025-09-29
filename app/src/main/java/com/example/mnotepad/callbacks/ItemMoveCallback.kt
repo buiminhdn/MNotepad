@@ -2,8 +2,6 @@ package com.example.mnotepad.callbacks
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mnotepad.adapters.CategoryAdapter
-import java.util.Collections
 
 class ItemMoveCallback(private val adapter: ItemTouchHelperContract) : ItemTouchHelper.Callback() {
     override fun isLongPressDragEnabled(): Boolean {

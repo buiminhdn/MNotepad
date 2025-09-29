@@ -13,7 +13,6 @@ import com.example.mnotepad.databinding.NoteItemBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.DateTimeHelper
 
-
 class NoteAdapter(
     private val onItemClick: (Note) -> Unit,
     private val onSelectModeChange: (Boolean) -> Unit,
@@ -33,13 +32,22 @@ class NoteAdapter(
                 txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
 
                 itemNote.backgroundTintList =
-                    if (isSelected)
+                    if (isSelected) {
                         ContextCompat.getColorStateList(
                             root.context,
                             R.color.primary
                         )
-                    else
+                    } else {
                         note.color?.let { ColorStateList.valueOf(it) }
+                    }
+
+//                itemNote.background =
+//                    if (isSelected)
+//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
+//                    else
+//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
+//
+//                itemNote.backgroundTintList = note.color?.let { ColorStateList.valueOf(it) }
 
                 root.setOnLongClickListener {
                     if (!multiSelect) {
@@ -62,13 +70,14 @@ class NoteAdapter(
         }
     }
 
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         val binding = NoteItemBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
         return ViewHolder(binding)
     }

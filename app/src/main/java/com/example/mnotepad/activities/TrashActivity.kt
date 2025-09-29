@@ -69,14 +69,10 @@ class TrashActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         noteAdapter = NoteAdapter(
-            ::startToNoteDetail, ::updateMenuForMultiSelect, ::updateSelectCount
+            ::startToNoteDetail, {}, {}
         )
         binding.rvDeletedNotes.layoutManager = LinearLayoutManager(this)
         binding.rvDeletedNotes.adapter = noteAdapter
-    }
-
-    private fun updateSelectCount(size: Int) {
-//        binding.toolbarTitle.text = size.toString()
     }
 
     private fun observeViewModel() {
@@ -89,10 +85,6 @@ class TrashActivity : AppCompatActivity() {
             putExtra(IS_EDITED_ACTION, true)
         }
         startActivity(intent)
-    }
-
-    private fun updateMenuForMultiSelect(isMultiSelect: Boolean) {
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

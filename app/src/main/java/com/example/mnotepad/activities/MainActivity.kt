@@ -19,11 +19,12 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
-import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
-import com.example.mnotepad.assets.OptionsData.Companion.noteSortOptions
+import com.example.mnotepad.assets.OptionsData.colorPalette
+import com.example.mnotepad.assets.OptionsData.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.CATEGORY_MENU_ID
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
@@ -35,7 +36,6 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-
     }
 
     private fun setupRecyclerView() {
@@ -141,9 +140,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSelectCount(size: Int) {
-        if (size == 0) binding.toolbarTitle.text = getResources().getString(R.string.project_title);
-        else
+        if (size == 0) {
+            binding.toolbarTitle.text = getResources().getString(R.string.project_title)
+        } else {
             binding.toolbarTitle.text = size.toString()
+        }
     }
 
     private fun updateMenuForMultiSelect(isMultiSelect: Boolean) {
@@ -180,7 +181,7 @@ class MainActivity : AppCompatActivity() {
         }
         categoryViewModel.categories.observe(this) {
             listCategories = it
-            addMenuItemInNavMenuDrawer();
+            addMenuItemInNavMenuDrawer()
         }
     }
 
@@ -199,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         binding.navView.setNavigationItemSelectedListener { item ->
-            if (item.groupId == 5) {
+            if (item.groupId == CATEGORY_MENU_ID) {
                 showToast("ID ${item.itemId}", this)
                 noteViewModel.filterByCategory(item.itemId)
             } else {
@@ -233,10 +234,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openNoteDetail(note: Note) {
-        startActivity(Intent(this, NoteDetailActivity::class.java).apply {
-            putExtra(NOTE_DETAIL_OBJECT, note)
-            putExtra(IS_EDITED_ACTION, true)
-        })
+        startActivity(
+            Intent(this, NoteDetailActivity::class.java).apply {
+                putExtra(NOTE_DETAIL_OBJECT, note)
+                putExtra(IS_EDITED_ACTION, true)
+            }
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -249,11 +252,13 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.navSearch -> {
-                showSearchBar(); true
+                showSearchBar()
+                true
             }
 
             R.id.navSort -> {
-                showSortDialog(); true
+                showSortDialog()
+                true
             }
 
             R.id.navSelectAll -> {
@@ -279,7 +284,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.navImportTxtFiles -> {
-                handleImportTxtFiles(); true
+                handleImportTxtFiles()
+                true
             }
 
             R.id.navCategorizeSelected -> {
@@ -288,7 +294,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.navColorizeSelected -> {
-                showColorPickerDialog(); true
+                showColorPickerDialog()
+                true
             }
 
             R.id.navSelectAllNotes -> {
@@ -336,7 +343,7 @@ class MainActivity : AppCompatActivity() {
         val submenu: Menu = menu.addSubMenu("Categories")
 
         for (category in listCategories) {
-            submenu.add(5, category.id, category.orderIndex, category.name)
+            submenu.add(CATEGORY_MENU_ID, category.id, category.orderIndex, category.name)
         }
     }
 
@@ -443,5 +450,4 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
 }

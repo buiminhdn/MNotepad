@@ -96,8 +96,6 @@ class NoteWidget : AppWidgetProvider() {
                     }
                 }
             }
-
-            ACTION_APPWIDGET_UPDATE -> {}
         }
     }
 

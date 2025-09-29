@@ -8,6 +8,4 @@ class Application : Application() {
         super.onCreate()
         registerActivityLifecycleCallbacks(ActivityLifecycleHandler(this))
     }
-
-
 }

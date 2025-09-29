@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.CheckListAdapter
-import com.example.mnotepad.assets.OptionsData.Companion.colorPalette
+import com.example.mnotepad.assets.OptionsData.colorPalette
 import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.databinding.ActivityNoteDetailBinding
 import com.example.mnotepad.entities.enums.NoteType
@@ -39,11 +39,13 @@ import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.ChecklistItem
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
+import com.example.mnotepad.helpers.DELAY_TYPING
 import com.example.mnotepad.helpers.DateTimeHelper
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.PLAIN_TYPE
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
@@ -56,7 +58,6 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.example.mnotepad.widgets.NoteWidget
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-
 
 class NoteDetailActivity : AppCompatActivity() {
 
@@ -77,7 +78,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private val saveRunnable = object : Runnable {
         override fun run() {
             history.save(binding.edtContent.text.toString())
-            handler.postDelayed(this, 1000)
+            handler.postDelayed(this, DELAY_TYPING)
         }
     }
 
@@ -247,60 +248,75 @@ class NoteDetailActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.navSave -> {
-            upsertNote(); true
+            upsertNote()
+            true
         }
 
         R.id.navUndo -> {
             val text = history.undo()
-            binding.edtContent.applyHistory(text); true
+            binding.edtContent.applyHistory(text)
+            true
         }
 
         R.id.navRedo -> {
-            binding.edtContent.applyHistory(history.redo()); true
+            binding.edtContent.applyHistory(history.redo())
+            true
         }
 
         R.id.navDelete -> {
-            curNoteItem?.let { noteViewModel.deleteNote(it.id) }; finish(); true
+            curNoteItem?.let { noteViewModel.deleteNote(it.id) }
+            finish()
+            true
         }
 
         R.id.navCategorize -> {
-            handleCategorize(); true
+            handleCategorize()
+            true
         }
 
         R.id.navColorize -> {
-            showColorPickerDialog(); true
+            showColorPickerDialog()
+            true
         }
 
         R.id.navImport -> {
-            handleImportFile(); true
+            handleImportFile()
+            true
         }
 
         R.id.navExport -> {
-            handleExportFile(); true
+            handleExportFile()
+            true
         }
 
         R.id.navPrint -> {
-            handlePrintFile(); true
+            handlePrintFile()
+            true
         }
 
         R.id.navReadOnly -> {
-            toggleEditMode(false); true
+            toggleEditMode(false)
+            true
         }
 
         R.id.navEdit -> {
-            toggleEditMode(true); true
+            toggleEditMode(true)
+            true
         }
 
         R.id.navShare -> {
-            shareNote(); true
+            shareNote()
+            true
         }
 
         R.id.navSearchDetail -> {
-            startSearchMode(); true
+            startSearchMode()
+            true
         }
 
         R.id.navShowInfo -> {
-            showInfoDialog(); true
+            showInfoDialog()
+            true
         }
 
         R.id.navChangeType -> {
@@ -374,15 +390,15 @@ class NoteDetailActivity : AppCompatActivity() {
         val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
         val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
         val contentInfo = "Words: $numOfWords \n" +
-                "Wrapped lines: $numOfWrappedLines\n" +
-                "Characters: $numOfCharacters\n" +
-                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-                "Created at: $createdAt\n" +
-                "Last saved at: $updatedAt"
+            "Wrapped lines: $numOfWrappedLines\n" +
+            "Characters: $numOfCharacters\n" +
+            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+            "Created at: $createdAt\n" +
+            "Last saved at: $updatedAt"
 //                "Last saved at: ${curNoteItem?.updatedAt}"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
-            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -424,7 +440,6 @@ class NoteDetailActivity : AppCompatActivity() {
         }
     }
 
-
     private fun handleCategorize() {
         if (listCategories.isEmpty()) {
             showToast("Please add at least 1 category first", this)
@@ -465,9 +480,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun upsertNote() {
         val title = binding.edtTitle.text.toString()
-        var content = ""
-
-        content = if (noteType == NoteType.TEXT) {
+        val content = if (noteType == NoteType.TEXT) {
             Html.toHtml(binding.edtContent.text, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
         } else {
             convertCheckListToContentForSave(checkListAdapter.getCheckListItems())
@@ -502,7 +515,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private fun handleImportFile() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
+            type = PLAIN_TYPE
         }
         importTxtLauncher.launch(intent)
     }
@@ -516,7 +529,7 @@ class NoteDetailActivity : AppCompatActivity() {
         }
 
         val intent =
-            FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", "text/plain")
+            FileSAFHelper.createFileIntent(binding.edtTitle.text.toString(), "txt", PLAIN_TYPE)
         createTxtLauncher.launch(intent)
     }
 
@@ -525,7 +538,7 @@ class NoteDetailActivity : AppCompatActivity() {
         val content = binding.edtContent.text.toString()
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
+            type = PLAIN_TYPE
             putExtra(Intent.EXTRA_SUBJECT, title)
             putExtra(Intent.EXTRA_TEXT, "$title\n\n$content")
         }
@@ -552,9 +565,9 @@ class NoteDetailActivity : AppCompatActivity() {
         // Show Input Search, X icon
         val btnClear = binding.btnClearSearch
         val edtSearch = binding.edtSearch
-        edtSearch.visibility = View.VISIBLE;
+        edtSearch.visibility = View.VISIBLE
         btnClear.visibility = View.VISIBLE
-        edtSearch.requestFocus();
+        edtSearch.requestFocus()
 
         edtSearch.doOnTextChanged { query, _, _, _ ->
             val keyword = query.toString()

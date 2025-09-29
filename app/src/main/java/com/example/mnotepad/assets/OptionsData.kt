@@ -1,6 +1,5 @@
 package com.example.mnotepad.assets
 
-import android.graphics.Color
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_NEWEST
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_OLDEST
 import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_NEWEST
@@ -8,30 +7,28 @@ import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_OLDEST
 import com.example.mnotepad.helpers.SORT_TITLE_A_Z
 import com.example.mnotepad.helpers.SORT_TITLE_Z_A
 
-class OptionsData {
-    companion object {
-        val noteSortOptions = arrayOf(
-            SORT_EDIT_DATE_FROM_NEWEST,
-            SORT_EDIT_DATE_FROM_OLDEST,
-            SORT_TITLE_A_Z,
-            SORT_TITLE_Z_A,
-            SORT_CREATE_DATE_FROM_NEWEST,
-            SORT_CREATE_DATE_FROM_OLDEST
-        )
+object OptionsData {
+    val noteSortOptions = arrayOf(
+        SORT_EDIT_DATE_FROM_NEWEST,
+        SORT_EDIT_DATE_FROM_OLDEST,
+        SORT_TITLE_A_Z,
+        SORT_TITLE_Z_A,
+        SORT_CREATE_DATE_FROM_NEWEST,
+        SORT_CREATE_DATE_FROM_OLDEST
+    )
 
-        val colorPalette = listOf(
-            "#FFAEAB", "#FFD7A6", "#FFFFB5", "#CDFDBF", "#9FF6FD", "#A0C3FD",
-            "#BBB3FE", "#FFC5FF", "#FEFFF9", "#D5E5FF", "#D7F9F8", "#FFFEE9",
-            "#FEF0D5", "#FAE0E1", "#E2D3F0", "#7E9CCE", "#95B7D0", "#B8E1D3",
-            "#D5E9DD", "#EAC3D6", "#8A4F91", "#BD5091", "#FD645F", "#FF8434",
-            "#FEA500", "#FED47E"
-        )
+    val colorPalette = listOf(
+        "#FFAEAB", "#FFD7A6", "#FFFFB5", "#CDFDBF", "#9FF6FD", "#A0C3FD",
+        "#BBB3FE", "#FFC5FF", "#FEFFF9", "#D5E5FF", "#D7F9F8", "#FFFEE9",
+        "#FEF0D5", "#FAE0E1", "#E2D3F0", "#7E9CCE", "#95B7D0", "#B8E1D3",
+        "#D5E9DD", "#EAC3D6", "#8A4F91", "#BD5091", "#FD645F", "#FF8434",
+        "#FEA500", "#FED47E"
+    )
 
-        val unlockTimes = arrayOf(
-            5 to "5 minutes",
-            10 to "10 minutes",
-            15 to "15 minutes",
-            30 to "20 minutes"
-        )
-    }
+    val unlockTimes = arrayOf(
+        5 to "5 minutes",
+        10 to "10 minutes",
+        15 to "15 minutes",
+        30 to "20 minutes"
+    )
 }
