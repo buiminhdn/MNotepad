@@ -31,23 +31,15 @@ class NoteAdapter(
                 txtTitle.text = note.title
                 txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
 
-                itemNote.backgroundTintList =
-                    if (isSelected) {
-                        ContextCompat.getColorStateList(
-                            root.context,
-                            R.color.primary
-                        )
-                    } else {
-                        note.color?.let { ColorStateList.valueOf(it) }
-                    }
-
-//                itemNote.background =
-//                    if (isSelected)
-//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
-//                    else
-//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
-//
-//                itemNote.backgroundTintList = note.color?.let { ColorStateList.valueOf(it) }
+                if (isSelected) {
+                    itemNote.background =
+                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
+                    itemNote.backgroundTintList = null
+                } else {
+                    itemNote.background =
+                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
+                    itemNote.backgroundTintList = note.color?.let { ColorStateList.valueOf(it) }
+                }
 
                 root.setOnLongClickListener {
                     if (!multiSelect) {

@@ -23,6 +23,7 @@ import com.example.mnotepad.databinding.ActivityPasswordBinding
 import com.example.mnotepad.helpers.INCORRECT_OLD_PASSWORD
 import com.example.mnotepad.helpers.INCORRECT_PASSWORD
 import com.example.mnotepad.helpers.INVALID_NEW_PASSWORD
+import com.example.mnotepad.helpers.PALE_VALUE
 import com.example.mnotepad.helpers.RECOVERY_EMAIL_REQUIRED
 import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.showToast
@@ -59,11 +60,7 @@ class PasswordActivity : AppCompatActivity() {
         binding.btnSetPassword.setOnClickListener { handleSetPassword() }
         binding.btnRemovePassword.setOnClickListener { handleRemovePassword() }
         binding.btnUnlockTime.setOnClickListener { handleUnlockTime() }
-
-        if (!isSetPassword(this)) {
-            binding.btnRemovePassword.isEnabled = false
-            binding.btnUnlockTime.isEnabled = false
-        }
+        enableButtons(isSetPassword(this))
     }
 
     private fun handleUnlockTime() {
@@ -115,8 +112,7 @@ class PasswordActivity : AppCompatActivity() {
                 removePassword(this)
                 dialog.dismiss()
                 showToast("Remove password successfully", this)
-                binding.btnRemovePassword.isEnabled = false
-                binding.btnUnlockTime.isEnabled = false
+                enableButtons(false)
             }
         }
 
@@ -175,12 +171,27 @@ class PasswordActivity : AppCompatActivity() {
                 setRecoveryEmail(this, edtRecoveryEmail!!.text.toString())
                 dialog.dismiss()
                 showToast("Update password successfully", this)
-                binding.btnRemovePassword.isEnabled = true
-                binding.btnUnlockTime.isEnabled = true
+                enableButtons(true)
             }
         }
 
         dialog.show()
+    }
+
+    private fun enableButtons(isPasswordSet: Boolean) {
+        if (isPasswordSet) {
+            binding.btnRemovePassword.isEnabled = true
+            binding.btnUnlockTime.isEnabled = true
+
+            binding.btnRemovePassword.alpha = 1.0f
+            binding.btnUnlockTime.alpha = 1.0f
+        } else {
+            binding.btnRemovePassword.isEnabled = false
+            binding.btnUnlockTime.isEnabled = false
+
+            binding.btnRemovePassword.alpha = PALE_VALUE
+            binding.btnUnlockTime.alpha = PALE_VALUE
+        }
     }
 
     private fun setUpToolbar() {
