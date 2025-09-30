@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.adapters.HelpAdapter
 import com.example.mnotepad.assets.SampleData.helpData
 import com.example.mnotepad.databinding.ActivityHelpBinding
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 
 class HelpActivity : AppCompatActivity() {
 
@@ -16,6 +17,7 @@ class HelpActivity : AppCompatActivity() {
     private lateinit var helpAdapter: HelpAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityHelpBinding.inflate(layoutInflater)
         enableEdgeToEdge()
