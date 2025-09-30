@@ -389,15 +389,14 @@ class NoteDetailActivity : AppCompatActivity() {
         val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
         val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
         val contentInfo = "Words: $numOfWords \n" +
-            "Wrapped lines: $numOfWrappedLines\n" +
-            "Characters: $numOfCharacters\n" +
-            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-            "Created at: $createdAt\n" +
-            "Last saved at: $updatedAt"
-//                "Last saved at: ${curNoteItem?.updatedAt}"
+                "Wrapped lines: $numOfWrappedLines\n" +
+                "Characters: $numOfCharacters\n" +
+                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+                "Created at: $createdAt\n" +
+                "Last saved at: $updatedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
-            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+            .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -547,12 +546,20 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handlePrintFile() {
-        val intent = FileSAFHelper.createFileIntent(
-            binding.edtTitle.text.toString(),
-            "pdf",
-            "application/pdf"
-        )
-        createPdfLauncher.launch(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val intent = FileSAFHelper.createFileIntent(
+                binding.edtTitle.text.toString(),
+                "pdf",
+                "application/pdf"
+            )
+            createPdfLauncher.launch(intent)
+        } else {
+            FileHelper.createPDF(
+                this,
+                binding.edtTitle.text.toString(),
+                binding.edtContent.text.toString()
+            )
+        }
     }
 
     private fun startSearchMode() {

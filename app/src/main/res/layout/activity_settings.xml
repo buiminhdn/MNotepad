@@ -30,7 +30,7 @@
             android:textColor="?attr/textFillColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/theme"
+            android:text="@string/txt_theme_title"
             android:textStyle="bold"
             android:textSize="16sp"
             tools:ignore="PrivateResource" />
@@ -39,7 +39,7 @@
             android:textColor="?attr/textFillColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/changes_color_theme_of_visible_elements"
+            android:text="@string/txt_subtext_change_color_theme"
             tools:ignore="PrivateResource" />
 
     </LinearLayout>
@@ -50,9 +50,9 @@
         android:layout_marginHorizontal="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:textStyle="bold"
+        android:textStyle="bold"
         android:textSize="16sp"
-        android:text="@string/password_settings"
+        android:text="@string/txt_option_password_settings"
         tools:ignore="PrivateResource" />
 
 </LinearLayout>

@@ -25,7 +25,6 @@
                 android:id="@+id/tvHelpTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="How can I use the app?"
                 android:textAlignment="textStart"
                 android:textColor="?attr/textFillColor"
                 android:textStyle="bold" />
@@ -34,7 +33,7 @@
                 android:id="@+id/tvHelpIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+"
+                android:text="@string/txt_plus"
                 android:textSize="20sp"
                 android:textAlignment="textEnd"
                 android:textColor="?attr/textFillColor"
@@ -50,7 +49,6 @@
         android:visibility="gone"
         android:layout_marginTop="2dp"
         android:background="@drawable/bg_note_default"
-        android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

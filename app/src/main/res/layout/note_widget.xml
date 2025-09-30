@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Note Title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -28,7 +27,6 @@
             android:id="@+id/tvNoteContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Note content preview..."
             android:textSize="14sp" />
 
     </LinearLayout>

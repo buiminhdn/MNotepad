@@ -3,55 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navSelectAll"
-        android:contentDescription="@string/button_to_select_all_android_title"
-        android:title="@string/all"
+        android:contentDescription="@string/txt_button_select_all"
+        android:title="@string/txt_option_all_upper"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navDeleteAll"
         android:icon="@drawable/ic_trash"
         app:iconTint="@color/white"
-        android:contentDescription="@string/button_to_delete_all"
-        android:title="@string/delete_all"
+        android:contentDescription="@string/txt_button_delete_all"
+        android:title="@string/txt_option_delete_all"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navSearch"
         android:icon="@drawable/ic_search"
-        android:contentDescription="@string/button_to_search_note"
-        android:title="@string/search"
+        android:contentDescription="@string/txt_button_search_note"
+        android:title="@string/txt_option_search"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navSort"
-        android:title="@string/sort"
-        android:contentDescription="@string/button_to_sort_note"
+        android:title="@string/txt_option_sort_upper"
+        android:contentDescription="@string/txt_button_sort_note"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navSelectAllNotes"
-        android:title="@string/select_all_notes"
+        android:title="@string/txt_option_select_all_notes"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navImportTxtFiles"
-        android:title="@string/import_text_files"
+        android:title="@string/txt_option_import_text_files"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navExportSelected"
-        android:title="@string/export_notes_to_text_files"
+        android:title="@string/txt_option_export_notes_to_text_files"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navCategorizeSelected"
-        android:title="@string/categorize"
+        android:title="@string/txt_option_categorize"
         android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navColorizeSelected"
-        android:title="@string/colorize"
+        android:title="@string/txt_option_colorize"
         android:visible="false"
         app:showAsAction="never" />
 </menu>

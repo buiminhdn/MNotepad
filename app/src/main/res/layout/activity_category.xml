@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:autofillHints="New Category"
             android:backgroundTint="@color/primary"
-            android:hint="@string/enter_category"
+            android:hint="@string/txt_hint_enter_category"
             android:inputType="text" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="@drawable/button_bg"
-            android:text="@string/add"
+            android:text="@string/txt_option_add_upper"
             android:textColor="@color/white" />
     </LinearLayout>
 

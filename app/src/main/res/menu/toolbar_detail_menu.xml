@@ -5,77 +5,77 @@
         android:id="@+id/navEdit"
         android:icon="@drawable/ic_pen"
         app:iconTint="@color/white"
-        android:title="@string/allow_edit"
+        android:title="@string/txt_option_allow_edit_upper"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navSave"
-        android:title="@string/save"
+        android:title="@string/txt_option_save_upper"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navUndo"
-        android:title="@string/undo"
+        android:title="@string/txt_option_undo_upper"
         android:enabled="false"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navDelete"
-        android:title="@string/delete"
+        android:title="@string/txt_option_delete"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navRedo"
-        android:title="@string/redo"
+        android:title="@string/txt_option_redo"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navCategorize"
-        android:title="@string/categorize"
+        android:title="@string/txt_option_categorize"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navColorize"
-        android:title="@string/colorize"
+        android:title="@string/txt_option_colorize"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navChangeType"
-        android:title="@string/covert_to_checklist"
+        android:title="@string/txt_option_covert_to_checklist"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navImport"
-        android:title="@string/import_file"
+        android:title="@string/txt_option_import_file"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navExport"
-        android:title="@string/export_file"
+        android:title="@string/txt_option_export_file"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navPrint"
-        android:title="@string/print"
+        android:title="@string/txt_option_print"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navReadOnly"
-        android:title="@string/read_only"
+        android:title="@string/txt_option_read_only"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navSearchDetail"
-        android:title="@string/search"
+        android:title="@string/txt_option_search"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navShare"
-        android:title="@string/share"
+        android:title="@string/txt_option_share"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/navShowInfo"
-        android:title="@string/show_info"
+        android:title="@string/txt_option_show_info"
         app:showAsAction="never" />
 </menu>

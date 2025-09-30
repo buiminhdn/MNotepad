@@ -31,7 +31,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:gravity="top"
-        android:hint="@string/enter_content"
+        android:hint="@string/txt_hint_enter_content"
         android:inputType="textCapSentences|textMultiLine"
         tools:ignore="PrivateResource" />
 

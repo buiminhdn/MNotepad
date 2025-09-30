@@ -38,7 +38,6 @@ import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -143,7 +142,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSelectCount(size: Int) {
         if (size == 0) {
-            binding.toolbarTitle.text = getResources().getString(R.string.project_title)
+            binding.toolbarTitle.text = getResources().getString(R.string.txt_app_name)
         } else {
             binding.toolbarTitle.text = size.toString()
         }
@@ -167,7 +166,7 @@ class MainActivity : AppCompatActivity() {
             categorizeItem.isVisible = true
             colorizeItem.isVisible = true
         } else {
-            binding.toolbarTitle.text = getString(R.string.project_title)
+            binding.toolbarTitle.text = getString(R.string.txt_app_name)
             searchItem?.isVisible = true
             sortItem?.isVisible = true
             selectAllItem?.isVisible = false
@@ -241,6 +240,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.navHelp -> {
                         startActivity(Intent(this, HelpActivity::class.java))
                     }
+
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -279,10 +279,10 @@ class MainActivity : AppCompatActivity() {
             R.id.navSelectAll -> {
                 if (noteAdapter.isAllSelected()) {
                     noteAdapter.clearSelection()
-                    item.title = getString(R.string.all)
+                    item.title = getString(R.string.txt_option_all_upper)
                 } else {
                     noteAdapter.selectAll()
-                    item.title = getString(R.string.unselect_all)
+                    item.title = getString(R.string.txt_option_unselect_all_upper)
                     binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
                 }
                 true
@@ -316,12 +316,12 @@ class MainActivity : AppCompatActivity() {
             R.id.navSelectAllNotes -> {
                 if (noteAdapter.isAllSelected()) {
                     noteAdapter.clearSelection()
-                    item.title = getString(R.string.select_all_notes)
+                    item.title = getString(R.string.txt_option_select_all_notes)
                 } else {
                     noteAdapter.selectAll()
-                    item.title = getString(R.string.unselect_all)
+                    item.title = getString(R.string.txt_option_unselect_all_upper)
                     binding.toolbar.menu.findItem(R.id.navSelectAll).title =
-                        getString(R.string.unselect_all)
+                        getString(R.string.txt_option_unselect_all_upper)
                     binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
                 }
                 true
