@@ -16,10 +16,12 @@ import com.example.mnotepad.database.PasswordStorage.getRecoveryEmail
 import com.example.mnotepad.database.PasswordStorage.getUnlockTime
 import com.example.mnotepad.database.PasswordStorage.isSetPassword
 import com.example.mnotepad.database.PasswordStorage.removePassword
+import com.example.mnotepad.database.PasswordStorage.setLastestTime
 import com.example.mnotepad.database.PasswordStorage.setPassword
 import com.example.mnotepad.database.PasswordStorage.setRecoveryEmail
 import com.example.mnotepad.database.PasswordStorage.setUnlockTime
 import com.example.mnotepad.databinding.ActivityPasswordBinding
+import com.example.mnotepad.helpers.DateTimeHelper
 import com.example.mnotepad.helpers.INCORRECT_OLD_PASSWORD
 import com.example.mnotepad.helpers.INCORRECT_PASSWORD
 import com.example.mnotepad.helpers.INVALID_NEW_PASSWORD
@@ -169,6 +171,7 @@ class PasswordActivity : AppCompatActivity() {
                 }
                 setPassword(this, edtNewPassword!!.text.toString())
                 setRecoveryEmail(this, edtRecoveryEmail!!.text.toString())
+                setLastestTime(this, DateTimeHelper.getCurrentTime())
                 dialog.dismiss()
                 showToast("Update password successfully", this)
                 enableButtons(true)

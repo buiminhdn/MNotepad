@@ -52,7 +52,8 @@
             android:exported="false" />
         <activity
             android:name=".activities.NoteDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

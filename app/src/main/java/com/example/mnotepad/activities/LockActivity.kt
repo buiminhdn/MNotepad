@@ -2,6 +2,7 @@ package com.example.mnotepad.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -30,7 +31,19 @@ class LockActivity : AppCompatActivity() {
         }
 
         setUpToolbar()
+        handleCheckbox()
         handleTextChange()
+    }
+
+    private fun handleCheckbox() {
+        binding.ckbHidePassword.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.edtPassword.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            } else {
+                binding.edtPassword.inputType = InputType.TYPE_CLASS_TEXT
+            }
+        }
     }
 
     private fun handleTextChange() {
