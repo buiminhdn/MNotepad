@@ -241,6 +241,9 @@ class MainActivity : AppCompatActivity() {
                         startActivity(Intent(this, HelpActivity::class.java))
                     }
 
+                    R.id.navUsers -> {
+                        startActivity(Intent(this, UserActivity::class.java))
+                    }
                 }
             }
             binding.drawerLayout.closeDrawers()

@@ -44,5 +44,10 @@
             android:id="@+id/navHelp"
             android:icon="@drawable/ic_help"
             android:title="@string/txt_help_title" />
+
+        <item
+            android:id="@+id/navUsers"
+            android:icon="@drawable/ic_users"
+            android:title="@string/txt_users_title" />
     </group>
 </menu>
