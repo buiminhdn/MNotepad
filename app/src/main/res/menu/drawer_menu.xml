@@ -33,4 +33,16 @@
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
     </group>
+
+    <group>
+
+        <item
+            android:id="@+id/navRating"
+            android:icon="@drawable/ic_star"
+            android:title="@string/rate_the_app" />
+        <item
+            android:id="@+id/navHelp"
+            android:icon="@drawable/ic_help"
+            android:title="@string/help" />
+    </group>
 </menu>

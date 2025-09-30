@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MNotepad.Base">
         <activity
+            android:name=".activities.HelpActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.NoteWidgetActivity"
             android:exported="false" />
         <activity

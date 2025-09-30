@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
@@ -36,6 +37,7 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -226,6 +228,19 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this, SettingsActivity::class.java)
                         resultLauncher.launch(intent)
                     }
+
+                    R.id.navRating -> {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://play.google.com/store/apps/details?id=com.atomczak.notepat".toUri()
+                            )
+                        )
+                    }
+
+                    R.id.navHelp -> {
+                        startActivity(Intent(this, HelpActivity::class.java))
+                    }
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -305,7 +320,8 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     noteAdapter.selectAll()
                     item.title = getString(R.string.unselect_all)
-                    binding.toolbar.menu.findItem(R.id.navSelectAll).title = getString(R.string.unselect_all)
+                    binding.toolbar.menu.findItem(R.id.navSelectAll).title =
+                        getString(R.string.unselect_all)
                     binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
                 }
                 true

@@ -55,4 +55,6 @@
     <string name="select_all_notes">Select all notes</string>
     <string name="mnotepad">MNotepad</string>
     <string name="select_note_widget">Select a note or create a new one (with the \'+\' button):</string>
+    <string name="rate_the_app">Rate the app</string>
+    <string name="help">Help</string>
 </resources>
