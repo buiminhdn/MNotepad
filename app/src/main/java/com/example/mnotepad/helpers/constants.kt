@@ -1,5 +1,6 @@
 package com.example.mnotepad.helpers
 
+const val BASE_URL = "https://dummyjson.com"
 const val USER_DETAIL_ID = "user_detail_id"
 const val NOTE_DETAIL_OBJECT = "note_detail_object"
 const val IS_EDITED_ACTION = "is_edited_action"

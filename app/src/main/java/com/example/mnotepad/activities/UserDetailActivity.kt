@@ -21,7 +21,7 @@ class UserDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserDetailBinding
     private var userId: Int = -1
 
-    private val viewModel: UserViewModel by viewModels {
+    private val userViewModel: UserViewModel by viewModels {
         UserViewModelFactory(UserRepository(UsersApi.retrofitService))
     }
 
@@ -43,7 +43,7 @@ class UserDetailActivity : AppCompatActivity() {
         userId = intent.getIntExtra(USER_DETAIL_ID, -1)
 
         if (userId != -1) {
-            viewModel.user.observe(this) { item ->
+            userViewModel.user.observe(this) { item ->
                 item?.let {
                     binding.toolbar.setTitle(it.firstName)
                     Glide.with(this)
@@ -57,7 +57,7 @@ class UserDetailActivity : AppCompatActivity() {
                     binding.tvGender.text = it.gender
                 }
             }
-            viewModel.fetchUserById(userId)
+            userViewModel.fetchUserById(userId)
         } else {
             showToast("Invalid User ID", this)
             finish()
