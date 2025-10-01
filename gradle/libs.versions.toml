@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.0"
 coilCompose = "2.7.0"
+dotsindicator = "5.1.0"
 glide = "5.0.5"
 hiltAndroid = "2.57.2"
 kotlin = "2.2.20"
@@ -26,6 +27,7 @@ room = "2.8.1"
 
 [libraries]
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }

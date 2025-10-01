@@ -1,6 +1,7 @@
 package com.example.mnotepad.activities
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,7 @@ class UserDetailActivity : AppCompatActivity() {
 
         userId = intent.getIntExtra(USER_DETAIL_ID, -1)
 
+        binding.progressBar.visibility = View.VISIBLE
         if (userId != -1) {
             userViewModel.userDetail.observe(this) { item ->
                 item?.let {
@@ -51,6 +53,7 @@ class UserDetailActivity : AppCompatActivity() {
                     binding.tvEmail.text = it.email
                     binding.tvPhone.text = it.phone
                     binding.tvGender.text = it.gender
+                    binding.progressBar.visibility = View.GONE
                 }
             }
             userViewModel.fetchUserById(userId)

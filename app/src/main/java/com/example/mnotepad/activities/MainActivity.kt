@@ -18,13 +18,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
+import com.example.mnotepad.adapters.SliderAdapter
 import com.example.mnotepad.assets.OptionsData.colorPalette
 import com.example.mnotepad.assets.OptionsData.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.entities.models.SliderModel
 import com.example.mnotepad.helpers.CATEGORY_MENU_ID
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.FileSAFHelper
@@ -68,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        initBanner()
         setupToolbarAndDrawer()
         setupRecyclerView()
         setupObservers()
@@ -467,8 +472,37 @@ class MainActivity : AppCompatActivity() {
 
                 noteViewModel.updateNotes(selectedNotes.map { it.copy(categoryIds = checkedIds) })
                 showToast("Update Categories successfully", this)
+                noteAdapter.toggleSelectMode(false)
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun initBanner() {
+        val banners = listOf(
+            SliderModel("https://lutech.vn/_ipx/_/image/work_play/team.png"),
+            SliderModel("https://i.etsystatic.com/5117969/r/il/98face/6916662015/il_570xN.6916662015_mnz1.jpg"),
+            SliderModel("https://i.etsystatic.com/5847630/r/il/1f456b/3407283332/il_340x270.3407283332_495d.jpg")
+        )
+
+        runBanners(banners)
+    }
+
+    private fun runBanners(image: List<SliderModel>) {
+        binding.viewPager.adapter = SliderAdapter(image)
+        binding.viewPager.offscreenPageLimit = 3
+        binding.viewPager.clipToPadding = false
+        binding.viewPager.clipChildren = false
+        binding.viewPager.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
+
+        val compositePageTransformer = CompositePageTransformer().apply {
+            addTransformer(MarginPageTransformer(40))
+        }
+        binding.viewPager.setPageTransformer(compositePageTransformer)
+
+        if (image.size > 1) {
+            binding.dotIndicator.visibility = View.VISIBLE
+            binding.dotIndicator.attachTo(binding.viewPager)
+        }
     }
 }

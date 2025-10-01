@@ -2,6 +2,7 @@ package com.example.mnotepad.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -61,8 +62,10 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun observeUsers() {
+        binding.progressBar.visibility = View.VISIBLE
         userViewModel.users.observe(this) { users ->
             userAdapter.submitList(users)
+            binding.progressBar.visibility = View.GONE
         }
     }
 }
