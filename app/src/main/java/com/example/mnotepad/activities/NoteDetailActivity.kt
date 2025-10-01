@@ -389,11 +389,11 @@ class NoteDetailActivity : AppCompatActivity() {
         val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
         val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
         val contentInfo = "Words: $numOfWords \n" +
-                "Wrapped lines: $numOfWrappedLines\n" +
-                "Characters: $numOfCharacters\n" +
-                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-                "Created at: $createdAt\n" +
-                "Last saved at: $updatedAt"
+            "Wrapped lines: $numOfWrappedLines\n" +
+            "Characters: $numOfCharacters\n" +
+            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+            "Created at: $createdAt\n" +
+            "Last saved at: $updatedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->

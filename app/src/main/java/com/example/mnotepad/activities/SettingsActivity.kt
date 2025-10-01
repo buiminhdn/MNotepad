@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.mnotepad.databinding.ActivitySettingsBinding
 import com.example.mnotepad.entities.enums.AppTheme
 import com.example.mnotepad.helpers.ThemeManager
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.ThemeManager.isThemeChange
 import com.example.mnotepad.helpers.ThemeManager.toggleThemeChange
 
@@ -18,7 +19,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeManager.applyTheme(this)
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 

@@ -1,5 +1,6 @@
 package com.example.mnotepad.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -13,12 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.adapters.UserAdapter
 import com.example.mnotepad.databinding.ActivityUserBinding
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
+import com.example.mnotepad.helpers.USER_DETAIL_ID
 import com.example.mnotepad.network.UsersApi
 import com.example.mnotepad.repositories.UserRepository
 import com.example.mnotepad.viewmodels.UserViewModel
 import com.example.mnotepad.viewmodels.UserViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UserActivity : AppCompatActivity() {
@@ -54,9 +54,21 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun setUpRecyclerView() {
-        userAdapter = UserAdapter()
+        userAdapter = UserAdapter(::openUserDetail)
         binding.rvUsers.layoutManager = LinearLayoutManager(this)
         binding.rvUsers.adapter = userAdapter
+
+//        val resId = R.anim.layout_animation_slide_up
+//        val animation: LayoutAnimationController? = AnimationUtils.loadLayoutAnimation(this, resId)
+//        binding.rvUsers.setLayoutAnimation(animation)
+    }
+
+    private fun openUserDetail(userId: Int) {
+        startActivity(
+            Intent(this, UserDetailActivity::class.java).apply {
+                putExtra(USER_DETAIL_ID, userId)
+            }
+        )
     }
 
     private fun observeUsers() {

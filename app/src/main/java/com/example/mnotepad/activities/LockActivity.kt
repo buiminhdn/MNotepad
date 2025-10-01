@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import com.example.mnotepad.database.PasswordStorage.getPassword
 import com.example.mnotepad.databinding.ActivityLockBinding
 import com.example.mnotepad.helpers.DELAY_TYPING
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import java.util.Timer
 import java.util.TimerTask
 
@@ -19,6 +20,7 @@ class LockActivity : AppCompatActivity() {
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityLockBinding.inflate(layoutInflater)

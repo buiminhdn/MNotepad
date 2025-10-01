@@ -13,16 +13,24 @@
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:background="@drawable/bg_note_default"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvFirstName"
+            android:id="@+id/tvName"
             android:textColor="?attr/textFillColor"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textStyle="bold" />
+
+        <TextView
+            android:textAlignment="textEnd"
+            android:id="@+id/tvAge"
+            android:textColor="?attr/textFillColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textStyle="bold" />
 
     </LinearLayout>

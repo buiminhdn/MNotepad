@@ -69,4 +69,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.1.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("com.github.bumptech.glide:glide:5.0.5")
+
 }

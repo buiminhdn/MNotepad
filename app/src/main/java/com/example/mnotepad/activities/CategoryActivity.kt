@@ -14,6 +14,7 @@ import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.callbacks.OnItemCategoryClickListener
 import com.example.mnotepad.databinding.ActivityCategoryBinding
 import com.example.mnotepad.entities.models.Category
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 
@@ -23,6 +24,7 @@ class CategoryActivity : AppCompatActivity() {
     private val categoryViewModel: CategoryViewModel by viewModels()
     var touchHelper: ItemTouchHelper? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityCategoryBinding.inflate(layoutInflater)
@@ -72,6 +74,7 @@ class CategoryActivity : AppCompatActivity() {
             adapter = categoryAdapter
         }
     }
+
     private fun updateOrderIndexes() {
         val updatedList = categoryAdapter.currentList
             .mapIndexed { index, category ->
@@ -82,6 +85,7 @@ class CategoryActivity : AppCompatActivity() {
 
         showToast("Order updated", applicationContext)
     }
+
     fun setupDragAndDrop() {
         touchHelper = ItemTouchHelper(
             ItemMoveCallback(categoryAdapter)
@@ -94,6 +98,7 @@ class CategoryActivity : AppCompatActivity() {
             categoryAdapter.submitList(categories)
         }
     }
+
     private fun handleClickAdd() {
         binding.btnAdd.setOnClickListener {
             val name = binding.edtName.text.toString().trim()

@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MNotepad.Base">
         <activity
+            android:name=".activities.UserDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.UserActivity"
             android:exported="false" />
         <activity

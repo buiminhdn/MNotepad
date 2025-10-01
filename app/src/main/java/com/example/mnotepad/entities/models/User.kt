@@ -1,7 +1,6 @@
 package com.example.mnotepad.entities.models
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
@@ -9,10 +8,10 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 @Serializable
 @JsonIgnoreUnknownKeys
 data class User(
-    @SerialName("id")
     val id: Int,
-    @SerialName("firstName")
-    val firstName: String
+    val firstName: String,
+    val lastName: String,
+    val age: Int
 )
 
 @OptIn(ExperimentalSerializationApi::class)

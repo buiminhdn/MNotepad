@@ -28,6 +28,7 @@ import com.example.mnotepad.helpers.INVALID_NEW_PASSWORD
 import com.example.mnotepad.helpers.PALE_VALUE
 import com.example.mnotepad.helpers.RECOVERY_EMAIL_REQUIRED
 import com.example.mnotepad.helpers.ThemeManager
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 
 class PasswordActivity : AppCompatActivity() {
@@ -42,7 +43,7 @@ class PasswordActivity : AppCompatActivity() {
     var errorMessage: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeManager.applyTheme(this)
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityPasswordBinding.inflate(layoutInflater)

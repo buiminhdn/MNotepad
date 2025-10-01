@@ -1,5 +1,6 @@
 package com.example.mnotepad.helpers
 
+const val USER_DETAIL_ID = "user_detail_id"
 const val NOTE_DETAIL_OBJECT = "note_detail_object"
 const val IS_EDITED_ACTION = "is_edited_action"
 const val SORT_EDIT_DATE_FROM_NEWEST = "edit date: from newest"

@@ -18,6 +18,7 @@ import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.NoteViewModel
 
@@ -30,6 +31,7 @@ class TrashActivity : AppCompatActivity() {
     private var selectedNotes: List<Pair<String, String>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityTrashBinding.inflate(layoutInflater)
         val view = binding.root
