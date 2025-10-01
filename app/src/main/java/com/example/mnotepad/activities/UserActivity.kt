@@ -7,28 +7,21 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.adapters.UserAdapter
 import com.example.mnotepad.databinding.ActivityUserBinding
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.USER_DETAIL_ID
-import com.example.mnotepad.network.UsersApi
-import com.example.mnotepad.repositories.UserRepository
 import com.example.mnotepad.viewmodels.UserViewModel
-import com.example.mnotepad.viewmodels.UserViewModelFactory
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityUserBinding
     private lateinit var userAdapter: UserAdapter
 
-    private val viewModel: UserViewModel by viewModels {
-        UserViewModelFactory(UserRepository(UsersApi.retrofitService))
-    }
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -57,10 +50,6 @@ class UserActivity : AppCompatActivity() {
         userAdapter = UserAdapter(::openUserDetail)
         binding.rvUsers.layoutManager = LinearLayoutManager(this)
         binding.rvUsers.adapter = userAdapter
-
-//        val resId = R.anim.layout_animation_slide_up
-//        val animation: LayoutAnimationController? = AnimationUtils.loadLayoutAnimation(this, resId)
-//        binding.rvUsers.setLayoutAnimation(animation)
     }
 
     private fun openUserDetail(userId: Int) {
@@ -72,12 +61,8 @@ class UserActivity : AppCompatActivity() {
     }
 
     private fun observeUsers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.users.collect { users ->
-                    userAdapter.submitList(users)
-                }
-            }
+        userViewModel.users.observe(this) { users ->
+            userAdapter.submitList(users)
         }
     }
 }

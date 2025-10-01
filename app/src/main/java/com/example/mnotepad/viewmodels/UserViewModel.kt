@@ -3,51 +3,35 @@ package com.example.mnotepad.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.mnotepad.entities.models.User
 import com.example.mnotepad.entities.models.UserDetail
 import com.example.mnotepad.repositories.UserRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class UserViewModel(private val repository: UserRepository) : ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
 
-    private val _users = MutableStateFlow<List<User>>(emptyList())
-    val users: StateFlow<List<User>> = _users.asStateFlow()
+    private val _users = MutableLiveData<List<User>>()
+    val users: LiveData<List<User>> = _users
 
-    private val _user = MutableLiveData<UserDetail>()
-    val user: LiveData<UserDetail> = _user
+    private val _userDetail = MutableLiveData<UserDetail>()
+    val userDetail: LiveData<UserDetail> = _userDetail
 
     init {
         fetchUsers()
     }
 
-    private fun fetchUsers() {
-        viewModelScope.launch {
-            repository.getUsers().collect { list ->
-                _users.value = list
-            }
-        }
+    private fun fetchUsers() = viewModelScope.launch(Dispatchers.IO) {
+        val response = repository.getUsers()
+        _users.postValue(response.users)
     }
 
-    fun fetchUserById(userId: Int) {
-        viewModelScope.launch {
-            repository.getUserById(userId).collect { user ->
-                _user.value = user
-            }
-        }
-    }
-}
-
-class UserViewModelFactory(private val repository: UserRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return UserViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    fun fetchUserById(userId: Int) = viewModelScope.launch(Dispatchers.IO) {
+        val response = repository.getUserById(userId)
+        _userDetail.postValue(response)
     }
 }

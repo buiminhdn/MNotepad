@@ -11,19 +11,15 @@ import com.example.mnotepad.databinding.ActivityUserDetailBinding
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.USER_DETAIL_ID
 import com.example.mnotepad.helpers.showToast
-import com.example.mnotepad.network.UsersApi
-import com.example.mnotepad.repositories.UserRepository
 import com.example.mnotepad.viewmodels.UserViewModel
-import com.example.mnotepad.viewmodels.UserViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserDetailBinding
     private var userId: Int = -1
-
-    private val userViewModel: UserViewModel by viewModels {
-        UserViewModelFactory(UserRepository(UsersApi.retrofitService))
-    }
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -43,7 +39,7 @@ class UserDetailActivity : AppCompatActivity() {
         userId = intent.getIntExtra(USER_DETAIL_ID, -1)
 
         if (userId != -1) {
-            userViewModel.user.observe(this) { item ->
+            userViewModel.userDetail.observe(this) { item ->
                 item?.let {
                     binding.toolbar.setTitle(it.firstName)
                     Glide.with(this)

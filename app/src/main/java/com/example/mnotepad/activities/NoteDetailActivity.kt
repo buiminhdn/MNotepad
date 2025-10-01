@@ -58,7 +58,9 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.example.mnotepad.widgets.NoteWidget
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NoteDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNoteDetailBinding

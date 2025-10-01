@@ -1,22 +1,18 @@
 package com.example.mnotepad.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mnotepad.database.AppDatabase
 import com.example.mnotepad.database.DAO.CategoryDao
 import com.example.mnotepad.entities.models.Category
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryViewModel(application: Application) : AndroidViewModel(application) {
-    val categories: LiveData<List<Category>>
-    private val categoryDao: CategoryDao = AppDatabase.getDatabase(application).getCategoryDao()
-
-    init {
-        categories = categoryDao.getAll()
-    }
+@HiltViewModel
+class CategoryViewModel @Inject constructor(private val categoryDao: CategoryDao) : ViewModel() {
+    val categories: LiveData<List<Category>> = categoryDao.getAll()
 
     fun deleteCategory(id: Int) = viewModelScope.launch(Dispatchers.IO) {
         categoryDao.delete(id)

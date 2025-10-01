@@ -21,7 +21,9 @@ import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.NoteViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TrashActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTrashBinding
     private val noteViewModel: NoteViewModel by viewModels()

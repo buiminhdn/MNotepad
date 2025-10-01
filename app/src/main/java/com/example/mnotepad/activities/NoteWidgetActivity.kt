@@ -14,18 +14,24 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
+import com.example.mnotepad.database.NoteDatabase
 import com.example.mnotepad.databinding.ActivityNoteWidgetBinding
 import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.PREFS_NAME
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.example.mnotepad.widgets.NoteWidget.Companion.updateAppWidget
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NoteWidgetActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteWidgetBinding
     private lateinit var noteAdapter: NoteAdapter
     private val noteViewModel: NoteViewModel by viewModels()
 
+    @Inject
+    lateinit var noteDatabase: NoteDatabase
     private lateinit var widgetManager: AppWidgetManager
     private lateinit var views: RemoteViews
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +77,7 @@ class NoteWidgetActivity : AppCompatActivity() {
             putInt("widget_$appWidgetId", note.id)
         }
 
-        updateAppWidget(this, AppWidgetManager.getInstance(this), appWidgetId)
+        updateAppWidget(this, noteDatabase, AppWidgetManager.getInstance(this), appWidgetId)
 
         val resultValue = Intent()
 

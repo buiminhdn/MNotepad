@@ -11,15 +11,21 @@ import android.widget.RemoteViews
 import androidx.core.content.edit
 import com.example.mnotepad.R
 import com.example.mnotepad.activities.NoteDetailActivity
-import com.example.mnotepad.database.AppDatabase
+import com.example.mnotepad.database.NoteDatabase
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.PREFS_NAME
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NoteWidget : AppWidgetProvider() {
+
+    @Inject
+    lateinit var noteDatabase: NoteDatabase
 
     companion object {
         const val ACTION_NOTE_CHANGED = "ACTION_NOTE_CHANGED"
@@ -27,6 +33,7 @@ class NoteWidget : AppWidgetProvider() {
 
         fun updateAppWidget(
             context: Context,
+            noteDatabase: NoteDatabase,
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int,
         ) {
@@ -34,9 +41,8 @@ class NoteWidget : AppWidgetProvider() {
             val noteId = prefs.getInt("widget_$appWidgetId", -1)
 
             CoroutineScope(Dispatchers.IO).launch {
-                val db = AppDatabase.getDatabase(context)
                 val note = if (noteId != -1) {
-                    db.getNoteDao().getNoteByIdSync(noteId)
+                    noteDatabase.getNoteDao().getNoteByIdSync(noteId)
                 } else {
                     null
                 }
@@ -71,7 +77,7 @@ class NoteWidget : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         appWidgetIds.forEach { appWidgetId ->
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            updateAppWidget(context, noteDatabase, appWidgetManager, appWidgetId)
         }
     }
 
@@ -91,7 +97,7 @@ class NoteWidget : AppWidgetProvider() {
                     allWidgetIds.forEach { wid ->
                         val saved = prefs.getInt("widget_$wid", -1)
                         if (saved == noteId) {
-                            updateAppWidget(context, widgetManager, wid)
+                            updateAppWidget(context, noteDatabase, widgetManager, wid)
                         }
                     }
                 }

@@ -17,7 +17,9 @@ import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CategoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategoryBinding
     private lateinit var categoryAdapter: CategoryAdapter
