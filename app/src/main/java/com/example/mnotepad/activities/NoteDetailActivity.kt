@@ -22,8 +22,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -91,11 +89,11 @@ class NoteDetailActivity : AppCompatActivity() {
         binding = ActivityNoteDetailBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
 
         initToolbar()
         setupRecyclerView()
@@ -391,11 +389,11 @@ class NoteDetailActivity : AppCompatActivity() {
         val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
         val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
         val contentInfo = "Words: $numOfWords \n" +
-            "Wrapped lines: $numOfWrappedLines\n" +
-            "Characters: $numOfCharacters\n" +
-            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-            "Created at: $createdAt\n" +
-            "Last saved at: $updatedAt"
+                "Wrapped lines: $numOfWrappedLines\n" +
+                "Characters: $numOfCharacters\n" +
+                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+                "Created at: $createdAt\n" +
+                "Last saved at: $updatedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
