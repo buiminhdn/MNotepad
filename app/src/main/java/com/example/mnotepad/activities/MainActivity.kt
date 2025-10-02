@@ -211,14 +211,19 @@ class MainActivity : AppCompatActivity() {
             if (item.groupId == CATEGORY_MENU_ID) {
                 showToast("ID ${item.itemId}", this)
                 noteViewModel.filterByCategory(item.itemId)
+                binding.toolbarSubtitle.visibility = View.VISIBLE
+                binding.toolbarSubtitle.text = item.toString()
             } else {
                 when (item.itemId) {
                     R.id.navNotes -> {
                         noteViewModel.filterByCategory(0)
+                        binding.toolbarSubtitle.visibility = View.GONE
                     }
 
                     R.id.navUncategorized -> {
                         noteViewModel.filterByCategory(-1)
+                        binding.toolbarSubtitle.visibility = View.VISIBLE
+                        binding.toolbarSubtitle.text = "Uncategorize"
                     }
 
                     R.id.navEditCategories -> startActivity(

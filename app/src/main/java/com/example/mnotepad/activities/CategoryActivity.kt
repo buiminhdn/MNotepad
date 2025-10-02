@@ -57,8 +57,16 @@ class CategoryActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         categoryAdapter = CategoryAdapter(object : OnItemCategoryClickListener {
             override fun onItemUpdate(category: Category) {
-                categoryViewModel.updateCategory(category)
-                toast("Updated: ${category.name}")
+                val exists = categoryViewModel.categories.value?.any {
+                    it.name.equals(category.name, ignoreCase = true)
+                } ?: false
+
+                if (exists) {
+                    toast("Category already exists: ${category.name}")
+                } else {
+                    categoryViewModel.updateCategory(category)
+                    toast("Updated: ${category.name}")
+                }
             }
 
             override fun onItemDelete(id: Int) {
