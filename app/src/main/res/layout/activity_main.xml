@@ -68,44 +68,15 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_margin="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
-
-        </androidx.viewpager2.widget.ViewPager2>
-
-        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewPager"
-            app:dotsSize="6dp"
-            app:dotsSpacing="2dp"
-            app:dotsWidthFactor="2.5"
-            app:dotsCornerRadius="8dp"
-            android:layout_marginTop="8dp"
-            app:dotsColor="?attr/colorSecondary"
-            app:selectedDotColor="?attr/colorPrimary"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:id="@+id/dotIndicator" />
-
         <!-- Nội dung -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNotes"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dotIndicator" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnAdd"

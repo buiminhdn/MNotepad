@@ -82,6 +82,8 @@ class NoteDetailActivity : AppCompatActivity() {
         }
     }
 
+    private var createdDate: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
         super.onCreate(savedInstanceState)
@@ -89,15 +91,11 @@ class NoteDetailActivity : AppCompatActivity() {
         binding = ActivityNoteDetailBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-//        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
 
         initToolbar()
         setupRecyclerView()
         initObservers()
+        createdDate = DateTimeHelper.getCurrentTime()
         getNoteDataIfUpdate()
         initImportLauncher()
         initCreateTxtLauncher()
@@ -105,8 +103,18 @@ class NoteDetailActivity : AppCompatActivity() {
         handleAddNewItemToCheckList()
         setupDragAndDrop()
         handleTextEditor()
+        handleTitleChange()
 
         handler.post(saveRunnable)
+    }
+
+    private fun handleTitleChange() {
+        binding.edtTitle.setOnFocusChangeListener { view, hasFocus ->
+            binding.formattingBar.isEnabled = false
+        }
+        binding.edtContent.setOnFocusChangeListener { view, hasFocus ->
+            binding.formattingBar.isEnabled = true
+        }
     }
 
     private fun handleTextEditor() {
@@ -207,7 +215,10 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         setSupportActionBar(binding.toolbar)
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener {
+            upsertNote()
+            finish()
+        }
     }
 
     fun setupDragAndDrop() {
@@ -379,21 +390,28 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun showInfoDialog() {
         val content = binding.edtContent.text.toString()
-        val numOfWords = content.split("\\s+".toRegex()).size
-        val numOfWrappedLines = content.split("\n+".toRegex()).size
-        val numOfCharacters = content.length
-        val numOfCharactersWithoutWhitespaces = content
-            .trim()
-            .replace(" ", "")
-            .replace("\n", "").length
-        val createdAt = DateTimeHelper.getFormatedDate(curNoteItem?.createdAt)
-        val updatedAt = DateTimeHelper.getFormatedDate(curNoteItem?.updatedAt)
+        val isContentEmpty = content.isEmpty()
+        val numOfWords = if (isContentEmpty) 0 else content.trim().split("\\s+".toRegex()).size
+        val numOfWrappedLines = if (isContentEmpty) 0 else content.split("\n+".toRegex()).size
+        val numOfCharacters = if (isContentEmpty) 0 else content.trim().length
+        val numOfCharactersWithoutWhitespaces = if (isContentEmpty) {
+            0
+        } else {
+            content
+                .trim()
+                .replace(" ", "")
+                .replace("\n", "").length
+        }
+        val createdAt = DateTimeHelper.getFormatedDate(createdDate)
+        val lastSavedAt = DateTimeHelper.getFormatedDate(
+            curNoteItem?.updatedAt ?: DateTimeHelper.getCurrentTime()
+        )
         val contentInfo = "Words: $numOfWords \n" +
                 "Wrapped lines: $numOfWrappedLines\n" +
                 "Characters: $numOfCharacters\n" +
                 "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
                 "Created at: $createdAt\n" +
-                "Last saved at: $updatedAt"
+                "Last saved at: $lastSavedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
@@ -412,6 +430,7 @@ class NoteDetailActivity : AppCompatActivity() {
                 intent.getParcelableExtra(NOTE_DETAIL_OBJECT)
             }
             curNoteItem?.let {
+                createdDate = it.createdAt
                 binding.edtTitle.setText(it.title)
                 if (it.type == NoteType.TEXT && it.content.isNotEmpty()) {
                     binding.edtContent.setText(
@@ -483,7 +502,6 @@ class NoteDetailActivity : AppCompatActivity() {
         }
 
         if (title.isEmpty() && content.isEmpty()) {
-            showToast("Type Something", this)
             return
         }
 

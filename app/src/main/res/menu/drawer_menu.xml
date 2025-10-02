@@ -7,7 +7,7 @@
             android:title="@string/txt_notes_title" />
     </group>
 
-    <group>
+    <group android:id="@+id/menuCategory">
         <item
             android:id="@+id/navUncategorized"
             android:icon="@drawable/ic_bookmark_x"
@@ -49,10 +49,6 @@
             android:id="@+id/navUsers"
             android:icon="@drawable/ic_users"
             android:title="@string/txt_users_title" />
-
-        <item
-            android:id="@+id/navGift"
-            android:icon="@drawable/ic_gift"
-            android:title="@string/txt_gift_title" />
+        
     </group>
 </menu>

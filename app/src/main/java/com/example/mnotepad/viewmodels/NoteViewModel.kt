@@ -67,6 +67,10 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
             }
     }
 
+    fun filterByColor() {
+
+    }
+
     fun filterByCategory(categoryId: Int) {
         _filteredNotes.value = when (categoryId) {
             0 -> currentNotes // tất cả
@@ -75,6 +79,17 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
                 it.categoryIds?.contains(categoryId) ?: false
             } // theo category
         }
+    }
+
+    fun filterByDeletedCategory(categoryId: Int): List<Note> {
+        when (categoryId) {
+            0 -> null // tất cả
+            -1 -> null
+            else -> return currentNotes.filter {
+                it.categoryIds?.contains(categoryId) ?: false
+            }
+        }
+        return emptyList()
     }
 
     fun sortBy(type: String) {

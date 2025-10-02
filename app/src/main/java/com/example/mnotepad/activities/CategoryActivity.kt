@@ -14,9 +14,11 @@ import com.example.mnotepad.callbacks.ItemMoveCallback
 import com.example.mnotepad.callbacks.OnItemCategoryClickListener
 import com.example.mnotepad.databinding.ActivityCategoryBinding
 import com.example.mnotepad.entities.models.Category
+import com.example.mnotepad.entities.models.Note
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
+import com.example.mnotepad.viewmodels.NoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,6 +26,8 @@ class CategoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCategoryBinding
     private lateinit var categoryAdapter: CategoryAdapter
     private val categoryViewModel: CategoryViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by viewModels()
+    private var currentNotes: List<Note> = emptyList()
     var touchHelper: ItemTouchHelper? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -58,8 +62,19 @@ class CategoryActivity : AppCompatActivity() {
             }
 
             override fun onItemDelete(id: Int) {
+                // Get list user with deleted ID
+                val currentNotes = noteViewModel.filterByDeletedCategory(id)
+                if (currentNotes.isEmpty()) return
+
+                val updatedNotes: MutableList<Note> = mutableListOf()
+
+                for (note in currentNotes) {
+                    val newCategoryIds = note.categoryIds?.filter { it != id }
+                    updatedNotes.add(note.copy(categoryIds = newCategoryIds))
+                }
                 categoryViewModel.deleteCategory(id)
                 toast("Deleted category: $id")
+                noteViewModel.updateNotes(updatedNotes)
             }
 
             override fun onItemDrag(viewHolder: RecyclerView.ViewHolder) {
@@ -98,6 +113,9 @@ class CategoryActivity : AppCompatActivity() {
     private fun setupObservers() {
         categoryViewModel.categories.observe(this) { categories ->
             categoryAdapter.submitList(categories)
+        }
+        noteViewModel.filteredNotes.observe(this) { notes ->
+            currentNotes = notes
         }
     }
 

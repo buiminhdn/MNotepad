@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navSelectAll"
+        android:icon="@drawable/ic_grid"
+        app:iconTint="@color/white"
         android:contentDescription="@string/txt_button_select_all"
         android:title="@string/txt_option_all_upper"
         app:showAsAction="ifRoom" />

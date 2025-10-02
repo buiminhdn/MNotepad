@@ -10,6 +10,7 @@ const val SORT_TITLE_A_Z = "title: A to Z"
 const val SORT_TITLE_Z_A = "title: Z to A"
 const val SORT_CREATE_DATE_FROM_NEWEST = "creation date: from newest"
 const val SORT_CREATE_DATE_FROM_OLDEST = "creation date: from oldest"
+const val SORT_COLOR = "color: in order as shown on color palette"
 
 const val PREFS_NAME = "app_prefs"
 const val PLAIN_TYPE = "text/plain"

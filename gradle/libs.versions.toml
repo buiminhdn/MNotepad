@@ -1,7 +1,6 @@
 [versions]
 agp = "8.13.0"
 coilCompose = "2.7.0"
-dotsindicator = "5.1.0"
 glide = "5.0.5"
 hiltAndroid = "2.57.2"
 kotlin = "2.2.20"
@@ -14,7 +13,7 @@ kotlinxSerializationJson = "1.9.0"
 material = "1.13.0"
 activity = "1.11.0"
 constraintlayout = "2.2.1"
-materialVersion = "1.12.0"
+materialVersion = "1.13.0"
 okhttp = "5.1.0"
 recyclerview = "1.4.0"
 retrofit = "3.0.0"
@@ -28,7 +27,6 @@ room = "2.8.1"
 
 [libraries]
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
-dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }

@@ -18,14 +18,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
 import com.example.mnotepad.R
 import com.example.mnotepad.adapters.NoteAdapter
-import com.example.mnotepad.adapters.SliderAdapter
 import com.example.mnotepad.assets.OptionsData.colorPalette
 import com.example.mnotepad.assets.OptionsData.noteSortOptions
-import com.example.mnotepad.assets.SampleData.banners
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
@@ -73,7 +69,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        initBanner()
         setupToolbarAndDrawer()
         setupRecyclerView()
         setupObservers()
@@ -123,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                 if (treeUri != null) {
                     // Ghi notes ra thư mục
                     FileSAFHelper.exportSelectedNotesToTxt(this, treeUri, selectedNotesToExport)
-                    showToast("Export successfully!", this)
+                    showToast("Export ${selectedNotesToExport.size} notes successfully!", this)
                 }
             }
         }
@@ -155,6 +150,7 @@ class MainActivity : AppCompatActivity() {
         if (size == 0) {
             binding.toolbarTitle.text = getResources().getString(R.string.txt_app_name)
         } else {
+            binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = false
             binding.toolbarTitle.text = size.toString()
         }
     }
@@ -255,10 +251,6 @@ class MainActivity : AppCompatActivity() {
                     R.id.navUsers -> {
                         startActivity(Intent(this, UserActivity::class.java))
                     }
-
-                    R.id.navGift -> {
-                        startActivity(Intent(this, WheelActivity::class.java))
-                    }
                 }
             }
             binding.drawerLayout.closeDrawers()
@@ -295,14 +287,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.navSelectAll -> {
-                if (noteAdapter.isAllSelected()) {
-                    noteAdapter.clearSelection()
-                    item.title = getString(R.string.txt_option_all_upper)
-                } else {
-                    noteAdapter.selectAll()
-                    item.title = getString(R.string.txt_option_unselect_all_upper)
-                    binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
-                }
+                binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = false
+                toggleSelect(noteAdapter.isAllSelected())
                 true
             }
 
@@ -332,20 +318,25 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.navSelectAllNotes -> {
-                if (noteAdapter.isAllSelected()) {
-                    noteAdapter.clearSelection()
-                    item.title = getString(R.string.txt_option_select_all_notes)
-                } else {
-                    noteAdapter.selectAll()
-                    item.title = getString(R.string.txt_option_unselect_all_upper)
-                    binding.toolbar.menu.findItem(R.id.navSelectAll).title =
-                        getString(R.string.txt_option_unselect_all_upper)
-                    binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
-                }
+                binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = false
+                toggleSelect(noteAdapter.isAllSelected())
                 true
             }
 
             else -> toggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun toggleSelect(isSelected: Boolean) {
+        if (noteViewModel.filteredNotes.value?.isEmpty() == true) {
+            return
+        }
+        if (isSelected) {
+            noteAdapter.clearSelection()
+            binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = true
+        } else {
+            noteAdapter.selectAll()
+            binding.toolbarTitle.text = noteAdapter.getSelectedNotesCount().toString()
         }
     }
 
@@ -376,6 +367,11 @@ class MainActivity : AppCompatActivity() {
 
         val submenu: Menu = menu.addSubMenu("Categories")
 
+        if (listCategories.isEmpty()) {
+            menu.findItem(R.id.navUncategorized).isVisible = false
+            return
+        }
+
         for (category in listCategories) {
             submenu.add(CATEGORY_MENU_ID, category.id, category.orderIndex, category.name)
         }
@@ -388,11 +384,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleExportSelected() {
         val selected = noteAdapter.getSelectedNotes()
-        if (selected.isEmpty()) return
-
-        selectedNotesToExport = selected.map { note ->
-            note.title to note.content
+        if (selected.isEmpty()) {
+            val allNotes = noteViewModel.filteredNotes.value
+            if (allNotes != null && allNotes.isNotEmpty()) {
+                selectedNotesToExport = allNotes.map { note ->
+                    note.title to note.content
+                }
+            }
+        } else {
+            selectedNotesToExport = selected.map { note ->
+                note.title to note.content
+            }
         }
+
 
         // Mở UI cho user chọn thư mục
         val intent = FileSAFHelper.createDirectoryIntent()
@@ -484,23 +488,5 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
-    }
-
-    private fun initBanner() {
-        binding.viewPager.adapter = SliderAdapter(banners)
-        binding.viewPager.offscreenPageLimit = 3
-        binding.viewPager.clipToPadding = false
-        binding.viewPager.clipChildren = false
-        binding.viewPager.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
-
-        val compositePageTransformer = CompositePageTransformer().apply {
-            addTransformer(MarginPageTransformer(40))
-        }
-        binding.viewPager.setPageTransformer(compositePageTransformer)
-
-        if (banners.size > 1) {
-            binding.dotIndicator.visibility = View.VISIBLE
-            binding.dotIndicator.attachTo(binding.viewPager)
-        }
     }
 }

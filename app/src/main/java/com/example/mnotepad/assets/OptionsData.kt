@@ -2,6 +2,7 @@ package com.example.mnotepad.assets
 
 import com.example.mnotepad.helpers.FIFTEEN_UNLOCK_TIME
 import com.example.mnotepad.helpers.FIVE_UNLOCK_TIME
+import com.example.mnotepad.helpers.SORT_COLOR
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_NEWEST
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_OLDEST
 import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_NEWEST
@@ -18,7 +19,8 @@ object OptionsData {
         SORT_TITLE_A_Z,
         SORT_TITLE_Z_A,
         SORT_CREATE_DATE_FROM_NEWEST,
-        SORT_CREATE_DATE_FROM_OLDEST
+        SORT_CREATE_DATE_FROM_OLDEST,
+        SORT_COLOR
     )
 
     val colorPalette = listOf(

@@ -60,6 +60,7 @@
     <string name="txt_option_add_widget">Add widget</string>
     <string name="txt_option_password_settings">Password Settings</string>
     <string name="txt_option_select_all_notes">Select all notes</string>
+    <string name="txt_option_unselect_all_notes">Unselect all notes</string>
     <string name="txt_option_set_password">Set password</string>
     <string name="txt_option_unlock_time">Unlock time</string>
     <string name="txt_option_remove_password">Remove password</string>
