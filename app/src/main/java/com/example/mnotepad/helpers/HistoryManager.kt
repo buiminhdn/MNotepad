@@ -7,33 +7,46 @@ class HistoryManager {
     private val undoStack = Stack<String>()
     private val redoStack = Stack<String>()
     private var lastSaved = ""
+    private var firstSave = false
 
     fun save(text: String) {
-        if (text != lastSaved) {
-            undoStack.push(text)
+        if (!firstSave) {
+            // lần đầu thì chỉ gán lastSaved thôi, không push vào undoStack
             lastSaved = text
+            firstSave = true
+            return
+        }
+
+        if (text != lastSaved) {
+            undoStack.push(lastSaved)
+            lastSaved = text
+            // Mỗi lần gõ thì không cho redo nữa
+            redoStack.clear()
         }
     }
 
-    fun undo(): String = if (undoStack.size > 1) {
-        redoStack.push(undoStack.pop())
-        lastSaved = undoStack.peek()
-        undoStack.peek()
-    } else if (undoStack.isNotEmpty()) {
-        redoStack.push(undoStack.pop())
-        lastSaved = ""
-        ""
-    } else {
-        ""
+    fun undo(): String {
+        return if (undoStack.isNotEmpty()) {
+            val prev = undoStack.pop()
+            redoStack.push(lastSaved) // lưu trạng thái hiện tại vào redo
+            lastSaved = prev
+            prev
+        } else {
+            // không cho undo xuống dưới text ban đầu
+            lastSaved
+        }
     }
 
-    fun redo(): String = if (redoStack.isNotEmpty()) {
-        val redoText = redoStack.pop()
-        undoStack.push(redoText)
-        lastSaved = redoText
-        redoText
-    } else {
-        lastSaved
+
+    fun redo(): String {
+        return if (redoStack.isNotEmpty()) {
+            val next = redoStack.pop()
+            undoStack.push(lastSaved) // lưu trạng thái hiện tại vào undo
+            lastSaved = next
+            next
+        } else {
+            lastSaved
+        }
     }
 }
 

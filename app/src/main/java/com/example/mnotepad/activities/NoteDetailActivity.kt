@@ -79,7 +79,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
         override fun run() {
-//            history.save(binding.edtContent.text.toString())
+            history.save(binding.edtContent.text.toString())
             handler.postDelayed(this, DELAY_TYPING)
         }
     }
