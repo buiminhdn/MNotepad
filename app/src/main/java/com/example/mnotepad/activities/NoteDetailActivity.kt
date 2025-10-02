@@ -46,6 +46,7 @@ import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.PLAIN_TYPE
+import com.example.mnotepad.helpers.PrintHelper
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
@@ -71,7 +72,6 @@ class NoteDetailActivity : AppCompatActivity() {
     private var curNoteItem: Note? = null
     private lateinit var importTxtLauncher: ActivityResultLauncher<Intent>
     private lateinit var createTxtLauncher: ActivityResultLauncher<Intent>
-    private lateinit var createPdfLauncher: ActivityResultLauncher<Intent>
     var noteType = NoteType.TEXT
     var touchHelper: ItemTouchHelper? = null
     private val history = HistoryManager()
@@ -101,7 +101,6 @@ class NoteDetailActivity : AppCompatActivity() {
         getNoteDataIfUpdate()
         initImportLauncher()
         initCreateTxtLauncher()
-        initCreatePdfLauncher()
         handleAddNewItemToCheckList()
         setupDragAndDrop()
         handleTextEditor()
@@ -188,22 +187,6 @@ class NoteDetailActivity : AppCompatActivity() {
                 if (result.resultCode == RESULT_OK) {
                     result.data?.data?.let { uri ->
                         FileSAFHelper.exportTxt(this, uri, binding.edtContent.text.toString())
-                    }
-                }
-            }
-    }
-
-    private fun initCreatePdfLauncher() {
-        createPdfLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    result.data?.data?.let { uri ->
-                        FileSAFHelper.exportPdf(
-                            this,
-                            uri,
-                            binding.edtTitle.text.toString(),
-                            binding.edtContent.text.toString()
-                        )
                     }
                 }
             }
@@ -586,20 +569,9 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun handlePrintFile() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val intent = FileSAFHelper.createFileIntent(
-                binding.edtTitle.text.toString(),
-                "pdf",
-                "application/pdf"
-            )
-            createPdfLauncher.launch(intent)
-        } else {
-            FileHelper.createPDF(
-                this,
-                binding.edtTitle.text.toString(),
-                binding.edtContent.text.toString()
-            )
-        }
+        val title = binding.edtTitle.text.toString()
+        val content = binding.edtContent.text.toString()
+        PrintHelper.print(this, title, content)
     }
 
     private fun startSearchMode() {
