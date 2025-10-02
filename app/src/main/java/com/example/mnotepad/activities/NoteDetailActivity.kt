@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -35,6 +36,7 @@ import com.example.mnotepad.entities.enums.NoteType
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.ChecklistItem
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.CATEGORY_ID
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.DELAY_TYPING
 import com.example.mnotepad.helpers.DateTimeHelper
@@ -83,6 +85,7 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private var createdDate: Long = 0
+    private var currentColor: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.applyTheme(this)
@@ -369,15 +372,18 @@ class NoteDetailActivity : AppCompatActivity() {
             this,
             colorPalette,
             onColorSelected = { selectedColor ->
+                currentColor = selectedColor
                 showToast("Selected: $selectedColor", applicationContext)
+                val colorInt = selectedColor.toColorInt()
                 curNoteItem?.let {
                     noteViewModel.upsertNote(it.copy(color = selectedColor))
-                    binding.noteDetailLayout.backgroundTintList =
-                        ColorStateList.valueOf(selectedColor)
                     curNoteItem = it.copy(color = selectedColor)
                 }
+                binding.noteDetailLayout.backgroundTintList =
+                    ColorStateList.valueOf(colorInt)
             },
             onReset = {
+                currentColor = ""
                 curNoteItem?.let {
                     noteViewModel.upsertNote(it.copy(color = null))
                     curNoteItem = it.copy(color = null)
@@ -407,11 +413,11 @@ class NoteDetailActivity : AppCompatActivity() {
             curNoteItem?.updatedAt ?: DateTimeHelper.getCurrentTime()
         )
         val contentInfo = "Words: $numOfWords \n" +
-                "Wrapped lines: $numOfWrappedLines\n" +
-                "Characters: $numOfCharacters\n" +
-                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-                "Created at: $createdAt\n" +
-                "Last saved at: $lastSavedAt"
+            "Wrapped lines: $numOfWrappedLines\n" +
+            "Characters: $numOfCharacters\n" +
+            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+            "Created at: $createdAt\n" +
+            "Last saved at: $lastSavedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
@@ -442,8 +448,9 @@ class NoteDetailActivity : AppCompatActivity() {
 
                 noteType = it.type
 
-                if (it.color != null) {
-                    binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(it.color)
+                it.color?.let { colorHex ->
+                    val colorInt = colorHex.toColorInt()
+                    binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(colorInt)
                 }
             }
         }
@@ -505,12 +512,22 @@ class NoteDetailActivity : AppCompatActivity() {
             return
         }
 
+        val categoryId = intent.getIntExtra(CATEGORY_ID, 0)
+
         val updatedNote = curNoteItem?.copy(
             title = title,
             content = content,
             updatedAt = System.currentTimeMillis(),
             type = noteType
-        ) ?: Note(title = title, content = content, type = noteType)
+        ) ?: Note(
+            title = title, content = content, type = noteType,
+            categoryIds = when (categoryId) {
+                0 -> emptyList()
+                -1 -> emptyList()
+                else -> listOf(categoryId)
+            },
+            color = currentColor
+        )
 
         noteViewModel.upsertNote(updatedNote)
         showToast("$title Saved", this)
@@ -522,6 +539,11 @@ class NoteDetailActivity : AppCompatActivity() {
             }
             applicationContext.sendBroadcast(intent)
         }
+
+        val resultIntent = Intent().apply {
+            putExtra(CATEGORY_ID, categoryId)
+        }
+        setResult(RESULT_OK, resultIntent)
 
         finish()
     }

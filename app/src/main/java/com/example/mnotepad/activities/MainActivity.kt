@@ -25,6 +25,7 @@ import com.example.mnotepad.assets.OptionsData.noteSortOptions
 import com.example.mnotepad.databinding.ActivityMainBinding
 import com.example.mnotepad.entities.models.Category
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.CATEGORY_ID
 import com.example.mnotepad.helpers.CATEGORY_MENU_ID
 import com.example.mnotepad.helpers.ColorPickerDialogHelper
 import com.example.mnotepad.helpers.FileSAFHelper
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var noteDetailLauncher: ActivityResultLauncher<Intent>
 
     private var currentCategoryId: Int = 0
 
@@ -78,10 +80,23 @@ class MainActivity : AppCompatActivity() {
         initSelectFolderLauncher()
         initImportMultipleTxtLauncher()
         initSettingLauncher()
+        initNoteDetailLauncher()
         handleClickAdd()
 
         val snackBar = Snackbar.make(binding.root, "Welcome back", Snackbar.LENGTH_LONG)
         snackBar.show()
+    }
+
+    private fun initNoteDetailLauncher() {
+        noteDetailLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val categoryId = result.data?.getIntExtra(CATEGORY_ID, 0) ?: 0
+                noteViewModel.filterByCategory(categoryId)
+                currentCategoryId = categoryId
+            }
+        }
     }
 
     private fun initSettingLauncher() {
@@ -131,8 +146,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener {
             val intent = Intent(this, NoteDetailActivity::class.java).apply {
                 putExtra(IS_EDITED_ACTION, false)
+                putExtra(CATEGORY_ID, currentCategoryId)
             }
-            startActivity(intent)
+            noteDetailLauncher.launch(intent)
         }
     }
 
@@ -229,7 +245,7 @@ class MainActivity : AppCompatActivity() {
                         noteViewModel.filterByCategory(-1)
                         binding.toolbarSubtitle.visibility = View.VISIBLE
                         binding.toolbarSubtitle.text = UNCATEGORIZE
-                        currentCategoryId = 0
+                        currentCategoryId = -1
                     }
 
                     R.id.navEditCategories -> startActivity(
@@ -270,12 +286,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openNoteDetail(note: Note) {
-        startActivity(
-            Intent(this, NoteDetailActivity::class.java).apply {
-                putExtra(NOTE_DETAIL_OBJECT, note)
-                putExtra(IS_EDITED_ACTION, true)
-            }
-        )
+        val intent = Intent(this, NoteDetailActivity::class.java).apply {
+            putExtra(NOTE_DETAIL_OBJECT, note)
+            putExtra(IS_EDITED_ACTION, true)
+            putExtra(CATEGORY_ID, currentCategoryId)
+        }
+        noteDetailLauncher.launch(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -499,5 +515,10 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        selectedSortTypeIndex = 0
     }
 }

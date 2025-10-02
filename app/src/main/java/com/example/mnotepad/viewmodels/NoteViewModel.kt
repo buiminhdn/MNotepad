@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mnotepad.assets.OptionsData.colorPalette
 import com.example.mnotepad.database.DAO.NoteDao
 import com.example.mnotepad.entities.models.Note
+import com.example.mnotepad.helpers.SORT_COLOR
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_NEWEST
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_OLDEST
 import com.example.mnotepad.helpers.SORT_EDIT_DATE_FROM_NEWEST
@@ -30,10 +32,13 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
 
     private var currentNotes: List<Note> = emptyList()
 
+    private var currentCategoryId: Int = 0
+
     init {
         notes.observeForever { list ->
             currentNotes = list
-            _filteredNotes.value = list
+//            _filteredNotes.value = list
+            filterByCategory(currentCategoryId)
         }
     }
 
@@ -67,14 +72,11 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
             }
     }
 
-    fun filterByColor() {
-
-    }
-
     fun filterByCategory(categoryId: Int) {
+        currentCategoryId = categoryId
         _filteredNotes.value = when (categoryId) {
             0 -> currentNotes // tất cả
-            -1 -> currentNotes.filter { it.categoryIds.isNullOrEmpty() } // uncategorized
+            -1 -> currentNotes.filter { it.categoryIds.isNullOrEmpty() || it.categoryIds == listOf(0) } // uncategorized
             else -> currentNotes.filter {
                 it.categoryIds?.contains(categoryId) ?: false
             } // theo category
@@ -100,6 +102,10 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
             SORT_TITLE_Z_A -> currentNotes.sortedByDescending { it.title }
             SORT_CREATE_DATE_FROM_NEWEST -> currentNotes.sortedByDescending { it.createdAt }
             SORT_CREATE_DATE_FROM_OLDEST -> currentNotes.sortedBy { it.createdAt }
+            SORT_COLOR -> currentNotes.sortedBy { note ->
+                val index = colorPalette.indexOf(note.color)
+                if (index == -1) Int.MAX_VALUE else index
+            }
             else -> currentNotes
         }
     }

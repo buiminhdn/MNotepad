@@ -70,7 +70,9 @@ class CategoryActivity : AppCompatActivity() {
             }
 
             override fun onItemDelete(id: Int) {
-                // Get list user with deleted ID
+                categoryViewModel.deleteCategory(id)
+                toast("Deleted category: $id")
+
                 val currentNotes = noteViewModel.filterByDeletedCategory(id)
                 if (currentNotes.isEmpty()) return
 
@@ -80,8 +82,6 @@ class CategoryActivity : AppCompatActivity() {
                     val newCategoryIds = note.categoryIds?.filter { it != id }
                     updatedNotes.add(note.copy(categoryIds = newCategoryIds))
                 }
-                categoryViewModel.deleteCategory(id)
-                toast("Deleted category: $id")
                 noteViewModel.updateNotes(updatedNotes)
             }
 

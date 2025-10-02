@@ -14,18 +14,25 @@ import com.example.mnotepad.R
 class ColorAdapter(
     private val context: Context,
     private val colors: List<String>,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
 
     inner class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val colorView: View = itemView.findViewById(R.id.colorView)
 
         fun bind(colorHex: String) {
+//            val colorInt = colorHex.toColorInt()
+//            val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.square_rounded_corners)?.mutate()
+//            backgroundDrawable?.colorFilter = PorterDuffColorFilter(colorInt, PorterDuff.Mode.SRC_IN)
+//            colorView.background = backgroundDrawable
+//            itemView.setOnClickListener { onItemClick(colorInt) }
             val colorInt = colorHex.toColorInt()
+
             val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.square_rounded_corners)?.mutate()
             backgroundDrawable?.colorFilter = PorterDuffColorFilter(colorInt, PorterDuff.Mode.SRC_IN)
+
             colorView.background = backgroundDrawable
-            itemView.setOnClickListener { onItemClick(colorInt) }
+            itemView.setOnClickListener { onItemClick(colorHex) }
         }
     }
 

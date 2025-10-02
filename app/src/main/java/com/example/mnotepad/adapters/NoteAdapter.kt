@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.R
@@ -38,7 +39,9 @@ class NoteAdapter(
                 } else {
                     itemNote.background =
                         ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
-                    itemNote.backgroundTintList = note.color?.let { ColorStateList.valueOf(it) }
+                    itemNote.backgroundTintList = note.color
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { colorHex -> ColorStateList.valueOf(colorHex.toColorInt()) }
                 }
 
                 root.setOnLongClickListener {

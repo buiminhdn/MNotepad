@@ -14,7 +14,7 @@ data class Note(
     val title: String,
     val content: String,
     val categoryIds: List<Int>? = null,
-    val color: Int? = null,
+    val color: String? = null,
     val type: NoteType = NoteType.TEXT,
     val isDeleted: Boolean = false,
     val createdAt: Long = System.currentTimeMillis(),
@@ -25,7 +25,7 @@ data class Note(
         title: String,
         content: String,
         categoryIds: List<Int>? = null,
-        color: Int? = null,
+        color: String? = null,
         type: NoteType = NoteType.TEXT
     ) : this(
         id = 0,

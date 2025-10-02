@@ -11,7 +11,7 @@ object ColorPickerDialogHelper {
     fun show(
         activity: AppCompatActivity,
         colors: List<String>,
-        onColorSelected: (Int) -> Unit,
+        onColorSelected: (String) -> Unit,
         onReset: (() -> Unit)? = null
     ) {
         val recyclerView = RecyclerView(activity).apply {

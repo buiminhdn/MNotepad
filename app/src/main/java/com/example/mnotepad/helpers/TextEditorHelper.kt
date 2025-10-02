@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.widget.EditText
+import androidx.core.graphics.toColorInt
 import androidx.core.widget.addTextChangedListener
 
 object TextEditorHelper {
@@ -50,11 +51,15 @@ object TextEditorHelper {
         return isUnderline
     }
 
-    fun toggleColor(editText: EditText, color: Int): Boolean {
-        activeColor = if (color != activeColor) color else activeColor
+    fun toggleColor(editText: EditText, colorHex: String): Boolean {
+        val colorInt = colorHex.toColorInt()
+
+        activeColor = if (colorInt != activeColor) colorInt else null
+
         if (editText.hasSelection() && activeColor != null) {
-            applySpan(editText, ForegroundColorSpan(color))
+            applySpan(editText, ForegroundColorSpan(colorInt))
         }
+
         return activeColor != null
     }
 
