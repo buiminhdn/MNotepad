@@ -49,5 +49,10 @@
             android:id="@+id/navUsers"
             android:icon="@drawable/ic_users"
             android:title="@string/txt_users_title" />
+
+        <item
+            android:id="@+id/navGift"
+            android:icon="@drawable/ic_gift"
+            android:title="@string/txt_gift_title" />
     </group>
 </menu>

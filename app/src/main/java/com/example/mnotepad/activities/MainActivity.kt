@@ -255,6 +255,10 @@ class MainActivity : AppCompatActivity() {
                     R.id.navUsers -> {
                         startActivity(Intent(this, UserActivity::class.java))
                     }
+
+                    R.id.navGift -> {
+                        startActivity(Intent(this, WheelActivity::class.java))
+                    }
                 }
             }
             binding.drawerLayout.closeDrawers()
