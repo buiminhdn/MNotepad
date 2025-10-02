@@ -517,8 +517,4 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        selectedSortTypeIndex = 0
-    }
 }

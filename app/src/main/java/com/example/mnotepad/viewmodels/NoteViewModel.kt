@@ -2,6 +2,7 @@ package com.example.mnotepad.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mnotepad.assets.OptionsData.colorPalette
@@ -20,7 +21,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewModel() {
+class NoteViewModel @Inject constructor(
+    private val noteDao: NoteDao,
+    private val state: SavedStateHandle
+) : ViewModel() {
 
     // raws data from db
     val notes: LiveData<List<Note>> = noteDao.getAll()
@@ -32,14 +36,57 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
 
     private var currentNotes: List<Note> = emptyList()
 
-    private var currentCategoryId: Int = 0
+    private var currentCategoryId: Int
+        get() = state["currentCategoryId"] ?: 0
+        set(value) { state["currentCategoryId"] = value }
+
+    private var currentSortType: String
+        get() = state["currentSortType"] ?: SORT_EDIT_DATE_FROM_NEWEST
+        set(value) { state["currentSortType"] = value }
+
+    private var currentQuery: String
+        get() = state["currentQuery"] ?: ""
+        set(value) { state["currentQuery"] = value }
+
 
     init {
         notes.observeForever { list ->
             currentNotes = list
-//            _filteredNotes.value = list
-            filterByCategory(currentCategoryId)
+            applyFiltersAndSort()
         }
+    }
+
+    private fun applyFiltersAndSort() {
+        var result = currentNotes
+
+        // 1) filter by query
+        if (currentQuery.isNotBlank()) {
+            result = result.filter { it.title.contains(currentQuery, ignoreCase = true) }
+        }
+
+        // 2) filter by category
+        result = when (currentCategoryId) {
+            0 -> result // all
+            -1 -> result.filter { it.categoryIds.isNullOrEmpty() || it.categoryIds == listOf(0) }
+            else -> result.filter { it.categoryIds?.contains(currentCategoryId) ?: false }
+        }
+
+        // 3) sort the filtered result
+        result = when (currentSortType) {
+            SORT_EDIT_DATE_FROM_NEWEST -> result.sortedByDescending { it.updatedAt }
+            SORT_EDIT_DATE_FROM_OLDEST -> result.sortedBy { it.updatedAt }
+            SORT_TITLE_A_Z -> result.sortedBy { it.title }
+            SORT_TITLE_Z_A -> result.sortedByDescending { it.title }
+            SORT_CREATE_DATE_FROM_NEWEST -> result.sortedByDescending { it.createdAt }
+            SORT_CREATE_DATE_FROM_OLDEST -> result.sortedBy { it.createdAt }
+            SORT_COLOR -> result.sortedBy { note ->
+                val index = colorPalette.indexOf(note.color)
+                if (index == -1) Int.MAX_VALUE else index
+            }
+            else -> result
+        }
+
+        _filteredNotes.value = result
     }
 
     fun deleteNote(id: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -63,24 +110,19 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
         noteDao.updateAll(notes.map { it.copy(updatedAt = System.currentTimeMillis()) })
     }
 
-    fun filterByQuery(query: String) {
-        _filteredNotes.value =
-            if (query.isBlank()) {
-                currentNotes
-            } else {
-                currentNotes.filter { it.title.contains(query, ignoreCase = true) }
-            }
-    }
-
     fun filterByCategory(categoryId: Int) {
         currentCategoryId = categoryId
-        _filteredNotes.value = when (categoryId) {
-            0 -> currentNotes // tất cả
-            -1 -> currentNotes.filter { it.categoryIds.isNullOrEmpty() || it.categoryIds == listOf(0) } // uncategorized
-            else -> currentNotes.filter {
-                it.categoryIds?.contains(categoryId) ?: false
-            } // theo category
-        }
+        applyFiltersAndSort()
+    }
+
+    fun filterByQuery(query: String) {
+        currentQuery = query
+        applyFiltersAndSort()
+    }
+
+    fun sortBy(type: String) {
+        currentSortType = type
+        applyFiltersAndSort()
     }
 
     fun filterByDeletedCategory(categoryId: Int): List<Note> {
@@ -93,23 +135,6 @@ class NoteViewModel @Inject constructor(private val noteDao: NoteDao) : ViewMode
         }
         return emptyList()
     }
-
-    fun sortBy(type: String) {
-        _filteredNotes.value = when (type) {
-            SORT_EDIT_DATE_FROM_NEWEST -> currentNotes.sortedByDescending { it.updatedAt }
-            SORT_EDIT_DATE_FROM_OLDEST -> currentNotes.sortedBy { it.updatedAt }
-            SORT_TITLE_A_Z -> currentNotes.sortedBy { it.title }
-            SORT_TITLE_Z_A -> currentNotes.sortedByDescending { it.title }
-            SORT_CREATE_DATE_FROM_NEWEST -> currentNotes.sortedByDescending { it.createdAt }
-            SORT_CREATE_DATE_FROM_OLDEST -> currentNotes.sortedBy { it.createdAt }
-            SORT_COLOR -> currentNotes.sortedBy { note ->
-                val index = colorPalette.indexOf(note.color)
-                if (index == -1) Int.MAX_VALUE else index
-            }
-            else -> currentNotes
-        }
-    }
-
     fun softDeleteNotes(notes: List<Note>) = viewModelScope.launch(Dispatchers.IO) {
         noteDao.softDeleteNotes(notes.map { it.id })
     }

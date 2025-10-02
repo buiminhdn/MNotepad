@@ -62,7 +62,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NoteDetailActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityNoteDetailBinding
     private lateinit var optionsMenu: Menu
     private val noteViewModel: NoteViewModel by viewModels()
