@@ -55,6 +55,7 @@ import com.example.mnotepad.helpers.TextEditorHelper
 import com.example.mnotepad.helpers.ThemeManager
 import com.example.mnotepad.helpers.applyHistory
 import com.example.mnotepad.helpers.showToast
+import com.example.mnotepad.helpers.toHexColor
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.example.mnotepad.widgets.NoteWidget
@@ -78,7 +79,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
         override fun run() {
-            history.save(binding.edtContent.text.toString())
+//            history.save(binding.edtContent.text.toString())
             handler.postDelayed(this, DELAY_TYPING)
         }
     }
@@ -140,6 +141,7 @@ class NoteDetailActivity : AppCompatActivity() {
             ColorPickerDialogHelper.show(
                 this,
                 colorPalette,
+                currentColor = TextEditorHelper.activeColor?.toHexColor(),
                 onColorSelected = { selectedColor ->
                     val active = TextEditorHelper.toggleColor(binding.edtContent, selectedColor)
                     binding.ivColor.isSelected = active

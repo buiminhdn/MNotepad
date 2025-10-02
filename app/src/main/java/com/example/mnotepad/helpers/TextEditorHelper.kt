@@ -3,7 +3,9 @@ package com.example.mnotepad.helpers
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.ITALIC
 import android.text.Editable
+import android.text.Spannable
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
@@ -71,38 +73,31 @@ object TextEditorHelper {
     }
 
     fun attachTo(editText: EditText) {
-        editText.addTextChangedListener { text ->
-            if (text == null || text.isEmpty()) return@addTextChangedListener
-            val start = text.length - 1
-            val end = text.length
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            if (isBold) {
-                text.setSpan(
-                    StyleSpan(BOLD),
-                    start,
-                    end,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Nếu count > 0 nghĩa là đang thêm text, không phải xóa
+                if (count > 0 && s is Spannable) {
+                    val end = start + count
+                    val spannable = s
+
+                    if (isBold) {
+                        spannable.setSpan(StyleSpan(BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    if (isItalic) {
+                        spannable.setSpan(StyleSpan(ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    if (isUnderline) {
+                        spannable.setSpan(UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    activeColor?.let {
+                        spannable.setSpan(ForegroundColorSpan(it), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                }
             }
-            if (isItalic) {
-                text.setSpan(
-                    StyleSpan(ITALIC),
-                    start,
-                    end,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-            if (isUnderline) {
-                text.setSpan(
-                    UnderlineSpan(),
-                    start,
-                    end,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-            activeColor?.let {
-                text.setSpan(ForegroundColorSpan(it), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-        }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 }

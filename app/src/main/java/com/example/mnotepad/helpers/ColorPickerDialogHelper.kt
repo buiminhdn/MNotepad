@@ -7,6 +7,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mnotepad.adapters.ColorAdapter
 
+fun Int.toHexColor(): String {
+    return String.format("#%06X", 0xFFFFFF and this)
+}
+
 object ColorPickerDialogHelper {
     fun show(
         activity: AppCompatActivity,
