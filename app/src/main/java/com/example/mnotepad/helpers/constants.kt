@@ -33,4 +33,5 @@ const val INCORRECT_OLD_PASSWORD = "Incorrect old password"
 const val INVALID_NEW_PASSWORD = "Invalid new password"
 const val RECOVERY_EMAIL_REQUIRED = "Recovery Email is required"
 
+const val UNCATEGORIZE = "Uncategorize"
 const val PALE_VALUE = 0.5f

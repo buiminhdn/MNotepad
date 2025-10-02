@@ -32,6 +32,7 @@ import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.ThemeManager.toggleThemeChange
+import com.example.mnotepad.helpers.UNCATEGORIZE
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var importMultipleTxtLauncher: ActivityResultLauncher<Intent>
     private var selectedNotesToExport: List<Pair<String, String>> = emptyList()
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+    private var currentCategoryId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme(this)
@@ -213,17 +216,20 @@ class MainActivity : AppCompatActivity() {
                 noteViewModel.filterByCategory(item.itemId)
                 binding.toolbarSubtitle.visibility = View.VISIBLE
                 binding.toolbarSubtitle.text = item.toString()
+                currentCategoryId = item.itemId
             } else {
                 when (item.itemId) {
                     R.id.navNotes -> {
                         noteViewModel.filterByCategory(0)
                         binding.toolbarSubtitle.visibility = View.GONE
+                        currentCategoryId = 0
                     }
 
                     R.id.navUncategorized -> {
                         noteViewModel.filterByCategory(-1)
                         binding.toolbarSubtitle.visibility = View.VISIBLE
-                        binding.toolbarSubtitle.text = "Uncategorize"
+                        binding.toolbarSubtitle.text = UNCATEGORIZE
+                        currentCategoryId = 0
                     }
 
                     R.id.navEditCategories -> startActivity(
