@@ -371,6 +371,7 @@ class NoteDetailActivity : AppCompatActivity() {
         ColorPickerDialogHelper.show(
             this,
             colorPalette,
+            currentColor = curNoteItem?.color,
             onColorSelected = { selectedColor ->
                 currentColor = selectedColor
                 showToast("Selected: $selectedColor", applicationContext)
@@ -448,7 +449,7 @@ class NoteDetailActivity : AppCompatActivity() {
 
                 noteType = it.type
 
-                it.color?.let { colorHex ->
+                it.color?.takeIf { hex -> hex.isNotBlank() }?.let { colorHex ->
                     val colorInt = colorHex.toColorInt()
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(colorInt)
                 }
@@ -526,7 +527,7 @@ class NoteDetailActivity : AppCompatActivity() {
                 -1 -> emptyList()
                 else -> listOf(categoryId)
             },
-            color = currentColor
+            color = currentColor.takeIf { it.isNotBlank() }
         )
 
         noteViewModel.upsertNote(updatedNote)

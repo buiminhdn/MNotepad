@@ -14,25 +14,34 @@ import com.example.mnotepad.R
 class ColorAdapter(
     private val context: Context,
     private val colors: List<String>,
-    private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
+
+    var selectedPosition: Int = RecyclerView.NO_POSITION
 
     inner class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val colorView: View = itemView.findViewById(R.id.colorView)
 
-        fun bind(colorHex: String) {
-//            val colorInt = colorHex.toColorInt()
-//            val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.square_rounded_corners)?.mutate()
-//            backgroundDrawable?.colorFilter = PorterDuffColorFilter(colorInt, PorterDuff.Mode.SRC_IN)
-//            colorView.background = backgroundDrawable
-//            itemView.setOnClickListener { onItemClick(colorInt) }
+        fun bind(colorHex: String, isSelected: Boolean) {
             val colorInt = colorHex.toColorInt()
 
             val backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.square_rounded_corners)?.mutate()
             backgroundDrawable?.colorFilter = PorterDuffColorFilter(colorInt, PorterDuff.Mode.SRC_IN)
 
             colorView.background = backgroundDrawable
-            itemView.setOnClickListener { onItemClick(colorHex) }
+
+            if (isSelected) {
+                itemView.foreground = ContextCompat.getDrawable(context, R.drawable.selected_border)
+            } else {
+                itemView.foreground = null
+            }
+
+
+            itemView.setOnClickListener {
+                val oldPos = selectedPosition
+                selectedPosition = bindingAdapterPosition
+                notifyItemChanged(oldPos)
+                notifyItemChanged(selectedPosition)
+            }
         }
     }
 
@@ -44,7 +53,7 @@ class ColorAdapter(
 
     override fun onBindViewHolder(holder: ColorViewHolder, position: Int) {
         val color = colors[position]
-        holder.bind(color)
+        holder.bind(color, position == selectedPosition)
     }
 
     override fun getItemCount(): Int {
