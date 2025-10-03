@@ -14,6 +14,7 @@ import android.text.style.BackgroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +47,7 @@ import com.example.mnotepad.helpers.FileSAFHelper
 import com.example.mnotepad.helpers.HistoryManager
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
+import com.example.mnotepad.helpers.PALE_VALUE
 import com.example.mnotepad.helpers.PLAIN_TYPE
 import com.example.mnotepad.helpers.PrintHelper
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
@@ -114,10 +116,16 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun handleTitleChange() {
         binding.edtTitle.setOnFocusChangeListener { view, hasFocus ->
-            binding.formattingBar.isVisible = false
+//            binding.formattingBar.alpha = PALE_VALUE
+//            binding.formattingBar.isEnabled = false
+//            binding.formattingBar.isClickable = false
+//            for (i in 0 until binding.formattingBar.childCount) {
+//                binding.formattingBar.getChildAt(i).isEnabled = false
+//            }
+            binding.formattingBar.setDisabledState(true)
         }
         binding.edtContent.setOnFocusChangeListener { view, hasFocus ->
-            binding.formattingBar.isVisible = true
+            binding.formattingBar.setDisabledState(false)
         }
     }
 
@@ -659,4 +667,17 @@ class NoteDetailActivity : AppCompatActivity() {
 
         editText.setText(spannable, TextView.BufferType.SPANNABLE)
     }
+
+    fun View.setDisabledState(disabled: Boolean) {
+        alpha = if (disabled) PALE_VALUE else 1f
+        isEnabled = !disabled
+        isClickable = !disabled
+        if (this is ViewGroup) {
+            for (i in 0 until childCount) {
+                getChildAt(i).isEnabled = !disabled
+                getChildAt(i).isClickable = !disabled
+            }
+        }
+    }
+
 }
