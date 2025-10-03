@@ -18,6 +18,7 @@ const val PLAIN_TYPE = "text/plain"
 const val DELAY_TYPING: Long = 2000
 const val CATEGORY_MENU_ID = 5
 const val DEFAULT_UNLOCK_TIME = 10
+const val ONE_UNLOCK_TIME = 1
 const val FIVE_UNLOCK_TIME = 5
 const val TEN_UNLOCK_TIME = 10
 const val FIFTEEN_UNLOCK_TIME = 15

@@ -4,15 +4,14 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginTop="4dp"
-    android:background="@drawable/bg_outline_item_note"
+    android:background="@drawable/bg_note_default"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/itemNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:background="@drawable/bg_note_default"
+        android:background="@drawable/bg_outline_item_note_new"
         android:orientation="vertical"
         android:padding="16dp">
 

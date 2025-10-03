@@ -2,6 +2,7 @@ package com.example.mnotepad.assets
 
 import com.example.mnotepad.helpers.FIFTEEN_UNLOCK_TIME
 import com.example.mnotepad.helpers.FIVE_UNLOCK_TIME
+import com.example.mnotepad.helpers.ONE_UNLOCK_TIME
 import com.example.mnotepad.helpers.SORT_COLOR
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_NEWEST
 import com.example.mnotepad.helpers.SORT_CREATE_DATE_FROM_OLDEST
@@ -32,6 +33,7 @@ object OptionsData {
     )
 
     val unlockTimes = arrayOf(
+        ONE_UNLOCK_TIME to "1 minutes",
         FIVE_UNLOCK_TIME to "5 minutes",
         TEN_UNLOCK_TIME to "10 minutes",
         FIFTEEN_UNLOCK_TIME to "15 minutes",

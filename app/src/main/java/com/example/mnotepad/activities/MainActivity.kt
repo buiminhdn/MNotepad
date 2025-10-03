@@ -233,12 +233,14 @@ class MainActivity : AppCompatActivity() {
                 binding.toolbarSubtitle.visibility = View.VISIBLE
                 binding.toolbarSubtitle.text = item.toString()
                 currentCategoryId = item.itemId
+                removeSelected()
             } else {
                 when (item.itemId) {
                     R.id.navNotes -> {
                         noteViewModel.filterByCategory(0)
                         binding.toolbarSubtitle.visibility = View.GONE
                         currentCategoryId = 0
+                        removeSelected()
                     }
 
                     R.id.navUncategorized -> {
@@ -246,6 +248,7 @@ class MainActivity : AppCompatActivity() {
                         binding.toolbarSubtitle.visibility = View.VISIBLE
                         binding.toolbarSubtitle.text = UNCATEGORIZE
                         currentCategoryId = -1
+                        removeSelected()
                     }
 
                     R.id.navEditCategories -> startActivity(
@@ -345,7 +348,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.navSelectAllNotes -> {
-                binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = false
+                noteViewModel.filteredNotes.value?.let {
+                    if (it.isNotEmpty()) {
+                        binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = false
+                    }
+                }
                 toggleSelect(noteAdapter.isAllSelected())
                 true
             }
@@ -517,4 +524,9 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    fun removeSelected() {
+        if (noteAdapter.isMultiSelected()) {
+            noteAdapter.toggleSelectMode(false)
+        }
+    }
 }

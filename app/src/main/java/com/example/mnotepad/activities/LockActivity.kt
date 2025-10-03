@@ -57,7 +57,9 @@ class LockActivity : AppCompatActivity() {
                     override fun run() {
                         if (text == null || text.isEmpty()) return
                         if (text.toString() == password) {
-                            startActivity(Intent(this@LockActivity, MainActivity::class.java))
+                            val i = Intent(this@LockActivity, MainActivity::class.java)
+                            finish()
+                            startActivity(i)
                         }
                     }
                 },

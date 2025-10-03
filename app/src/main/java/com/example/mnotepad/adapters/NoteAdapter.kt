@@ -1,7 +1,6 @@
 package com.example.mnotepad.adapters
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -31,18 +30,23 @@ class NoteAdapter(
             binding.apply {
                 txtTitle.text = note.title
                 txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
+                val background = ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
+                background?.setTint(note.color?.toColorInt() ?: 0)
+                root.background = background
+                itemNote.isSelected = isSelected
 
-                if (isSelected) {
-                    itemNote.background =
-                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
-                    itemNote.backgroundTintList = null
-                } else {
-                    itemNote.background =
-                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
-                    itemNote.backgroundTintList = note.color
-                        ?.takeIf { it.isNotBlank() }
-                        ?.let { colorHex -> ColorStateList.valueOf(colorHex.toColorInt()) }
-                }
+//                if (isSelected) {
+//                    itemNote.background =
+//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
+//                    itemNote.backgroundTintList = null
+//                } else {
+//                    val background = ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
+//                    background?.setTint(note.color?.toColorInt() ?: 0)
+//                    itemNote.background = background
+//                    itemNote.backgroundTintList = note.color
+//                        ?.takeIf { it.isNotBlank() }
+//                        ?.let { colorHex -> ColorStateList.valueOf(colorHex.toColorInt()) }
+//                }
 
                 root.setOnLongClickListener {
                     if (!multiSelect) {
@@ -129,6 +133,8 @@ class NoteAdapter(
     }
 
     fun getSelectedNotes(): List<Note> = selectedItems.toList()
+
+    fun isMultiSelected(): Boolean = multiSelect
 
     fun isAllSelected(): Boolean =
         currentList.isNotEmpty() && selectedItems.size == currentList.size

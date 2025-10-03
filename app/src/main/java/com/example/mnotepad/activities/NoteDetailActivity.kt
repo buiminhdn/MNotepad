@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -113,9 +114,11 @@ class NoteDetailActivity : AppCompatActivity() {
     private fun handleTitleChange() {
         binding.edtTitle.setOnFocusChangeListener { view, hasFocus ->
             binding.formattingBar.isEnabled = false
+            binding.formattingBar.isVisible = false
         }
         binding.edtContent.setOnFocusChangeListener { view, hasFocus ->
             binding.formattingBar.isEnabled = true
+            binding.formattingBar.isVisible = true
         }
     }
 
@@ -617,7 +620,8 @@ class NoteDetailActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(saveRunnable) // cleanup
+        handler.removeCallbacks(saveRunnable)
+        binding.noteDetailLayout.backgroundTintList = null
     }
 
     private fun highlightSearchKeyword(editText: EditText, keyword: String) {
