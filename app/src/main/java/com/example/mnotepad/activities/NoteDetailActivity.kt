@@ -591,7 +591,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private fun handlePrintFile() {
         val title = binding.edtTitle.text.toString()
         val content = if (noteType == NoteType.TEXT) {
-            Html.toHtml(binding.edtContent.text, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+            binding.edtContent.text.toString()
         } else {
             convertCheckListToContentForPrint(checkListAdapter.getCheckListItems())
         }
