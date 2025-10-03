@@ -9,14 +9,15 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/navUndo"
+        android:title="@string/txt_option_undo_upper"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/navSave"
         android:title="@string/txt_option_save_upper"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/navUndo"
-        android:title="@string/txt_option_undo_upper"
-        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navDelete"

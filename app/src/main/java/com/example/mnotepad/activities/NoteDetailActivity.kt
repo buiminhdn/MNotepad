@@ -84,6 +84,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private val saveRunnable = object : Runnable {
         override fun run() {
             history.save(binding.edtContent.text.toSpannable())
+            invalidateOptionsMenu()
             handler.postDelayed(this, DELAY_TYPING)
         }
     }
@@ -232,7 +233,16 @@ class NoteDetailActivity : AppCompatActivity() {
             menu.findItem(R.id.navEdit).isVisible = false
             updateConvertMenuTitle()
         }
+        updateUndoRedoMenu(menu)
         return true
+    }
+
+    private fun updateUndoRedoMenu(menu: Menu?) {
+        val undoItem = menu?.findItem(R.id.navUndo)
+        val redoItem = menu?.findItem(R.id.navRedo)
+
+        undoItem?.isVisible = !history.isUndoEmpty()
+        redoItem?.isVisible = !history.isRedoEmpty()
     }
 
     private fun updateConvertMenuTitle() {
@@ -263,11 +273,14 @@ class NoteDetailActivity : AppCompatActivity() {
             TextEditorHelper.detachTextWatcher(binding.edtContent)
             binding.edtContent.applyHistory(text)
             TextEditorHelper.attachTo(binding.edtContent)
+
+            invalidateOptionsMenu()
             true
         }
 
         R.id.navRedo -> {
             binding.edtContent.applyHistory(history.redo())
+            invalidateOptionsMenu()
             true
         }
 
@@ -578,13 +591,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private fun handlePrintFile() {
         val title = binding.edtTitle.text.toString()
         val content = if (noteType == NoteType.TEXT) {
-            Html.fromHtml(
-                Html.toHtml(
-                    binding.edtContent.text,
-                    Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL
-                ),
-                Html.FROM_HTML_MODE_COMPACT
-            ).toString()
+            Html.toHtml(binding.edtContent.text, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
         } else {
             convertCheckListToContentForPrint(checkListAdapter.getCheckListItems())
         }
