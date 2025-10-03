@@ -12,9 +12,11 @@ import androidx.core.content.edit
 import com.example.mnotepad.R
 import com.example.mnotepad.activities.NoteDetailActivity
 import com.example.mnotepad.database.NoteDatabase
+import com.example.mnotepad.entities.enums.NoteType
 import com.example.mnotepad.helpers.IS_EDITED_ACTION
 import com.example.mnotepad.helpers.NOTE_DETAIL_OBJECT
 import com.example.mnotepad.helpers.PREFS_NAME
+import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToTextForWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,10 +50,24 @@ class NoteWidget : AppWidgetProvider() {
                 }
 
                 val views = RemoteViews(context.packageName, R.layout.note_widget)
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                    views.setColorStateList(
+//                        R.id.background,
+//                        "setBackground",
+//                        ColorStateList.valueOf(
+//                            note?.color?.toColorInt()
+//                                ?: 0
+//                        )
+//                    )
+//                }
                 views.setTextViewText(R.id.tvNoteTitle, note?.title ?: "No title")
                 views.setTextViewText(
                     R.id.tvNoteContent,
-                    Html.fromHtml(note?.content ?: "", Html.FROM_HTML_MODE_LEGACY).toString()
+                    if (note?.type == NoteType.TEXT) {
+                        Html.fromHtml(note.content, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
+                    } else {
+                        convertCheckListContentToTextForWidget(note?.content ?: "")
+                    }
                 )
                 val intent = Intent(context, NoteDetailActivity::class.java).apply {
                     putExtra(NOTE_DETAIL_OBJECT, note)

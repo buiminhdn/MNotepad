@@ -22,12 +22,44 @@ object TextConvertHelper {
         return content.joinToString("\n")
     }
 
+    fun convertCheckListToContentForWidget(items: List<ChecklistItem>): String {
+        val content: MutableList<String> = mutableListOf()
+        val filterItems = items.filter { it.text.isNotBlank() }
+        for (item in filterItems) {
+            if (item.isChecked) {
+                content.add("☑ ${item.text}")
+            } else {
+                content.add("☐ ${item.text}")
+            }
+        }
+        return content.joinToString("\n")
+    }
+
+    fun convertCheckListToContentForPrint(items: List<ChecklistItem>): String {
+        val content: MutableList<String> = mutableListOf()
+        val filterItems = items.filter { it.text.isNotBlank() }
+        for (item in filterItems) {
+            if (item.isChecked) {
+                content.add("☑ ${item.text}")
+            } else {
+                content.add("☐ ${item.text}")
+            }
+        }
+        return content.joinToString("\n")
+    }
+
     fun convertCheckListToContent(items: List<ChecklistItem>): String {
         val content = items.map { it.text }
         return content.joinToString("\n") { line ->
             line.replaceFirst("-[x] ", "")
                 .replaceFirst("-[o] ", "")
         }
+    }
+
+    fun convertCheckListContentToTextForWidget(content: String): String {
+        return content
+            .replace("-[o]", "☐")
+            .replace("-[x]", "☑")
     }
 
     fun convertCheckListContentToText(content: String): MutableList<ChecklistItem> {

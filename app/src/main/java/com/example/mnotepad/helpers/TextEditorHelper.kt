@@ -70,7 +70,9 @@ object TextEditorHelper {
         activeColor = null
     }
 
-    fun attachTo(editText: EditText) {
+    fun attachTo(
+        editText: EditText
+    ) {
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 

@@ -39,7 +39,6 @@ import com.example.mnotepad.viewmodels.CategoryViewModel
 import com.example.mnotepad.viewmodels.NoteViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -82,9 +81,6 @@ class MainActivity : AppCompatActivity() {
         initSettingLauncher()
         initNoteDetailLauncher()
         handleClickAdd()
-
-        val snackBar = Snackbar.make(binding.root, "Welcome back", Snackbar.LENGTH_LONG)
-        snackBar.show()
     }
 
     private fun initNoteDetailLauncher() {

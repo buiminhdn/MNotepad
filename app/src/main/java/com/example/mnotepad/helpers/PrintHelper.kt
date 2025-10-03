@@ -16,7 +16,7 @@ import java.io.FileOutputStream
 object PrintHelper {
     fun print(context: Context, title: String, content: String) {
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-        val jobName = title
+        val jobName = "$title document"
 
         val adapter = object : PrintDocumentAdapter() {
             override fun onLayout(

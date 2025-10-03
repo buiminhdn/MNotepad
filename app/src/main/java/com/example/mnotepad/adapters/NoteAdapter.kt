@@ -30,7 +30,7 @@ class NoteAdapter(
             binding.apply {
                 txtTitle.text = note.title
                 txtUpdatedAt.text = DateTimeHelper.getFormatedDate(note.updatedAt)
-                val background = ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
+                val background = ContextCompat.getDrawable(root.context, R.drawable.bg_note_item)
                 background?.setTint(note.color?.toColorInt() ?: 0)
                 root.background = background
                 itemNote.isSelected = isSelected

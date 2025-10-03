@@ -50,10 +50,11 @@ import com.example.mnotepad.helpers.PLAIN_TYPE
 import com.example.mnotepad.helpers.PrintHelper
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListContentToText
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContent
+import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForPrint
 import com.example.mnotepad.helpers.TextConvertHelper.convertCheckListToContentForSave
 import com.example.mnotepad.helpers.TextConvertHelper.convertContentToCheckList
 import com.example.mnotepad.helpers.TextEditorHelper
-import com.example.mnotepad.helpers.ThemeManager
+import com.example.mnotepad.helpers.ThemeManager.applyTheme
 import com.example.mnotepad.helpers.applyHistory
 import com.example.mnotepad.helpers.showToast
 import com.example.mnotepad.helpers.toHexColor
@@ -89,7 +90,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private var currentColor: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeManager.applyTheme(this)
+        applyTheme(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityNoteDetailBinding.inflate(layoutInflater)
@@ -387,8 +388,8 @@ class NoteDetailActivity : AppCompatActivity() {
         val content = binding.edtContent.text.toString()
         val isContentEmpty = content.isEmpty()
         val numOfWords = if (isContentEmpty) 0 else content.trim().split("\\s+".toRegex()).size
-        val numOfWrappedLines = if (isContentEmpty) 0 else content.split("\n+".toRegex()).size
-        val numOfCharacters = if (isContentEmpty) 0 else content.trim().length
+        val numOfWrappedLines = if (isContentEmpty) 0 else content.lines().count()
+        val numOfCharacters = if (isContentEmpty) 0 else content.trim().replace("\n", "").length
         val numOfCharactersWithoutWhitespaces = if (isContentEmpty) {
             0
         } else {
@@ -570,7 +571,15 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun handlePrintFile() {
         val title = binding.edtTitle.text.toString()
-        val content = binding.edtContent.text.toString()
+        val content = if (noteType == NoteType.TEXT) {
+            binding.edtContent.text.toString()
+        } else {
+            convertCheckListToContentForPrint(checkListAdapter.getCheckListItems())
+        }
+        if (title.isEmpty() && content.isEmpty()) {
+            showToast("Enter something", this)
+            return
+        }
         PrintHelper.print(this, title, content)
     }
 
@@ -621,7 +630,7 @@ class NoteDetailActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(saveRunnable)
-        binding.noteDetailLayout.backgroundTintList = null
+//        binding.noteDetailLayout.background = null
     }
 
     private fun highlightSearchKeyword(editText: EditText, keyword: String) {
