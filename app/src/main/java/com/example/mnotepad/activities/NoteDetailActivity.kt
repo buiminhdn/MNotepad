@@ -23,7 +23,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
-import androidx.core.widget.addTextChangedListener
+import androidx.core.text.toSpannable
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -79,7 +79,7 @@ class NoteDetailActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val saveRunnable = object : Runnable {
         override fun run() {
-            history.save(binding.edtContent.text.toString())
+            history.save(binding.edtContent.text.toSpannable())
             handler.postDelayed(this, DELAY_TYPING)
         }
     }
@@ -220,7 +220,6 @@ class NoteDetailActivity : AppCompatActivity() {
         if (menu != null) {
             optionsMenu = menu
             menu.findItem(R.id.navEdit).isVisible = false
-            handleContentChange()
             updateConvertMenuTitle()
         }
         return true
@@ -251,7 +250,9 @@ class NoteDetailActivity : AppCompatActivity() {
 
         R.id.navUndo -> {
             val text = history.undo()
+            TextEditorHelper.detachTextWatcher(binding.edtContent)
             binding.edtContent.applyHistory(text)
+            TextEditorHelper.attachTo(binding.edtContent)
             true
         }
 
@@ -398,11 +399,11 @@ class NoteDetailActivity : AppCompatActivity() {
             curNoteItem?.updatedAt ?: DateTimeHelper.getCurrentTime()
         )
         val contentInfo = "Words: $numOfWords \n" +
-            "Wrapped lines: $numOfWrappedLines\n" +
-            "Characters: $numOfCharacters\n" +
-            "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-            "Created at: $createdAt\n" +
-            "Last saved at: $lastSavedAt"
+                "Wrapped lines: $numOfWrappedLines\n" +
+                "Characters: $numOfCharacters\n" +
+                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+                "Created at: $createdAt\n" +
+                "Last saved at: $lastSavedAt"
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
@@ -438,12 +439,6 @@ class NoteDetailActivity : AppCompatActivity() {
                     binding.noteDetailLayout.backgroundTintList = ColorStateList.valueOf(colorInt)
                 }
             }
-        }
-    }
-
-    private fun handleContentChange() {
-        binding.edtContent.addTextChangedListener { text ->
-            optionsMenu.findItem(R.id.navUndo)?.isEnabled = !text.isNullOrEmpty()
         }
     }
 

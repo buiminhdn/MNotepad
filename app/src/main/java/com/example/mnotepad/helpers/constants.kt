@@ -15,7 +15,7 @@ const val SORT_COLOR = "color: in order as shown on color palette"
 
 const val PREFS_NAME = "app_prefs"
 const val PLAIN_TYPE = "text/plain"
-const val DELAY_TYPING: Long = 1000
+const val DELAY_TYPING: Long = 2000
 const val CATEGORY_MENU_ID = 5
 const val DEFAULT_UNLOCK_TIME = 10
 const val FIVE_UNLOCK_TIME = 5

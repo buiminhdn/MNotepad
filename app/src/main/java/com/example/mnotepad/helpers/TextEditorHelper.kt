@@ -11,15 +11,13 @@ import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.widget.EditText
 import androidx.core.graphics.toColorInt
-import androidx.core.widget.addTextChangedListener
 
 object TextEditorHelper {
-
     var isBold = false
     var isItalic = false
     var isUnderline = false
     var activeColor: Int? = null
-
+    lateinit var textWatcher: TextWatcher
     private fun applySpan(editText: EditText, span: Any) {
         val start = editText.selectionStart
         val end = editText.selectionEnd
@@ -73,7 +71,7 @@ object TextEditorHelper {
     }
 
     fun attachTo(editText: EditText) {
-        editText.addTextChangedListener(object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -83,21 +81,47 @@ object TextEditorHelper {
                     val spannable = s
 
                     if (isBold) {
-                        spannable.setSpan(StyleSpan(BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(
+                            StyleSpan(BOLD),
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                     }
                     if (isItalic) {
-                        spannable.setSpan(StyleSpan(ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(
+                            StyleSpan(ITALIC),
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                     }
                     if (isUnderline) {
-                        spannable.setSpan(UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(
+                            UnderlineSpan(),
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                     }
                     activeColor?.let {
-                        spannable.setSpan(ForegroundColorSpan(it), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(
+                            ForegroundColorSpan(it),
+                            start,
+                            end,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                     }
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
-        })
+        }
+
+        editText.addTextChangedListener(textWatcher)
+    }
+
+    fun detachTextWatcher(editText: EditText) {
+        editText.removeTextChangedListener(textWatcher)
     }
 }
