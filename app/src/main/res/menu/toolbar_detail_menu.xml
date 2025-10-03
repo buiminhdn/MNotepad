@@ -16,7 +16,6 @@
     <item
         android:id="@+id/navUndo"
         android:title="@string/txt_option_undo_upper"
-        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item

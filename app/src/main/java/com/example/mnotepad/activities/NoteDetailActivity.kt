@@ -114,11 +114,9 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun handleTitleChange() {
         binding.edtTitle.setOnFocusChangeListener { view, hasFocus ->
-            binding.formattingBar.isEnabled = false
             binding.formattingBar.isVisible = false
         }
         binding.edtContent.setOnFocusChangeListener { view, hasFocus ->
-            binding.formattingBar.isEnabled = true
             binding.formattingBar.isVisible = true
         }
     }
@@ -572,7 +570,13 @@ class NoteDetailActivity : AppCompatActivity() {
     private fun handlePrintFile() {
         val title = binding.edtTitle.text.toString()
         val content = if (noteType == NoteType.TEXT) {
-            binding.edtContent.text.toString()
+            Html.fromHtml(
+                Html.toHtml(
+                    binding.edtContent.text,
+                    Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL
+                ),
+                Html.FROM_HTML_MODE_COMPACT
+            ).toString()
         } else {
             convertCheckListToContentForPrint(checkListAdapter.getCheckListItems())
         }

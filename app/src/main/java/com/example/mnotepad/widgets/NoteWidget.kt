@@ -9,6 +9,7 @@ import android.content.Intent
 import android.text.Html
 import android.widget.RemoteViews
 import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import com.example.mnotepad.R
 import com.example.mnotepad.activities.NoteDetailActivity
 import com.example.mnotepad.database.NoteDatabase
@@ -60,6 +61,7 @@ class NoteWidget : AppWidgetProvider() {
 //                        )
 //                    )
 //                }
+                views.setInt(R.id.background, "setBackgroundColor", note?.color?.toColorInt() ?: 0)
                 views.setTextViewText(R.id.tvNoteTitle, note?.title ?: "No title")
                 views.setTextViewText(
                     R.id.tvNoteContent,
