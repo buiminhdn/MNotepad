@@ -35,19 +35,6 @@ class NoteAdapter(
                 root.background = background
                 itemNote.isSelected = isSelected
 
-//                if (isSelected) {
-//                    itemNote.background =
-//                        ContextCompat.getDrawable(root.context, R.drawable.bg_note_selected)
-//                    itemNote.backgroundTintList = null
-//                } else {
-//                    val background = ContextCompat.getDrawable(root.context, R.drawable.bg_note_default)
-//                    background?.setTint(note.color?.toColorInt() ?: 0)
-//                    itemNote.background = background
-//                    itemNote.backgroundTintList = note.color
-//                        ?.takeIf { it.isNotBlank() }
-//                        ?.let { colorHex -> ColorStateList.valueOf(colorHex.toColorInt()) }
-//                }
-
                 root.setOnLongClickListener {
                     if (!multiSelect) {
                         toggleSelectMode(true)

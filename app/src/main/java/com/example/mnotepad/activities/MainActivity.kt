@@ -523,6 +523,14 @@ class MainActivity : AppCompatActivity() {
     fun removeSelected() {
         if (noteAdapter.isMultiSelected()) {
             noteAdapter.toggleSelectMode(false)
+            binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = true
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (noteViewModel.currentNotesSize() > 0 && !noteAdapter.isMultiSelected()) {
+            binding.toolbar.menu.findItem(R.id.navSelectAllNotes).isVisible = true
         }
     }
 }

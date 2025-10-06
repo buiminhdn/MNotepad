@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
-import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
 import android.view.Menu
@@ -16,7 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,7 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.text.toSpannable
-import androidx.core.view.isVisible
+import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -127,6 +125,12 @@ class NoteDetailActivity : AppCompatActivity() {
         }
         binding.edtContent.setOnFocusChangeListener { view, hasFocus ->
             binding.formattingBar.setDisabledState(false)
+            if (binding.edtContent.text.isEmpty()) {
+                binding.edtSearch.text.clear()
+                binding.edtSearch.clearFocus()
+                binding.edtSearch.visibility = View.GONE
+                binding.btnClearSearch.visibility = View.GONE
+            }
         }
     }
 
@@ -275,6 +279,9 @@ class NoteDetailActivity : AppCompatActivity() {
             TextEditorHelper.attachTo(binding.edtContent)
 
             invalidateOptionsMenu()
+
+            val keyword = binding.edtSearch.text.toString()
+            highlightSearchKeyword(binding.edtContent, keyword)
             true
         }
 
@@ -405,28 +412,37 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun showInfoDialog() {
         val content = binding.edtContent.text.toString()
+        var contentInfo = ""
         val isContentEmpty = content.isEmpty()
-        val numOfWords = if (isContentEmpty) 0 else content.trim().split("\\s+".toRegex()).size
-        val numOfWrappedLines = if (isContentEmpty) 0 else content.lines().count()
-        val numOfCharacters = if (isContentEmpty) 0 else content.trim().replace("\n", "").length
-        val numOfCharactersWithoutWhitespaces = if (isContentEmpty) {
-            0
-        } else {
-            content
-                .trim()
-                .replace(" ", "")
-                .replace("\n", "").length
-        }
+
         val createdAt = DateTimeHelper.getFormatedDate(createdDate)
         val lastSavedAt = DateTimeHelper.getFormatedDate(
             curNoteItem?.updatedAt ?: DateTimeHelper.getCurrentTime()
         )
-        val contentInfo = "Words: $numOfWords \n" +
-                "Wrapped lines: $numOfWrappedLines\n" +
-                "Characters: $numOfCharacters\n" +
-                "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
-                "Created at: $createdAt\n" +
-                "Last saved at: $lastSavedAt"
+
+        if (noteType == NoteType.TEXT) {
+            val numOfWords = if (isContentEmpty) 0 else content.trim().split("\\s+".toRegex()).size
+            val numOfWrappedLines = if (isContentEmpty) 0 else content.lines().count()
+            val numOfCharacters = if (isContentEmpty) 0 else content.replace("\n", "").length
+            val numOfCharactersWithoutWhitespaces = if (isContentEmpty) {
+                0
+            } else {
+                content
+                    .trim()
+                    .replace(" ", "")
+                    .replace("\n", "").length
+            }
+            contentInfo = "Words: $numOfWords \n" +
+                    "Wrapped lines: $numOfWrappedLines\n" +
+                    "Characters: $numOfCharacters\n" +
+                    "Characters without whitespaces: $numOfCharactersWithoutWhitespaces\n" +
+                    "Created at: $createdAt\n" +
+                    "Last saved at: $lastSavedAt"
+        } else {
+            contentInfo = "Items: ${checkListAdapter.itemCount} \n" +
+                    "Created at: $createdAt\n" +
+                    "Last saved at: $lastSavedAt"
+        }
         MaterialAlertDialogBuilder(this)
             .setMessage(contentInfo)
             .setPositiveButton(getString(R.string.txt_option_ok_upper)) { dialog, _ ->
@@ -504,6 +520,7 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun upsertNote() {
+        highlightSearchKeyword(binding.edtContent, "")
         val title = binding.edtTitle.text.toString()
         val content = if (noteType == NoteType.TEXT) {
             Html.toHtml(binding.edtContent.text, Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL)
@@ -603,12 +620,19 @@ class NoteDetailActivity : AppCompatActivity() {
     }
 
     private fun startSearchMode() {
-        val btnSave = findViewById<View>(R.id.navSave)
-        val btnUndo = findViewById<View>(R.id.navUndo)
+        if (curNoteItem?.type == NoteType.CHECKLIST ||
+            checkListAdapter.itemCount > 1 ||
+            binding.noteContentLayout.isGone
+        ) {
+            showToast("Cannot search for Checklist", this)
+            return
+        }
+
+//        val btnUndo = findViewById<View>(R.id.navUndo)
 
         // Hide button Save, Undo
-        btnSave.visibility = View.GONE
-        btnUndo.visibility = View.GONE
+//        btnSave.visibility = View.GONE
+//        if (btnUndo != null) btnUndo.visibility = View.GONE
 
         // Show Input Search, X icon
         val btnClear = binding.btnClearSearch
@@ -620,10 +644,14 @@ class NoteDetailActivity : AppCompatActivity() {
         edtSearch.doOnTextChanged { query, _, _, _ ->
             val keyword = query.toString()
             highlightSearchKeyword(binding.edtContent, keyword)
+//            TextEditorHelper.detachTextWatcher(binding.edtContent)
             // Mỗi lần text change thì 2 nút này chạy lại
             // Nên set lại như vầy
-            btnSave.visibility = View.GONE
-            btnUndo.visibility = View.GONE
+//            val btnSave = optionsMenu.findItem(R.id.navSave)
+//            btnSave.isVisible = false
+
+//            val btnUndo = findViewById<View>(R.id.navUndo)
+//            if (btnUndo != null) btnUndo.visibility = View.GONE
         }
 
         // Reset lại view ban đầu
@@ -632,8 +660,14 @@ class NoteDetailActivity : AppCompatActivity() {
             edtSearch.clearFocus()
             edtSearch.visibility = View.GONE
             btnClear.visibility = View.GONE
-            btnSave.visibility = View.VISIBLE
-            btnUndo.visibility = View.VISIBLE
+
+//            val btnSave = optionsMenu.findItem(R.id.navSave)
+//            btnSave.isVisible = true
+//            TextEditorHelper.attachTo(binding.edtContent)
+//            btnSave.visibility = View.VISIBLE
+
+//            val btnUndo = findViewById<View>(R.id.navUndo)
+//            if (btnUndo != null) btnUndo.visibility = View.VISIBLE
         }
     }
 
@@ -654,15 +688,19 @@ class NoteDetailActivity : AppCompatActivity() {
 
     private fun highlightSearchKeyword(editText: EditText, keyword: String) {
         val text = editText.text.toString()
-        val spannable = SpannableString(text)
 
-        // clear old highlight
-        spannable.removeSpan(BackgroundColorSpan(Color.YELLOW))
+        val toRemoveSpans = editText.text.getSpans(
+            0,
+            editText.text.length,
+            BackgroundColorSpan::class.java
+        )
+        for (i in 0 until toRemoveSpans.size)
+            editText.text.removeSpan(toRemoveSpans[i])
 
         if (keyword.isNotBlank()) {
             var index = text.indexOf(keyword, 0, ignoreCase = true)
             while (index >= 0) {
-                spannable.setSpan(
+                editText.text.setSpan(
                     BackgroundColorSpan(Color.YELLOW),
                     index,
                     index + keyword.length,
@@ -671,8 +709,6 @@ class NoteDetailActivity : AppCompatActivity() {
                 index = text.indexOf(keyword, index + keyword.length, ignoreCase = true)
             }
         }
-
-        editText.setText(spannable, TextView.BufferType.SPANNABLE)
     }
 
     fun View.setDisabledState(disabled: Boolean) {
@@ -686,5 +722,4 @@ class NoteDetailActivity : AppCompatActivity() {
             }
         }
     }
-
 }

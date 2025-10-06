@@ -38,15 +38,21 @@ class NoteViewModel @Inject constructor(
 
     private var currentCategoryId: Int
         get() = state["currentCategoryId"] ?: 0
-        set(value) { state["currentCategoryId"] = value }
+        set(value) {
+            state["currentCategoryId"] = value
+        }
 
     private var currentSortType: String
         get() = state["currentSortType"] ?: SORT_EDIT_DATE_FROM_NEWEST
-        set(value) { state["currentSortType"] = value }
+        set(value) {
+            state["currentSortType"] = value
+        }
 
     private var currentQuery: String
         get() = state["currentQuery"] ?: ""
-        set(value) { state["currentQuery"] = value }
+        set(value) {
+            state["currentQuery"] = value
+        }
 
 
     init {
@@ -54,6 +60,10 @@ class NoteViewModel @Inject constructor(
             currentNotes = list
             applyFiltersAndSort()
         }
+    }
+
+    fun currentNotesSize(): Int {
+        return filteredNotes.value?.size ?: 0
     }
 
     private fun applyFiltersAndSort() {
@@ -83,6 +93,7 @@ class NoteViewModel @Inject constructor(
                 val index = colorPalette.indexOf(note.color)
                 if (index == -1) Int.MAX_VALUE else index
             }
+
             else -> result
         }
 
@@ -135,6 +146,7 @@ class NoteViewModel @Inject constructor(
         }
         return emptyList()
     }
+
     fun softDeleteNotes(notes: List<Note>) = viewModelScope.launch(Dispatchers.IO) {
         noteDao.softDeleteNotes(notes.map { it.id })
     }
